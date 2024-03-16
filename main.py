@@ -2,22 +2,29 @@ import sys
  
 import pygame
 from pygame.locals import *
-from background import Background 
+from background import Back_ground 
 
 
 pygame.init()
-BackGround = Background('map.jpg', [0,0])
 
 fps = 60
 fpsClock = pygame.time.Clock()
  
-width, height = 1800, 1000
+width, height = 1650, 900
 screen = pygame.display.set_mode((width, height))
- 
+
+back_ground = Back_ground('map.jpg', [0,0])
+# menu = Menu(,[])
+def draw_window():
+
+    screen.fill([255, 255, 255])
+    screen.blit(back_ground.image, back_ground.rect)
+
+
 # Game loop.
 while True:
-    screen.fill([255, 255, 255])
-    screen.blit(BackGround.image, BackGround.rect)
+
+    draw_window()
   
     for event in pygame.event.get():
         if event.type == QUIT:
