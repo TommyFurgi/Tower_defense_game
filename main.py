@@ -2,7 +2,7 @@ import sys
  
 import pygame
 from pygame.locals import *
-from background import Back_ground 
+from map import Map 
 from menu import Menu
 
 
@@ -11,21 +11,17 @@ pygame.init()
 fps = 60
 fpsClock = pygame.time.Clock()
  
-width, height = 1650, 900
+width, height = 1600, 900
 #width, height = 1920, 1080
 
 screen = pygame.display.set_mode((width, height))
-
-back_ground = Back_ground('img/map.jpg', screen)
+map = Map(screen)
 menu = Menu(screen)
-screen.blit(back_ground.image, back_ground.rect)
 
-
-
+money = 10000
+points = 100
 def draw_window():
-    menu.draw_points(100)
-    menu.draw_money(10000)
-    menu.draw_hearts(3)
+    menu.draw_all_menu(points, money, hearts=3)
 
 
 while True:

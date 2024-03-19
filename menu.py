@@ -1,26 +1,32 @@
 import pygame
-from pygame.locals import *
 
 class Menu():
     def __init__(self, screen):
         self.screen = screen
         
-        window_width, self.height = screen.get_size()
-        self.width = 0.15 * window_width # 247.5
-        self.left_border = window_width - self.width # 1402.5
+        self.window_width, self.height = screen.get_size()
+        self.width = 0.15 * self.window_width # 247.5
+        self.left_border = self.window_width - self.width # 1402.5
 
         self.scale_rate = self.height / self.width # 3.63
         
         self.font = pygame.font.Font(None, int(10 * self.scale_rate))
         self.background_color = (214, 189, 120)
-        self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, window_width, self.height))
+        self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         
         self.hearth = pygame.image.load('img/heart.png')
         self.hearth = pygame.transform.scale(self.hearth, (15 * self.scale_rate, 15 * self.scale_rate))
         
-        tower = pygame.image.load('img/archer_tower.png')
-        tower = pygame.transform.scale(tower, (41 * self.scale_rate, 41 * self.scale_rate))
-        self.tower_rect = screen.blit(tower, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
+        self.archer = pygame.image.load('img/archer_tower.png')
+        self.archer = pygame.transform.scale(self.archer, (41 * self.scale_rate, 41 * self.scale_rate))
+
+    def draw_all_menu(self, points, money, hearts):
+        self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
+        self.draw_points(points)
+        self.draw_hearts(hearts)
+        self.draw_money(money)
+        self.draw_tower()
+
 
     def draw_points(self, points):
         score = self.font.render(f'Score: {points}', True, (0, 0, 0))
@@ -48,3 +54,6 @@ class Menu():
             return self.tower_rect
         
         return None
+    
+    def draw_tower(self):
+        self.tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
