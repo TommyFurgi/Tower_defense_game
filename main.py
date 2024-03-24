@@ -4,6 +4,7 @@ import pygame
 from pygame.locals import *
 from map import Map 
 from menu import Menu
+from enemy import Enemy
 
 
 pygame.init()
@@ -20,14 +21,16 @@ menu = Menu(screen)
 
 money = 10000
 points = 100
+enemies = [Enemy(screen)]
 def draw_window():
     menu.draw_all_menu(points, money, hearts=3)
-
+    map.draw_background()
 
 while True:
 
     draw_window()
-
+    enemies[0].draw(screen)
+    enemies[0].move()
   
     for event in pygame.event.get():
         if event.type == QUIT:

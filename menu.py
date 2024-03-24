@@ -21,7 +21,7 @@ class Menu():
         self.archer = pygame.transform.scale(self.archer, (41 * self.scale_rate, 41 * self.scale_rate))
 
     def draw_all_menu(self, points, money, hearts):
-        self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
+        pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         self.draw_points(points)
         self.draw_hearts(hearts)
         self.draw_money(money)
