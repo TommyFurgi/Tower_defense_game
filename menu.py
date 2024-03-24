@@ -1,4 +1,5 @@
 import pygame
+from tower import Tower
 
 class Menu():
     def __init__(self, screen):
@@ -49,11 +50,8 @@ class Menu():
 
     def handle_click(self, clicked_position):
         
-        if (self.tower_rect.collidepoint(clicked_position)):
-            print("kliknieto w wieze")
-            return self.tower_rect
-        
-        return None
+        if (self.archer_tower_rect.collidepoint(clicked_position)):
+            return self.archer
     
     def draw_tower(self):
-        self.tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
+        self.archer_tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
