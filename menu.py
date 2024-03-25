@@ -28,7 +28,6 @@ class Menu():
         self.draw_money(money)
         self.draw_tower()
 
-
     def draw_points(self, points):
         score = self.font.render(f'Score: {points}', True, (0, 0, 0))
         self.screen.blit(score, (self.left_border + self.width * 0.1, 0.02 * self.height))
@@ -51,6 +50,7 @@ class Menu():
     def handle_click(self, clicked_position):
         
         if (self.archer_tower_rect.collidepoint(clicked_position)):
+            
             return self.archer
     
     def draw_tower(self):

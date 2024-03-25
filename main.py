@@ -6,6 +6,7 @@ from map import Map
 from menu import Menu
 from enemy import Enemy
 from tower import Tower
+from archer_tower import ArcherTower
 
 
 pygame.init()
@@ -35,19 +36,43 @@ def draw_window():
     menu.draw_all_menu(points, money, hearts=3)
     map.draw_background()
 
-def edit_mode(): # used to move tower around when selected from the menu
-        
+
+# makes selected tower follow player's mouse
+def tower_drag(): # used to move tower around when selected from the menu
+    
     edit_tower.draw(screen) # draws tower on a screen
-    edit_tower.sprite.follow_mouse() 
+    edit_tower.sprite.move() 
+
+# selects a tower
+def tower_pick_up(image):
+                        
+    edit_tower.add(ArcherTower(image))
+    
+# cancels placing a tower
+def tower_cancel():
+                    
+    edit_tower.empty()
+
+# places a tower if possible
+def tower_place():
+    
+    if edit_tower.sprite.place():
+                        
+        towers.add(edit_tower.sprite)# add an instance of tower to group
+        
+        # TODO: Should substract certain amount of money from player's balance
+                        
+    edit_tower.empty() # removes sprite from the group
 
 while True:
 
     draw_window()
     
-    if edit_tower.sprite: # moving and drawing selected tower
-        edit_mode() 
+    if edit_tower.sprite: # tower was picked up
+        tower_drag()
         
     towers.draw(screen) # automatically draws all towers, without user specified draw function
+    towers.update() # calls each tower's update function
     
     enemies[0].draw(screen)
     enemies[0].move()
@@ -60,27 +85,30 @@ while True:
             
         elif event.type == MOUSEBUTTONDOWN:
                 
-            if event.button == 1:  
+            if event.button == 1: # left mouse button
                     
                 clicked_position = pygame.mouse.get_pos()
                     
                 if menu.rect.collidepoint(clicked_position):
                         
-                    tower_image = menu.handle_click(clicked_position)
+                    image = menu.handle_click(clicked_position) # TODO: should return sth that could help to identify which tower was clicked
                         
-                    edit_tower.add(Tower(tower_image))
+                    if image != None and not edit_tower.sprite: # player is not holding a tower
+                        tower_pick_up(image)
+                    
+            elif event.button == 3: # right mouse button
+                
+                if edit_tower.sprite: # tower is being held
+                    tower_cancel()
                         
         elif event.type == MOUSEBUTTONUP:
-            
-              if edit_tower.sprite: #checks if edit_tower contains sprite
                 
-                if event.button == 1: # place a tower
+            if event.button == 1: # left mouse button
                     
-                    if edit_tower.sprite.place():
-                        
-                        towers.add(edit_tower.sprite)# add an instance of tower to group
-                        
-                    edit_tower.empty() # removes sprite from the group
+                if edit_tower.sprite: # tower is being held
+                    tower_place()
+                    
+                    
             
 
     pygame.display.flip()

@@ -1,36 +1,46 @@
 import pygame
+from abc import ABC, abstractmethod
 
-class Tower(pygame.sprite.Sprite):
+
+# base class for towers
+class Tower(pygame.sprite.Sprite, ABC): # ABC means Tower is abstrac class
     
-    def __init__(self, tower_image): # player grabbed a tower from the menu
+    # player grabbed a tower from the menu
+    def __init__(self, image): 
 
         pygame.sprite.Sprite.__init__(self)
     
-        self.image = tower_image
+        self.image = image
         self.rect = self.image.get_rect()
         
-        self.rect.x, self.rect.y = self.calcualte_position()
-        
-        #self.rect.center = (self.image.get_width() // 2, self.image.get_height() // 2)
+        self.rect.x, self.rect.y = self.calcualte_position() # initial position, cant be None
     
+    # makes sure tower is being held in the middle
     def calcualte_position(self):
         
         mouse_position = pygame.mouse.get_pos()
         return (mouse_position[0] - self.image.get_width() // 2, mouse_position[1] - self.image.get_height() // 2)
 
-    
-    def follow_mouse(self):
+    # makes tower follow a mouse
+    def move(self):
         
         self.rect.x, self.rect.y = self.calcualte_position()
     
     def place(self):
         
-        #TODO: check if position if valid
+        # TODO:
+        # check if position if valid
+        # should check if its overlapping any forbidden areas (path, trees, rocks)
         
-        self.rect.x, self.rect.y = self.calcualte_position()
+        self.move() #make sure tower is in desired position
         
         return True
 
+    # each tower should define its behaviour
+    @abstractmethod
+    def update():
+        pass
+    
         
     
         
