@@ -25,16 +25,15 @@ menu = Menu(screen)
 
 money = 10000
 points = 100
+hearts = 3
 
-enemies = [Enemy(screen)]
+enemies = [Enemy()]
 
 towers = pygame.sprite.Group() # defines a towers sprite group in pygame
 
 edit_tower = pygame.sprite.GroupSingle() # this group holds single sprite
 
-def draw_window():
-    menu.draw_all_menu(points, money, hearts=3)
-    map.draw_background()
+    
 
 
 # makes selected tower follow player's mouse
@@ -64,9 +63,30 @@ def tower_place():
                         
     edit_tower.empty() # removes sprite from the group
 
+def move_all_enemies():
+    to_delete  = []
+    for monster in enemies:
+        monster.draw(screen)
+        if not monster.move():
+            to_delete.append(monster)
+
+    for monster_to_delete in to_delete:
+        enemies.remove(monster_to_delete)
+    
+    if len(to_delete) - hearts < 0:
+        ...
+        # TODO end game
+
+def update_screeen():
+    menu.draw_all_menu(points, money, hearts)
+    map.draw_background()
+
+    move_all_enemies()
+
+
 while True:
 
-    draw_window()
+    update_screeen()
     
     if edit_tower.sprite: # tower was picked up
         tower_drag()
@@ -74,9 +94,9 @@ while True:
     towers.draw(screen) # automatically draws all towers, without user specified draw function
     towers.update() # calls each tower's update function
     
-    enemies[0].draw(screen)
-    enemies[0].move()
-  
+    
+    move_all_enemies()
+
     for event in pygame.event.get():
         
         if event.type == QUIT:

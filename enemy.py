@@ -3,16 +3,17 @@ from PIL import Image
 from directions import Direction
 
 class Enemy():
-    def __init__(self, screen):
+    def __init__(self):
         self.x = 510
         self.y = 850
         
         self.speed = 1.3
         self.health = 300
+        self.max_health = 300
 
         path =  [(520, 790), (530, 750), (550, 725), (580, 680), (600, 660), (640, 650), (660, 645), (680, 620), (695, 585), (700, 565), (695, 540), (686, 525), (683, 495), (678, 460),
-                  (660, 445), (635, 440), (610, 430), (590, 415), (570, 400), (550, 385), (535, 360), (515, 340), (500, 325), (495, 305), (490, 290), (485, 270), (490, 255), (510, 230),
-                  (525, 205), (540, 182), (560, 173), (585, 171), (615, 170), (640, 166)] # ...
+                  (660, 445), (635, 440), (610, 430), (580, 420), (570, 410),  (560, 400), (550, 390), (525, 380), (505, 370), (480, 360), (460, 335), (455, 320), (450, 300), (452, 285), (455, 265), 
+                  (470, 250), (485, 230), (500, 210), (515, 200), (530, 180), (1350, 175)]
         
         self.path = [(self.x, self.y)] + path
         self.animation_count = 0
@@ -48,6 +49,13 @@ class Enemy():
 
         self.flipped = False
 
+    def draw_health_bar(self, screen):
+        length = 80
+        move_by = round(length / self.max_health)
+        health_bar = move_by * self.health
+
+        pygame.draw.rect(screen, (255,0,0), (self.x-42, self.y-75, length, 10), 0)
+        pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 75, health_bar, 10), 0)
 
     def draw(self, screen):
         match self.direction:
@@ -61,6 +69,7 @@ class Enemy():
                 self.img = self.imgs_left[self.animation_count//10]            
 
         screen.blit(self.img, (self.x - self.img.get_width()/2, self.y- self.img.get_height()/2 ))
+        self.draw_health_bar(screen)
         
 
     def move(self):
@@ -71,13 +80,9 @@ class Enemy():
 
         x1, y1 = self.path[self.path_pos]
         if self.path_pos + 1 >= len(self.path): # TODO !!!
-            return
-            x2, y2 = (-10, 355)
+            return False
         else:
             x2, y2 = self.path[self.path_pos+1]
-
-
-        # print(x2,y2)
 
         dirn = ((x2-x1)*2, (y2-y1)*2)
         length = math.sqrt((dirn[0])**2 + (dirn[1])**2)
@@ -108,3 +113,5 @@ class Enemy():
         
         # Setting direction
         self.direction = Direction.set_direction(dirn)
+
+        return True
