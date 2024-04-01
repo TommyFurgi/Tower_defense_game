@@ -1,13 +1,14 @@
 import pygame, math
 from PIL import Image
 from directions import Direction
+import random
 
 class Enemy():
     def __init__(self):
         self.x = 510
         self.y = 850
         
-        self.speed = 1.3
+        self.speed = 0.7
         self.health = 300
         self.max_health = 300
 
@@ -16,7 +17,7 @@ class Enemy():
                   (470, 250), (485, 230), (500, 210), (515, 200), (530, 180), (1350, 175)]
         
         self.path = [(self.x, self.y)] + path
-        self.animation_count = 0
+        self.animation_count = random.randint(0, 7) * 20
         self.path_pos = 0
 
         self.imgs_up = []
@@ -60,13 +61,13 @@ class Enemy():
     def draw(self, screen):
         match self.direction:
             case Direction.UP:
-                self.img = self.imgs_up[self.animation_count//10]
+                self.img = self.imgs_up[self.animation_count//20]
             case Direction.DOWN:
-                self.img = self.imgs_down[self.animation_count//10]
+                self.img = self.imgs_down[self.animation_count//20]
             case Direction.RIGHT:
-                self.img = self.imgs_right[self.animation_count//10]
+                self.img = self.imgs_right[self.animation_count//20]
             case Direction.LEFT:
-                self.img = self.imgs_left[self.animation_count//10]            
+                self.img = self.imgs_left[self.animation_count//20]            
 
         screen.blit(self.img, (self.x - self.img.get_width()/2, self.y- self.img.get_height()/2 ))
         self.draw_health_bar(screen)
@@ -75,11 +76,11 @@ class Enemy():
     def move(self):
 
         self.animation_count += 1
-        if self.animation_count >= len(self.imgs_up) * 10:
+        if self.animation_count >= len(self.imgs_up) * 20:
             self.animation_count = 0
 
         x1, y1 = self.path[self.path_pos]
-        if self.path_pos + 1 >= len(self.path): # TODO !!!
+        if self.path_pos + 1 >= len(self.path):
             return False
         else:
             x2, y2 = self.path[self.path_pos+1]
