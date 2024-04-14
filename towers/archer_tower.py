@@ -1,15 +1,18 @@
 import pygame
-from tower import Tower
+from towers.tower import Tower
 from menu import Menu
 
 class ArcherTower(Tower):
-    
-     # player grabbed a tower from the menu
-    def __init__(self, image):
-        Tower.__init__(self, image)
+
+    def __init__(self, x, y):
+        Tower.__init__(self, x, y)
+
+        image = pygame.image.load('img/archer_tower.png')
+        image = pygame.transform.scale(image, (150, 150))
+        self.tower_imgs = [image]
+
 
     def update(self):
-        # print("pow pow pow")
         
         #self.find_targets()
         

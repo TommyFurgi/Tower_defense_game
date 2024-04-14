@@ -4,17 +4,13 @@ from directions import Direction
 import random
 
 class Enemy():
-    def __init__(self):
-        self.x = 510
-        self.y = 850
+    def __init__(self, path):
+        self.x = 540
+        self.y = 900
         
         self.speed = 0.7
         self.health = 300
         self.max_health = 300
-
-        path =  [(520, 790), (530, 750), (550, 725), (580, 680), (600, 660), (640, 650), (660, 645), (680, 620), (695, 585), (700, 565), (695, 540), (686, 525), (683, 495), (678, 460),
-                  (660, 445), (635, 440), (610, 430), (580, 420), (570, 410),  (560, 400), (550, 390), (525, 380), (505, 370), (480, 360), (460, 335), (455, 320), (450, 300), (452, 285), (455, 265), 
-                  (470, 250), (485, 230), (500, 210), (515, 200), (530, 180), (1350, 175)]
         
         self.path = [(self.x, self.y)] + path
         self.animation_count = random.randint(0, 7) * 20
@@ -55,8 +51,8 @@ class Enemy():
         move_by = round(length / self.max_health)
         health_bar = move_by * self.health
 
-        pygame.draw.rect(screen, (255,0,0), (self.x-42, self.y-75, length, 10), 0)
-        pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 75, health_bar, 10), 0)
+        pygame.draw.rect(screen, (255,0,0), (self.x-42, self.y - 130, length, 10), 0)
+        pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
 
     def draw(self, screen):
         match self.direction:
@@ -69,7 +65,7 @@ class Enemy():
             case Direction.LEFT:
                 self.img = self.imgs_left[self.animation_count//20]            
 
-        screen.blit(self.img, (self.x - self.img.get_width()/2, self.y- self.img.get_height()/2 ))
+        screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
         self.draw_health_bar(screen)
         
 
