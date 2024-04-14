@@ -1,5 +1,5 @@
 import pygame
-from tower import Tower
+from towers.tower import Tower
 
 class Menu():
     def __init__(self, screen):
@@ -26,7 +26,7 @@ class Menu():
         self.draw_points(points)
         self.draw_hearts(hearts)
         self.draw_money(money)
-        self.draw_tower()
+        self.archer_tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
 
     def draw_points(self, points):
         score = self.font.render(f'Score: {points}', True, (0, 0, 0))
@@ -48,10 +48,7 @@ class Menu():
 
 
     def handle_click(self, clicked_position):
-        
         if (self.archer_tower_rect.collidepoint(clicked_position)):
-            
-            return self.archer
-    
-    def draw_tower(self):
-        self.archer_tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
+            return self.archer, "archer"
+
+        
