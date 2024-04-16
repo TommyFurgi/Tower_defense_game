@@ -3,11 +3,8 @@ from PIL import Image
 from directions import Direction
 import random
 
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self, path, screen):
-
-        pygame.sprite.Sprite.__init__(self)
-
+class Enemy():
+    def __init__(self, path):
         self.x = 540
         self.y = 900
         
@@ -23,7 +20,6 @@ class Enemy(pygame.sprite.Sprite):
         self.imgs_down = []
         self.imgs_right = []
         self.imgs_left = []
-        self.screen = screen
         animation_strip = Image.open("img/enemy.png")
         frame_width = 64
         frame_height = 64
@@ -50,15 +46,15 @@ class Enemy(pygame.sprite.Sprite):
 
         self.flipped = False
 
-    def draw_health_bar(self):
+    def draw_health_bar(self, screen):
         length = 80
         move_by = round(length / self.max_health)
         health_bar = move_by * self.health
 
-        pygame.draw.rect(self.screen, (255,0,0), (self.x-42, self.y - 130, length, 10), 0)
-        pygame.draw.rect(self.screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
+        pygame.draw.rect(screen, (255,0,0), (self.x-42, self.y - 130, length, 10), 0)
+        pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
 
-    def draw(self):
+    def draw(self, screen):
         match self.direction:
             case Direction.UP:
                 self.img = self.imgs_up[self.animation_count//20]
@@ -69,8 +65,8 @@ class Enemy(pygame.sprite.Sprite):
             case Direction.LEFT:
                 self.img = self.imgs_left[self.animation_count//20]            
 
-        self.screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
-        self.draw_health_bar()
+        screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
+        self.draw_health_bar(screen)
         
 
     def move(self):
@@ -116,9 +112,3 @@ class Enemy(pygame.sprite.Sprite):
         self.direction = Direction.set_direction(dirn)
 
         return True
-    
-    def update(self, game_pause):
-        if not game_pause:
-            self.move()
-            
-        self.draw()

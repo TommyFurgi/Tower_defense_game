@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class Tower(pygame.sprite.Sprite, ABC): 
     
-    def __init__(self, x, y, screen): 
+    def __init__(self, x, y): 
 
         pygame.sprite.Sprite.__init__(self)
         self.x = x
@@ -15,16 +15,15 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.tower_imgs = []
         self.damage = 1
         self.range = 150
-        self.screen = screen
 
-    def draw(self):
+    def draw(self, screen):
         image = self.tower_imgs[self.level-1]
 
         if self.selected:
-            self.draw_radius(self.screen)
+            self.draw_radius(screen)
             ... # TODO: draw menu for upgrade
 
-        self.screen.blit(image, (self.x-image.get_width()//2, self.y-image.get_height()//2))
+        screen.blit(image, (self.x-image.get_width()//2, self.y-image.get_height()//2))
 
 
     def draw_radius(self, screen):
@@ -43,7 +42,7 @@ class Tower(pygame.sprite.Sprite, ABC):
                 
                 return True
         return False
-
+    
     # def calcualte_position(self):
         
     #     mouse_position = pygame.mouse.get_pos()
