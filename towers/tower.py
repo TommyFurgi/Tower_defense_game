@@ -15,11 +15,6 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.tower_imgs = []
         self.damage = 1
         self.range = 150
-<<<<<<< HEAD
-        self.screen = screen
-    
-=======
->>>>>>> parent of 3fe380c (Merge pull request #10 from TommyFurgi/dev7)
 
     def draw(self, screen):
         image = self.tower_imgs[self.level-1]

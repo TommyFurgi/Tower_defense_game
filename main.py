@@ -6,6 +6,7 @@ from menu import Menu
 from enemies.enemy import Enemy
 from towers.tower import Tower
 from towers.archer_tower import ArcherTower
+from editor import Editor
 import math
 
 pygame.init()
@@ -80,8 +81,7 @@ def calculate_distance(x1, y1, x2, y2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
      
 
-<<<<<<< HEAD
-def drag_object_conflict(clicked_position, drag_object):
+def drag_object_conflict(drag_object):
 
     # for tower in towers:
         # if pygame.Rect.colliderect(tower, drag_object):
@@ -89,25 +89,8 @@ def drag_object_conflict(clicked_position, drag_object):
     #if drag_object.collide_rect():
     # if calculate_distance(clicked_position[0], clicked_position[1], tower.x, tower.y) < 100:
     #    return True
-    lst = pygame.sprite.spritecollide(drag_object, towers, False)
-    print(drag_object.rect, lst)
-    if lst == []:
-        return False
-    else:
-        return True
-=======
-def drag_object_conflict(clicked_position):
-
-    for tower in towers:
-        if calculate_distance(clicked_position[0], clicked_position[1], tower.x, tower.y) < 100:
-            return True
-        
-    for path_point in path:
-        dist = calculate_distance(clicked_position[0], clicked_position[1], path_point[0], path_point[1])
-        if dist < 70:
-            return True
->>>>>>> parent of 3fe380c (Merge pull request #10 from TommyFurgi/dev7)
-
+    
+    return pygame.sprite.spritecollide(drag_object, towers, False) # [] is eveluated as False    
     
     #for path_point in path:
     #    dist = calculate_distance(clicked_position[0], clicked_position[1], path_point[0], path_point[1])
@@ -132,7 +115,7 @@ def update_screen():
         drag_object.rect.center = (mouse_x, mouse_y - 60)
 
         color = (0, 0, 255, 100)
-        if drag_object_conflict((mouse_x, mouse_y)):
+        if drag_object_conflict(drag_object):
             color = (255, 0, 0, 100)
         
         surface = pygame.Surface((160, 160), pygame.SRCALPHA, 32)
@@ -153,8 +136,17 @@ def update_game():
         enemies_to_generate -= 1
         last_spawn_time = current_time
 
+# Editor related
+editor = Editor(screen, "environment/path")
+edit_mode = False
+
 while True:
     update_screen()
+
+    if edit_mode:
+        editor.edit()
+        pygame.display.flip() # Required by editor
+        continue
 
     if not game_pause:
         update_game()
@@ -191,17 +183,11 @@ while True:
                         if tower.click(clicked_position[0], clicked_position[1]):
                             selected_tower = tower
                             break
-<<<<<<< HEAD
-=======
-                            
 
-                        
->>>>>>> parent of 3fe380c (Merge pull request #10 from TommyFurgi/dev7)
-
-                elif drag_object and not drag_object_conflict(clicked_position):
+                elif drag_object and not drag_object_conflict(drag_object):
                     match drag_object_name:
                         case "archer":
-                            tower = ArcherTower(clicked_position[0], clicked_position[1]-60)
+                            tower = ArcherTower(clicked_position[0], clicked_position[1]-60, screen)
 
                     towers.append(tower)
                     drag_object = None
