@@ -38,10 +38,10 @@ path = [
     (481, 409), (472, 383), (470, 354), (462, 319), (467, 289),
     (475, 263), (487, 240), (503, 229), (525, 214), (547, 207),
     (573, 205), (595, 204), (615, 201), (637, 200), (680, 199),
-    (717, 197), (752, 198), (787, 197), (816, 198), (853, 199),
-    (895, 195), (935, 194), (979, 193), (1019, 194), (1055, 193),
-    (1098, 191), (1147, 192), (1195, 190), (1246, 191), (1289, 190),
-    (1329, 191), (1353, 192)
+    (717, 198), (752, 198), (787, 197), (816, 199), (853, 199),
+    (895, 195), (935, 193), (979, 193), (1019, 194), (1055, 194),
+    (1098, 191), (1147, 192), (1195, 192), (1246, 190), (1289, 190),
+    (1329, 191), (1353, 191)
 ]
 
 
@@ -49,14 +49,10 @@ money = 10000
 points = 100
 hearts = 3
 
-game_pause = False
+game_pause = True
 
-# enemies = []
-# towers = []
-
-enemies = pygame.sprite.Group()
-towers = pygame.sprite.Group()
-
+enemies = []
+towers = []
 spawn_interval = 500 
 last_spawn_time = 0
 enemies_to_generate = 30
@@ -66,14 +62,10 @@ selected_tower = None
 def move_all_enemies():
     global money, hearts
     to_delete = []
-
-    # for monster in enemies:
-    #     monster.draw(screen)
-    #     if not monster.move():
-    #         to_delete.append(monster)
-
-    global game_pause
-    enemies.update(game_pause)
+    for monster in enemies:
+        monster.draw(screen)
+        if not monster.move():
+            to_delete.append(monster)
 
     for monster_to_delete in to_delete:
         enemies.remove(monster_to_delete)
@@ -88,6 +80,7 @@ def calculate_distance(x1, y1, x2, y2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
      
 
+<<<<<<< HEAD
 def drag_object_conflict(clicked_position, drag_object):
 
     # for tower in towers:
@@ -102,6 +95,18 @@ def drag_object_conflict(clicked_position, drag_object):
         return False
     else:
         return True
+=======
+def drag_object_conflict(clicked_position):
+
+    for tower in towers:
+        if calculate_distance(clicked_position[0], clicked_position[1], tower.x, tower.y) < 100:
+            return True
+        
+    for path_point in path:
+        dist = calculate_distance(clicked_position[0], clicked_position[1], path_point[0], path_point[1])
+        if dist < 70:
+            return True
+>>>>>>> parent of 3fe380c (Merge pull request #10 from TommyFurgi/dev7)
 
     
     #for path_point in path:
@@ -116,10 +121,8 @@ def update_screen():
     menu.draw_all_menu(points, money, hearts)
     map.draw_background()
 
-    # for tower in towers:
-    #     tower.draw(screen)
-
-    towers.update()
+    for tower in towers:
+        tower.draw(screen)
 
     if drag_object:
         
@@ -129,7 +132,7 @@ def update_screen():
         drag_object.rect.center = (mouse_x, mouse_y - 60)
 
         color = (0, 0, 255, 100)
-        if drag_object_conflict((mouse_x, mouse_y), drag_object):
+        if drag_object_conflict((mouse_x, mouse_y)):
             color = (255, 0, 0, 100)
         
         surface = pygame.Surface((160, 160), pygame.SRCALPHA, 32)
@@ -146,9 +149,7 @@ def update_game():
 
     current_time = pygame.time.get_ticks()
     if enemies_to_generate > 0 and current_time - last_spawn_time >= spawn_interval:
-        # enemies.append(Enemy(path))
-        enemies.add(Enemy(path, screen))
-
+        enemies.append(Enemy(path))
         enemies_to_generate -= 1
         last_spawn_time = current_time
 
@@ -169,6 +170,7 @@ while True:
         elif event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
                 clicked_position = pygame.mouse.get_pos()
+                print(clicked_position)
 
                 if not drag_object:
                     if selected_tower:
@@ -189,21 +191,26 @@ while True:
                         if tower.click(clicked_position[0], clicked_position[1]):
                             selected_tower = tower
                             break
+<<<<<<< HEAD
+=======
+                            
 
-                elif drag_object and not drag_object_conflict(clicked_position, drag_object):
+                        
+>>>>>>> parent of 3fe380c (Merge pull request #10 from TommyFurgi/dev7)
+
+                elif drag_object and not drag_object_conflict(clicked_position):
                     match drag_object_name:
                         case "archer":
-                            tower = ArcherTower(clicked_position[0], clicked_position[1]-60, screen)
+                            tower = ArcherTower(clicked_position[0], clicked_position[1]-60)
 
-                    # towers.append(tower)
-                    towers.add(tower)
+                    towers.append(tower)
                     drag_object = None
 
 
             elif event.button == 3:
                 if selected_tower:
-                    selected_tower.selected = False
-                    selected_tower = None
+                        selected_tower.selected = False
+                        selected_tower = None
 
                 drag_object = None
                 drag_object_name = None
