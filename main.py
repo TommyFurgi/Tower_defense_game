@@ -38,10 +38,10 @@ path = [
     (481, 409), (472, 383), (470, 354), (462, 319), (467, 289),
     (475, 263), (487, 240), (503, 229), (525, 214), (547, 207),
     (573, 205), (595, 204), (615, 201), (637, 200), (680, 199),
-    (717, 198), (752, 198), (787, 197), (816, 199), (853, 199),
-    (895, 195), (935, 193), (979, 193), (1019, 194), (1055, 194),
-    (1098, 191), (1147, 192), (1195, 192), (1246, 190), (1289, 190),
-    (1329, 191), (1353, 191)
+    (717, 197), (752, 198), (787, 197), (816, 198), (853, 199),
+    (895, 195), (935, 194), (979, 193), (1019, 194), (1055, 193),
+    (1098, 191), (1147, 192), (1195, 190), (1246, 191), (1289, 190),
+    (1329, 191), (1353, 192)
 ]
 
 
@@ -49,10 +49,14 @@ money = 10000
 points = 100
 hearts = 3
 
-game_pause = True
+game_pause = False
 
-enemies = []
-towers = []
+# enemies = []
+# towers = []
+
+enemies = pygame.sprite.Group()
+towers = pygame.sprite.Group()
+
 spawn_interval = 500 
 last_spawn_time = 0
 enemies_to_generate = 30
@@ -62,10 +66,14 @@ selected_tower = None
 def move_all_enemies():
     global money, hearts
     to_delete = []
-    for monster in enemies:
-        monster.draw(screen)
-        if not monster.move():
-            to_delete.append(monster)
+
+    # for monster in enemies:
+    #     monster.draw(screen)
+    #     if not monster.move():
+    #         to_delete.append(monster)
+
+    global game_pause
+    enemies.update(game_pause)
 
     for monster_to_delete in to_delete:
         enemies.remove(monster_to_delete)
@@ -80,12 +88,15 @@ def calculate_distance(x1, y1, x2, y2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
      
 
-def drag_object_conflict(clicked_position):
+def drag_object_conflict(clicked_position, drag_object):
 
-    for tower in towers:
-        if calculate_distance(clicked_position[0], clicked_position[1], tower.x, tower.y) < 100:
-            return True
-        
+    # for tower in towers:
+        # if pygame.Rect.colliderect(tower, drag_object):
+    if pygame.sprite.collide_rect(drag_object, towers):
+    # if calculate_distance(clicked_position[0], clicked_position[1], tower.x, tower.y) < 100:
+        return True
+
+
     for path_point in path:
         dist = calculate_distance(clicked_position[0], clicked_position[1], path_point[0], path_point[1])
         if dist < 70:
@@ -101,8 +112,10 @@ def update_screen():
     menu.draw_all_menu(points, money, hearts)
     map.draw_background()
 
-    for tower in towers:
-        tower.draw(screen)
+    # for tower in towers:
+    #     tower.draw(screen)
+
+    towers.update()
 
     if drag_object:
         drag_object_rect = drag_object.get_rect()
@@ -111,7 +124,7 @@ def update_screen():
         drag_object_rect.center = (mouse_x, mouse_y - 60)
 
         color = (0, 0, 255, 100)
-        if drag_object_conflict((mouse_x, mouse_y)):
+        if drag_object_conflict((mouse_x, mouse_y), drag_object):
             color = (255, 0, 0, 100)
 
         surface = pygame.Surface((160, 160), pygame.SRCALPHA, 32)
@@ -128,7 +141,9 @@ def update_game():
 
     current_time = pygame.time.get_ticks()
     if enemies_to_generate > 0 and current_time - last_spawn_time >= spawn_interval:
-        enemies.append(Enemy(path))
+        # enemies.append(Enemy(path))
+        enemies.add(Enemy(path, screen))
+
         enemies_to_generate -= 1
         last_spawn_time = current_time
 
@@ -149,7 +164,6 @@ while True:
         elif event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
                 clicked_position = pygame.mouse.get_pos()
-                print(clicked_position)
 
                 if not drag_object:
                     if selected_tower:
@@ -163,23 +177,24 @@ while True:
                         if tower.click(clicked_position[0], clicked_position[1]):
                             selected_tower = tower
                             break
-                            
+                        
 
                         
 
-                elif drag_object and not drag_object_conflict(clicked_position):
+                elif drag_object and not drag_object_conflict(clicked_position, drag_object):
                     match drag_object_name:
                         case "archer":
-                            tower = ArcherTower(clicked_position[0], clicked_position[1]-60)
+                            tower = ArcherTower(clicked_position[0], clicked_position[1]-60, screen)
 
-                    towers.append(tower)
+                    # towers.append(tower)
+                    towers.add(tower)
                     drag_object = None
 
 
             elif event.button == 3:
                 if selected_tower:
-                        selected_tower.selected = False
-                        selected_tower = None
+                    selected_tower.selected = False
+                    selected_tower = None
 
                 drag_object = None
                 drag_object_name = None
