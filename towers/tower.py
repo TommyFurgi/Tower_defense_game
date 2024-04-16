@@ -16,6 +16,7 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.damage = 1
         self.range = 150
         self.screen = screen
+    
 
     def draw(self):
         image = self.tower_imgs[self.level-1]
@@ -43,7 +44,7 @@ class Tower(pygame.sprite.Sprite, ABC):
                 
                 return True
         return False
-
+    
     # def calcualte_position(self):
         
     #     mouse_position = pygame.mouse.get_pos()

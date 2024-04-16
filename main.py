@@ -92,20 +92,24 @@ def drag_object_conflict(clicked_position, drag_object):
 
     # for tower in towers:
         # if pygame.Rect.colliderect(tower, drag_object):
-    if pygame.sprite.collide_rect(drag_object, towers):
+        
+    #if drag_object.collide_rect():
     # if calculate_distance(clicked_position[0], clicked_position[1], tower.x, tower.y) < 100:
+    #    return True
+    lst = pygame.sprite.spritecollide(drag_object, towers, False)
+    print(drag_object.rect, lst)
+    if lst == []:
+        return False
+    else:
         return True
 
-
-    for path_point in path:
-        dist = calculate_distance(clicked_position[0], clicked_position[1], path_point[0], path_point[1])
-        if dist < 70:
-            return True
-
     
-        
-    return clicked_position[0] > 1320
+    #for path_point in path:
+    #    dist = calculate_distance(clicked_position[0], clicked_position[1], path_point[0], path_point[1])
+    #    if dist < 70:
+    #        return True
 
+    #return clicked_position[0] > 1320
 
 def update_screen():
     
@@ -118,20 +122,21 @@ def update_screen():
     towers.update()
 
     if drag_object:
-        drag_object_rect = drag_object.get_rect()
+        
+        
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        drag_object_rect.center = (mouse_x, mouse_y - 60)
+        drag_object.rect.center = (mouse_x, mouse_y - 60)
 
         color = (0, 0, 255, 100)
         if drag_object_conflict((mouse_x, mouse_y), drag_object):
             color = (255, 0, 0, 100)
-
+        
         surface = pygame.Surface((160, 160), pygame.SRCALPHA, 32)
         pygame.draw.circle(surface, color, (80, 80), 80, 0)
         screen.blit(surface, (mouse_x - 80, mouse_y - 80))
 
-        screen.blit(drag_object, drag_object_rect)
+        screen.blit(drag_object.image, drag_object.rect)
     
     
 def update_game():
@@ -172,14 +177,18 @@ while True:
 
                     if menu.rect.collidepoint(clicked_position):
                         drag_object, drag_object_name = menu.handle_click(clicked_position)
+                        
+                        # drag_object = pygame.image
+                        temp_sprite = pygame.sprite.Sprite()
+                        temp_sprite.image = drag_object
+                        temp_sprite.rect = drag_object.get_rect()
+                        drag_object = temp_sprite
+                        
 
                     for tower in towers:
                         if tower.click(clicked_position[0], clicked_position[1]):
                             selected_tower = tower
                             break
-                        
-
-                        
 
                 elif drag_object and not drag_object_conflict(clicked_position, drag_object):
                     match drag_object_name:
@@ -201,3 +210,4 @@ while True:
 
     pygame.display.flip()
     fpsClock.tick(fps)
+
