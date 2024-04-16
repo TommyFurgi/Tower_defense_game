@@ -4,8 +4,8 @@ from menu import Menu
 
 class ArcherTower(Tower):
 
-    def __init__(self, x, y):
-        Tower.__init__(self, x, y)
+    def __init__(self, x, y, screen):
+        Tower.__init__(self, x, y, screen)
 
         image = pygame.image.load('img/archer_tower.png')
         image = pygame.transform.scale(image, (150, 150))
@@ -13,7 +13,7 @@ class ArcherTower(Tower):
 
 
     def update(self):
-        
+        self.draw()
         #self.find_targets()
         
         pass
