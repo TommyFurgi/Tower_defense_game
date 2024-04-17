@@ -53,6 +53,7 @@ hearts = 3
 
 game_pause = False
 
+#enemies = pygame.sprite.OrderedUpdates() # Cos jak grupa tylko rysuje sprite'y w kolejnosci dodania (Wtedy trzeba chyba uzyc enemies.draw())
 enemies = pygame.sprite.Group()
 towers = pygame.sprite.Group()
 paths = pygame.sprite.Group()
@@ -195,6 +196,7 @@ while True:
     if not game_pause:
         update_game()
     
+    towers.update()
     
     move_all_enemies()
 

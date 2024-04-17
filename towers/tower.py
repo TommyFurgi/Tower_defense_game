@@ -48,7 +48,7 @@ class Tower(pygame.sprite.Sprite, ABC):
     
     def find_targets(self, enemies):
         
-        # True znaczy, że obiekty, które wejdą w kolizję z okręgie dookoła wieży są usuwane
+        # True znaczy, że obiekty, które wejdą w kolizję z okręgiem dookoła wieży są usuwane
         # TODO: zmienić True na False i zamiast tego dodać zadawanie obrażeń
         enemies_collision = pygame.sprite.spritecollide(self, enemies, True, pygame.sprite.collide_circle)
         
