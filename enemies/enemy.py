@@ -3,10 +3,15 @@ from PIL import Image
 from directions import Direction
 import random
 
-class Enemy():
-    def __init__(self, path):
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, path, screen):
+
+        pygame.sprite.Sprite.__init__(self)
+
         self.x = 540
         self.y = 900
+        
+        self.rect = pygame.Rect(self.x, self.y, 64, 64) # Required in order for collisions to work
         
         self.speed = 0.7
         self.health = 300
@@ -20,9 +25,11 @@ class Enemy():
         self.imgs_down = []
         self.imgs_right = []
         self.imgs_left = []
+        self.screen = screen
         animation_strip = Image.open("img/enemy.png")
         frame_width = 64
         frame_height = 64
+        
         for i in range(4):
             for j in range(1,9):
                 frame = animation_strip.crop((frame_width * j, frame_height * i, frame_width * (j + 1), frame_height * (i+1)))
@@ -46,15 +53,15 @@ class Enemy():
 
         self.flipped = False
 
-    def draw_health_bar(self, screen):
+    def draw_health_bar(self):
         length = 80
         move_by = round(length / self.max_health)
         health_bar = move_by * self.health
 
-        pygame.draw.rect(screen, (255,0,0), (self.x-42, self.y - 130, length, 10), 0)
-        pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
+        pygame.draw.rect(self.screen, (255,0,0), (self.x-42, self.y - 130, length, 10), 0)
+        pygame.draw.rect(self.screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
 
-    def draw(self, screen):
+    def draw(self):
         match self.direction:
             case Direction.UP:
                 self.img = self.imgs_up[self.animation_count//20]
@@ -65,8 +72,8 @@ class Enemy():
             case Direction.LEFT:
                 self.img = self.imgs_left[self.animation_count//20]            
 
-        screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
-        self.draw_health_bar(screen)
+        self.screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
+        self.draw_health_bar()
         
 
     def move(self):
@@ -90,6 +97,8 @@ class Enemy():
         move_x, move_y = ((self.x + dirn[0]), (self.y + dirn[1]))
         self.x = move_x
         self.y = move_y
+        
+        self.rect.center = (move_x, move_y)
 
         # Go to next point
         if dirn[0] >= 0: # moving right
@@ -112,3 +121,9 @@ class Enemy():
         self.direction = Direction.set_direction(dirn)
 
         return True
+    
+    def update(self, game_pause):
+        if not game_pause:
+            self.move()
+            
+        self.draw()

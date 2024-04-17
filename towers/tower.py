@@ -15,14 +15,17 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.tower_imgs = []
         self.damage = 1
         self.range = 150
-
+        
+        self.radius = self.range
+        
     def draw(self, screen):
         image = self.tower_imgs[self.level-1]
 
         if self.selected:
             self.draw_radius(screen)
-            ... # TODO: draw menu for upgrade
+            # TODO: draw menu for upgrade
 
+    
         screen.blit(image, (self.x-image.get_width()//2, self.y-image.get_height()//2))
 
 
@@ -43,30 +46,13 @@ class Tower(pygame.sprite.Sprite, ABC):
                 return True
         return False
     
-    # def calcualte_position(self):
+    def find_targets(self, enemies):
         
-    #     mouse_position = pygame.mouse.get_pos()
-    #     return (mouse_position[0] - self.image.get_width() // 2, mouse_position[1] - self.image.get_height() // 2)
-
-
-    # def move(self):
+        # True znaczy, że obiekty, które wejdą w kolizję z okręgiem dookoła wieży są usuwane
+        # TODO: zmienić True na False i zamiast tego dodać zadawanie obrażeń
+        enemies_collision = pygame.sprite.spritecollide(self, enemies, True, pygame.sprite.collide_circle)
         
-    #     self.rect.x, self.rect.y = self.calcualte_position()
-    
-    # def place(self):
-        
-    #     # TODO:
-    #     # check if position if valid
-    #     # should check if its overlapping any forbidden areas (path, trees, rocks)
-        
-    #     self.move() #make sure tower is in desired position
-        
-    #     return True
-
-    # # each tower should define its behaviour
-    # @abstractmethod
-    # def update():
-    #     pass
+        return enemies_collision
     
         
     

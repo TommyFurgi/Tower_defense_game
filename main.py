@@ -1,5 +1,6 @@
 import sys
 import pygame
+import math
 from pygame.locals import *
 from map import Map 
 from menu import Menu
@@ -7,7 +8,7 @@ from enemies.enemy import Enemy
 from towers.tower import Tower
 from towers.archer_tower import ArcherTower
 from editor import Editor
-import math
+from debug import Debug
 
 pygame.init()
 
@@ -20,7 +21,7 @@ width, height = 1600, 900
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Tower defense")
 
-map = Map(screen)
+game_map = Map(screen)
 menu = Menu(screen)
 
 # path =  [(520, 790), (530, 750), (550, 725), (580, 680), (600, 660), (640, 650), (660, 645), (680, 620), (695, 585), (700, 565), (695, 540), (686, 525), (683, 495), 
@@ -39,10 +40,10 @@ path = [
     (481, 409), (472, 383), (470, 354), (462, 319), (467, 289),
     (475, 263), (487, 240), (503, 229), (525, 214), (547, 207),
     (573, 205), (595, 204), (615, 201), (637, 200), (680, 199),
-    (717, 198), (752, 198), (787, 197), (816, 199), (853, 199),
-    (895, 195), (935, 193), (979, 193), (1019, 194), (1055, 194),
-    (1098, 191), (1147, 192), (1195, 192), (1246, 190), (1289, 190),
-    (1329, 191), (1353, 191)
+    (717, 197), (752, 198), (787, 197), (816, 198), (853, 199),
+    (895, 195), (935, 194), (979, 193), (1019, 194), (1055, 193),
+    (1098, 191), (1147, 192), (1195, 190), (1246, 191), (1289, 190),
+    (1329, 191), (1353, 192)
 ]
 
 
@@ -50,23 +51,53 @@ money = 10000
 points = 100
 hearts = 3
 
-game_pause = True
+game_pause = False
 
-enemies = []
-towers = []
+#enemies = pygame.sprite.OrderedUpdates() # Cos jak grupa tylko rysuje sprite'y w kolejnosci dodania (Wtedy trzeba chyba uzyc enemies.draw())
+enemies = pygame.sprite.Group()
+towers = pygame.sprite.Group()
+paths = pygame.sprite.Group()
+others = pygame.sprite.Group()
+
 spawn_interval = 500 
 last_spawn_time = 0
 enemies_to_generate = 30
 drag_object = None
 selected_tower = None
 
+# Editor related
+editor = [Editor(screen, "environment/path"),
+          Editor(screen, "environment/others")]
+edit_mode = False
+
+# Debug related
+debug = Debug(screen)
+debug_mode = False
+
+def load_rectangles_from_file(filename):
+    try:
+        with open(filename, "r") as file:
+            rectangles = []
+            for line in file:
+                rect_x, rect_y, rect_width, rect_height = map(int, line.strip().split())
+                rectangles.append((rect_x, rect_y, rect_width, rect_height))
+    except FileNotFoundError:
+        print(f"File '{filename}' not found. No rectangles loaded.")
+    
+    return rectangles
+
+
 def move_all_enemies():
     global money, hearts
     to_delete = []
-    for monster in enemies:
-        monster.draw(screen)
-        if not monster.move():
-            to_delete.append(monster)
+
+    # for monster in enemies:
+    #     monster.draw(screen)
+    #     if not monster.move():
+    #         to_delete.append(monster)
+
+    global game_pause
+    enemies.update(game_pause)
 
     for monster_to_delete in to_delete:
         enemies.remove(monster_to_delete)
@@ -83,26 +114,14 @@ def calculate_distance(x1, y1, x2, y2):
 
 def drag_object_conflict(drag_object):
 
-    # for tower in towers:
-        # if pygame.Rect.colliderect(tower, drag_object):
-        
-    #if drag_object.collide_rect():
-    # if calculate_distance(clicked_position[0], clicked_position[1], tower.x, tower.y) < 100:
-    #    return True
-    
-    return pygame.sprite.spritecollide(drag_object, towers, False) # [] is eveluated as False    
-    
-    #for path_point in path:
-    #    dist = calculate_distance(clicked_position[0], clicked_position[1], path_point[0], path_point[1])
-    #    if dist < 70:
-    #        return True
-
-    #return clicked_position[0] > 1320
+    return (pygame.sprite.spritecollide(drag_object, towers, False) or 
+            pygame.sprite.spritecollide(drag_object, paths, False) or
+            pygame.sprite.spritecollide(drag_object, others, False))  
 
 def update_screen():
     
     menu.draw_all_menu(points, money, hearts)
-    map.draw_background()
+    game_map.draw_background()
 
     for tower in towers:
         tower.draw(screen)
@@ -112,7 +131,7 @@ def update_screen():
         
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        drag_object.rect.center = (mouse_x, mouse_y - 60)
+        drag_object.rect.center = (mouse_x, mouse_y)
 
         color = (0, 0, 255, 100)
         if drag_object_conflict(drag_object):
@@ -122,9 +141,13 @@ def update_screen():
         pygame.draw.circle(surface, color, (80, 80), 80, 0)
         screen.blit(surface, (mouse_x - 80, mouse_y - 80))
 
-        screen.blit(drag_object.image, drag_object.rect)
+        screen.blit(drag_object.image, (mouse_x - 80, mouse_y - 120))
     
+def find_targets():
     
+    for tower in towers:
+        tower.find_targets(enemies)
+
 def update_game():
     global last_spawn_time, enemies_to_generate
 
@@ -132,25 +155,48 @@ def update_game():
 
     current_time = pygame.time.get_ticks()
     if enemies_to_generate > 0 and current_time - last_spawn_time >= spawn_interval:
-        enemies.append(Enemy(path))
+        # enemies.append(Enemy(path))
+        enemies.add(Enemy(path, screen))
+
         enemies_to_generate -= 1
         last_spawn_time = current_time
+        
+    find_targets()
 
-# Editor related
-editor = Editor(screen, "environment/path")
-edit_mode = False
+# Loads rectangles from file and adds them to group
+def load_rects(filename, group):
+    
+    rectangles = load_rectangles_from_file(filename)
+    
+    for rectangle in rectangles:
+        
+        rect_sprite = pygame.sprite.Sprite()
+        rect_sprite.rect = pygame.Rect(rectangle[0], rectangle[1], rectangle[2], rectangle[3])
 
+        group.add(rect_sprite)
+
+load_rects("environment/path", paths)
+load_rects("environment/others", others)
+        
 while True:
     update_screen()
 
+    if debug_mode:
+        debug.draw_paths_rect(paths)
+        debug.draw_others_rect(others)
+        debug.draw_enemy_rect(enemies)
+        if drag_object:
+            debug.draw_drag_object_rect(drag_object)
+
     if edit_mode:
-        editor.edit()
+        editor[1].edit()
         pygame.display.flip() # Required by editor
         continue
 
     if not game_pause:
         update_game()
     
+    towers.update()
     
     move_all_enemies()
 
@@ -162,7 +208,7 @@ while True:
         elif event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
                 clicked_position = pygame.mouse.get_pos()
-                print(clicked_position)
+                #print(clicked_position)
 
                 if not drag_object:
                     if selected_tower:
@@ -175,7 +221,7 @@ while True:
                         # drag_object = pygame.image
                         temp_sprite = pygame.sprite.Sprite()
                         temp_sprite.image = drag_object
-                        temp_sprite.rect = drag_object.get_rect()
+                        temp_sprite.rect = pygame.rect.Rect(clicked_position[0], clicked_position[1], 50, 50)
                         drag_object = temp_sprite
                         
 
@@ -187,9 +233,9 @@ while True:
                 elif drag_object and not drag_object_conflict(drag_object):
                     match drag_object_name:
                         case "archer":
-                            tower = ArcherTower(clicked_position[0], clicked_position[1]-60, screen)
+                            tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42, screen)
 
-                    towers.append(tower)
+                    towers.add(tower)
                     drag_object = None
 
 
