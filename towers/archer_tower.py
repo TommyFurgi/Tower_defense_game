@@ -24,13 +24,6 @@ class ArcherTower(Tower):
         #self.find_targets()
         
         pass
-    
-    def find_targets(self):
-        
-        # TODO: create circular surface and check if it overlapps enemies
-        
-        pass
-
 
         
     
