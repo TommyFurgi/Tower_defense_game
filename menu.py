@@ -15,16 +15,19 @@ class Menu():
         self.background_color = (214, 189, 120)
         self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         
-        self.hearth = pygame.image.load('img/heart.png')
+        self.hearth = pygame.image.load('assets/menu/heart.png')
         self.hearth = pygame.transform.scale(self.hearth, (15 * self.scale_rate, 15 * self.scale_rate))
         
-        self.archer = pygame.image.load('img/archer_tower.png')
+        self.archer = pygame.image.load('assets/towers/archer_tower.png')
         self.archer = pygame.transform.scale(self.archer, (41 * self.scale_rate, 41 * self.scale_rate))
 
-        self.play = pygame.image.load('img/play_button.png')
+        self.magic = pygame.image.load('assets/towers/magic_tower.png')
+        self.magic = pygame.transform.scale(self.magic, (41 * self.scale_rate, 41 * self.scale_rate))
+
+        self.play = pygame.image.load('assets/menu/play_button.png')
         self.play = pygame.transform.scale(self.play, (60, 60))
 
-        self.stop = pygame.image.load('img/stop_button.png')
+        self.stop = pygame.image.load('assets/menu/stop_button.png')
         self.stop = pygame.transform.scale(self.stop, (60, 60))
 
     def draw_all_menu(self, points, money, hearts):
@@ -37,6 +40,7 @@ class Menu():
         self.stop_rect = self.screen.blit(self.stop, (1480, 820))
         
         self.archer_tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
+        self.magic_tower_rect = self.screen.blit(self.magic, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.5))
 
     def draw_points(self, points):
         score = self.font.render(f'Score: {points}', True, (0, 0, 0))
@@ -60,6 +64,9 @@ class Menu():
     def handle_click(self, clicked_position):
         if (self.archer_tower_rect.collidepoint(clicked_position)):
             return self.archer, "archer"
+        
+        if (self.magic_tower_rect.collidepoint(clicked_position)):
+            return self.magic, "magic"
         
         if (self.play_rect.collidepoint(clicked_position)):
             return None, "play"
