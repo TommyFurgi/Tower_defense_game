@@ -19,11 +19,11 @@ class ArcherTower(Tower):
         self.tower_imgs = [image]
 
 
-    def update(self):
+    # def update(self):
         
-        #self.find_targets()
+    #     #self.find_targets()
         
-        pass
+    #     pass
 
         
     

@@ -21,11 +21,21 @@ class Menu():
         self.archer = pygame.image.load('img/archer_tower.png')
         self.archer = pygame.transform.scale(self.archer, (41 * self.scale_rate, 41 * self.scale_rate))
 
+        self.play = pygame.image.load('img/play_button.png')
+        self.play = pygame.transform.scale(self.play, (60, 60))
+
+        self.stop = pygame.image.load('img/stop_button.png')
+        self.stop = pygame.transform.scale(self.stop, (60, 60))
+
     def draw_all_menu(self, points, money, hearts):
         pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         self.draw_points(points)
         self.draw_hearts(hearts)
         self.draw_money(money)
+
+        self.play_rect = self.screen.blit(self.play, (1410, 820))
+        self.stop_rect = self.screen.blit(self.stop, (1480, 820))
+        
         self.archer_tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.3))
 
     def draw_points(self, points):
@@ -50,5 +60,13 @@ class Menu():
     def handle_click(self, clicked_position):
         if (self.archer_tower_rect.collidepoint(clicked_position)):
             return self.archer, "archer"
+        
+        if (self.play_rect.collidepoint(clicked_position)):
+            return None, "play"
+        
+        if (self.stop_rect.collidepoint(clicked_position)):
+            return None, "stop"
+        
+        return None, None
 
         
