@@ -17,7 +17,7 @@ class Bullet(pygame.sprite.Sprite):
         self.dirn = (self.dirn[0]/self.length, self.dirn[1]/self.length)
         self.dirn = (self.dirn[0] * self.speed, self.dirn[1] * self.speed)
 
-        self.bullet = pygame.image.load('img/bullet-01.png')
+        self.bullet = pygame.image.load('assets/towers/bullet-01.png')
         self.bullet = pygame.transform.scale(self.bullet, (15, 15))
     
     def draw(self, screen):

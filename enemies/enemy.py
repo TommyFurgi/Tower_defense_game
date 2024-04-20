@@ -42,7 +42,7 @@ class Enemy(pygame.sprite.Sprite):
         self.imgs_right = []
         self.imgs_left = []
         self.screen = screen
-        animation_strip = Image.open("img/enemy.png")
+        animation_strip = Image.open("assets/enemies/enemy.png")
         frame_width = 64
         frame_height = 64
         

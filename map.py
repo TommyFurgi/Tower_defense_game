@@ -7,7 +7,7 @@ class Map():
         window_width, self.height = screen.get_size()
         self.width = 0.85 * window_width 
 
-        self.background = pygame.image.load("img/map.jpg")
+        self.background = pygame.image.load("assets/map.jpg")
         self.background = pygame.transform.scale(self.background, (self.width, self.height))
         self.draw_background()
 
