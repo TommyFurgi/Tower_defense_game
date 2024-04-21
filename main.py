@@ -15,6 +15,12 @@ if __name__ == "__main__":
     icon_image = pygame.image.load("assets/towers/archer_tower.png")  
     pygame.display.set_icon(icon_image)
 
+    pygame.mixer.init()
+    pygame.mixer.music.load("assets/music.mp3")  
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.015)
+
+
     width, height = 1600, 900
     screen = pygame.display.set_mode((width, height))
 
