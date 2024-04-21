@@ -22,6 +22,7 @@ class Game():
         self.money = 1000
         self.points = 0
         self.hearts = 3
+        self.wave = 0
 
         self.game_pause = True
 
@@ -81,7 +82,7 @@ class Game():
 
 
     def update_screen(self):
-        self.menu.draw_all_menu(self.points, self.money, self.hearts)
+        self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave)
         self.game_map.draw_background()
 
         if self.drag_object:
@@ -205,7 +206,14 @@ class Game():
                                     break
 
                         elif self.drag_object and not self.drag_object_conflict():
-                            # TODO: Money can be < 0 (blocking puting new tower)
+
+                            if self.money - new_tower_cost < 0:
+                                self.drag_object = None
+                                drag_object_name = None
+                                new_tower_cost = 0
+                                # TODO: inform about not enought amount of money
+                                continue
+
                             match drag_object_name:
                                 case "archer":
                                     tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42)

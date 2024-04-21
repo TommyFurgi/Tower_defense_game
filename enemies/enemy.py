@@ -17,7 +17,7 @@ class Enemy(pygame.sprite.Sprite):
         self.health = 300
         self.max_health = 300
         self.reached_last_point = False
-        self.reward = 200
+        self.reward = 20
         
         self.path = [(self.x, self.y)] + [
                 (539, 892), (541, 868), (543, 837), (547, 806), (555, 771),
@@ -34,7 +34,7 @@ class Enemy(pygame.sprite.Sprite):
                 (1329, 191), (1353, 192)
             ]
         
-        self.animation_count = random.randint(0, 7) * 20
+        self.animation_count = random.randint(0, 7) * 10
         self.path_pos = 0
 
         self.imgs_up = []
@@ -80,13 +80,13 @@ class Enemy(pygame.sprite.Sprite):
     def draw(self):
         match self.direction:
             case Direction.UP:
-                self.img = self.imgs_up[self.animation_count//20]
+                self.img = self.imgs_up[self.animation_count//10]
             case Direction.DOWN:
-                self.img = self.imgs_down[self.animation_count//20]
+                self.img = self.imgs_down[self.animation_count//10]
             case Direction.RIGHT:
-                self.img = self.imgs_right[self.animation_count//20]
+                self.img = self.imgs_right[self.animation_count//10]
             case Direction.LEFT:
-                self.img = self.imgs_left[self.animation_count//20]            
+                self.img = self.imgs_left[self.animation_count//10]            
 
         self.screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
         self.draw_health_bar()
@@ -95,7 +95,7 @@ class Enemy(pygame.sprite.Sprite):
     def move(self):
 
         self.animation_count += 1
-        if self.animation_count >= len(self.imgs_up) * 20:
+        if self.animation_count >= len(self.imgs_up) * 10:
             self.animation_count = 0
 
         x1, y1 = self.path[self.path_pos]
