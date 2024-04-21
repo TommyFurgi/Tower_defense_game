@@ -1,28 +1,25 @@
-import sys
 import pygame
 from pygame.locals import *
 from map import Map 
 from menu import Menu
 from enemies.enemy import Enemy
-# from towers.tower import Tower
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 # from editor import Editor
 # from debug import Debug
 
 class Game():
-    def __init__(self):
+    def __init__(self, screen):
         self.fps = 60
         self.fpsClock = pygame.time.Clock()
         
-        self.width, self.height = 1600, 900
-
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.screen = screen
+        self.width, self.height = screen.get_width(), screen.get_height()
 
         self.game_map = Map(self.screen)
         self.menu = Menu(self.screen)
 
-        self.money = 10000
+        self.money = 1000
         self.points = 0
         self.hearts = 3
 
@@ -149,8 +146,11 @@ class Game():
 
     def run(self):
         selected_tower = None
-
-        while True:
+        new_tower_cost = 0
+        drag_object_name = None
+    
+        running = True
+        while running:
             self.update_screen()
 
             # if debug_mode:
@@ -169,8 +169,7 @@ class Game():
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    running = False
 
                 elif event.type == MOUSEBUTTONDOWN:
                     if event.button == 1:
@@ -183,12 +182,12 @@ class Game():
                                 selected_tower = None
 
                             if self.menu.rect.collidepoint(clicked_position):
-                                self.drag_object, self.drag_object_name = self.menu.handle_click(clicked_position)
+                                self.drag_object, drag_object_name, new_tower_cost = self.menu.handle_click(clicked_position)
                                 
                                 if not self.drag_object:
-                                    if self.drag_object_name == "play":
+                                    if drag_object_name == "play":
                                         self.game_pause = False
-                                    elif self.drag_object_name == "stop":
+                                    elif drag_object_name == "stop":
                                         self.game_pause = True
 
                                     continue
@@ -206,11 +205,15 @@ class Game():
                                     break
 
                         elif self.drag_object and not self.drag_object_conflict():
-                            match self.drag_object_name:
+                            # TODO: Money can be < 0 (blocking puting new tower)
+                            match drag_object_name:
                                 case "archer":
                                     tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42)
+                                    self.money -= new_tower_cost
+
                                 case "magic":
                                     tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
+                                    self.money -= new_tower_cost
 
                             self.towers.add(tower)
                             self.drag_object = None
@@ -222,7 +225,8 @@ class Game():
                                 selected_tower = None
 
                         self.drag_object = None
-                        self.drag_object_name = None
+                        drag_object_name = None
+                        new_tower_cost = 0
 
             pygame.display.flip()
             self.fpsClock.tick(self.fps)

@@ -11,12 +11,18 @@ class Menu():
 
         self.scale_rate = self.height / self.width # 3.63
         
-        self.font = pygame.font.Font(None, int(10 * self.scale_rate))
+        self.font = pygame.font.Font(None, int(75))
         self.background_color = (214, 189, 120)
         self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         
-        self.hearth = pygame.image.load('assets/menu/heart.png')
-        self.hearth = pygame.transform.scale(self.hearth, (15 * self.scale_rate, 15 * self.scale_rate))
+        self.points = pygame.image.load('assets/menu/points.png')
+        self.points = pygame.transform.scale(self.points, (12* self.scale_rate, 12 * self.scale_rate))
+
+        self.money = pygame.image.load('assets/menu/resources.png')
+        self.money = pygame.transform.scale(self.money, (15 * self.scale_rate, 15 * self.scale_rate))
+
+        self.hearth = pygame.image.load('assets/menu/lives.png')
+        self.hearth = pygame.transform.scale(self.hearth, (20 * self.scale_rate, 20 * self.scale_rate))
         
         self.archer = pygame.image.load('assets/towers/archer_tower.png')
         self.archer = pygame.transform.scale(self.archer, (41 * self.scale_rate, 41 * self.scale_rate))
@@ -43,37 +49,39 @@ class Menu():
         self.magic_tower_rect = self.screen.blit(self.magic, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.5))
 
     def draw_points(self, points):
-        score = self.font.render(f'Score: {points}', True, (0, 0, 0))
-        self.screen.blit(score, (self.left_border + self.width * 0.1, 0.02 * self.height))
+        score = self.font.render(f'{points}', True, (0, 0, 0))
+        self.screen.blit(self.points, (self.left_border + self.width * 0.2 - 10 * self.scale_rate,  0.02 * self.height))
+        self.screen.blit(score, (self.left_border + self.width * 0.3, 0.02 * self.height))
 
     def draw_hearts(self, health_points):
         if (health_points > 0):
-            self.screen.blit(self.hearth, (self.left_border + self.width * 0.25 - 7.5 * self.scale_rate, self.height * 0.2))
+            self.screen.blit(self.hearth, (self.left_border + self.width * 0.2 - 10 * self.scale_rate, self.height * 0.17))
 
         if (health_points > 1):
-            self.screen.blit(self.hearth, (self.left_border + self.width * 0.5 - 7.5 * self.scale_rate, self.height * 0.2))
+            self.screen.blit(self.hearth, (self.left_border + self.width * 0.5 - 10 * self.scale_rate, self.height * 0.17))
 
         if (health_points > 2):
-            self.screen.blit(self.hearth, (self.left_border + self.width * 0.75 - 7.5 * self.scale_rate, self.height * 0.2))
+            self.screen.blit(self.hearth, (self.left_border + self.width * 0.8 - 10 * self.scale_rate, self.height * 0.17))
     
     def draw_money(self, money):
-        money = self.font.render(f'Money: {money}', True, (0, 0, 0))
-        self.screen.blit(money, (self.left_border + self.width * 0.1, self.height * 0.1))        
+        money = self.font.render(f'{money}', True, (0, 0, 0))
+        self.screen.blit(self.money, (self.left_border + self.width * 0.2 - 10 * self.scale_rate,  self.height * 0.1))
+        self.screen.blit(money, (self.left_border + self.width * 0.3, self.height * 0.1))        
 
 
     def handle_click(self, clicked_position):
         if (self.archer_tower_rect.collidepoint(clicked_position)):
-            return self.archer, "archer"
+            return self.archer, "archer", 400
         
         if (self.magic_tower_rect.collidepoint(clicked_position)):
-            return self.magic, "magic"
+            return self.magic, "magic", 300
         
         if (self.play_rect.collidepoint(clicked_position)):
-            return None, "play"
+            return None, "play", 0
         
         if (self.stop_rect.collidepoint(clicked_position)):
-            return None, "stop"
+            return None, "stop", 0
         
-        return None, None
+        return None, None, 0
 
         
