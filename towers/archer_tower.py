@@ -26,7 +26,6 @@ class ArcherTower(Tower):
 
     def find_targets(self, enemies):
         
-        # True znaczy, że obiekty, które wejdą w kolizję z okręgiem dookoła wieży są usuwane
         enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
 
         if enemies_collision and pygame.time.get_ticks() - self.time_from_last_shot > self.cooldown:
@@ -43,7 +42,7 @@ class ArcherTower(Tower):
         self.bullets.update(game_pasue, screen)
 
         bullets_to_remove = []
-
+        
         for bullet in self.bullets:
             enemy_hitted = bullet.hit()
             if enemy_hitted:
@@ -53,7 +52,7 @@ class ArcherTower(Tower):
         for bullet in bullets_to_remove:
             self.bullets.remove(bullet)
 
-        self.draw(screen)
+        #self.draw(screen)
         
     
         
