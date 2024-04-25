@@ -1,1 +1,0 @@
-Editor(screen, "environment/path"
