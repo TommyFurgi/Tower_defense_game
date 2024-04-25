@@ -16,11 +16,11 @@ class Game():
         
         self.screen = screen
         self.width, self.height = screen.get_width(), screen.get_height()
-
+        
         self.game_map = Map(self.screen)
         self.menu = Menu(self.screen)
 
-        self.money = 1000
+        self.money = 10000
         self.points = 0
         self.hearts = 3
         self.wave = 0
@@ -87,10 +87,19 @@ class Game():
         for sprite in sorted(sprites, key=lambda s: s.y):
             sprite.draw(self.screen)
 
+    # Images and effects that have to appear on top of everything else
+    def draw_on_top(self):
+        
+        sprites = self.enemies.sprites() + self.towers.sprites()
+        
+        for sprite in sprites:
+            sprite.draw_on_top(self.screen)
+
     def update_screen(self):
         self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave)
         self.game_map.draw_background()
         self.draw_enemies_and_towers()
+        self.draw_on_top()
         
     
         if self.drag_object:
@@ -245,5 +254,6 @@ class Game():
                         new_tower_cost = 0
 
             pygame.display.flip()
+   
             self.fpsClock.tick(self.fps)
 

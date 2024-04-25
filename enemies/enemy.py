@@ -92,6 +92,8 @@ class Enemy(pygame.sprite.Sprite):
         screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
         self.draw_health_bar(screen)
         
+    def draw_on_top(self, screen):
+        pass
 
     def move(self):
 

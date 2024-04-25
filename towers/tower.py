@@ -16,14 +16,16 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.time_from_last_shot = pygame.time.get_ticks()
         
     def draw(self, screen):
+        
         image = self.tower_imgs[self.level-1]
+        screen.blit(image, (self.x-image.get_width()//2, self.y-image.get_height()//2))
 
+    def draw_on_top(self, screen):
+    
         if self.selected:
             self.draw_radius(screen)
+            self.draw(screen) # So the tower isn't drawn under the circle
             # TODO: draw menu for upgrade
-
-    
-        screen.blit(image, (self.x-image.get_width()//2, self.y-image.get_height()//2))
 
     def draw_radius(self, screen):
         scale_rate = 1.2
