@@ -20,7 +20,6 @@ if __name__ == "__main__":
     pygame.mixer.music.play()
     pygame.mixer.music.set_volume(0.015)
 
-
     width, height = 1600, 900
     screen = pygame.display.set_mode((width, height))
 

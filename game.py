@@ -8,6 +8,7 @@ from towers.magic_tower import MagicTower
 # from editor import Editor
 # from debug import Debug
 
+
 class Game():
     def __init__(self, screen):
         self.fps = 60
@@ -26,11 +27,10 @@ class Game():
 
         self.game_pause = True
 
-        #enemies = pygame.sprite.OrderedUpdates() # Cos jak grupa tylko rysuje sprite'y w kolejnosci dodania (Wtedy trzeba chyba uzyc enemies.draw())
         self.enemies = pygame.sprite.Group()
-        self.towers = pygame.sprite.Group()
-        self.paths = pygame.sprite.Group()
-        self.other_obstacles = pygame.sprite.Group()
+        self.towers = pygame.sprite.Group() 
+        self.path_collisions = pygame.sprite.Group()
+        self.other_obstacles_collisions = pygame.sprite.Group()
 
         self.spawn_interval = 700 
         self.last_spawn_time = 0
@@ -38,8 +38,8 @@ class Game():
         self.drag_object = None
 
         
-        self.load_rects("environment/path", self.paths)
-        self.load_rects("environment/others", self.other_obstacles)
+        self.load_rects("environment/path", self.path_collisions)
+        self.load_rects("environment/others", self.other_obstacles_collisions)
 
         # # Editor related
         # editor = [Editor(screen, "environment/path"),
@@ -77,14 +77,22 @@ class Game():
     def drag_object_conflict(self):
 
         return (pygame.sprite.spritecollide(self.drag_object, self.towers, False) or 
-                pygame.sprite.spritecollide(self.drag_object, self.paths, False) or
-                pygame.sprite.spritecollide(self.drag_object, self.other_obstacles, False))  
+                pygame.sprite.spritecollide(self.drag_object, self.path_collisions, False) or
+                pygame.sprite.spritecollide(self.drag_object, self.other_obstacles_collisions, False))  
 
+    def draw_enemies_and_towers(self):
+        
+        sprites = self.enemies.sprites() + self.towers.sprites()
+        
+        for sprite in sorted(sprites, key=lambda s: s.y):
+            sprite.draw(self.screen)
 
     def update_screen(self):
         self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave)
         self.game_map.draw_background()
-
+        self.draw_enemies_and_towers()
+        
+    
         if self.drag_object:
             
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -111,7 +119,7 @@ class Game():
 
             current_time = pygame.time.get_ticks()
             if self.enemies_to_generate > 0 and current_time - self.last_spawn_time >= self.spawn_interval:
-                self.enemies.add(Enemy(self.screen))
+                self.enemies.add(Enemy())
 
                 self.enemies_to_generate -= 1
                 self.last_spawn_time = current_time
@@ -155,7 +163,7 @@ class Game():
             self.update_screen()
 
             # if debug_mode:
-            #     debug.draw_paths_rect(paths)
+            #     debug.draw_path_collisions_rect(path_collisions)
             #     debug.draw_others_rect(others)
             #     debug.draw_enemy_rect(enemies)
             #     if drag_object:
