@@ -20,6 +20,9 @@ class Enemy(pygame.sprite.Sprite):
         self.reached_last_point = False
         self.reward = 20
         
+        self.damage_animation_duration = 0.5
+        self.damage_animation_timer = 0
+        
         self.path = [(self.x, self.y)] + [
                 (539, 892), (541, 868), (543, 837), (547, 806), (555, 771),
                 (570, 750), (587, 732), (607, 717), (632, 706), (659, 699),
@@ -153,6 +156,7 @@ class Enemy(pygame.sprite.Sprite):
         #self.draw()
 
     def lose_hp(self, hp_lost):
+        
         self.health -= hp_lost
 
     def to_delete(self):
