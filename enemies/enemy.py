@@ -18,6 +18,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.rect = pygame.Rect(self.x, self.y, 64, 64) # Required in order for collisions to work
         
         self.speed = 1.5
+        self.max_speed = 1.5
         self.health = 300
         self.max_health = 300
         self.reached_last_point = False
@@ -173,19 +174,26 @@ class Enemy(pygame.sprite.Sprite, ABC):
         
         for effect in self.effects:
             
-            effect_type, damage = effect.update()
+            effect_type, property = effect.update()
             
             match effect_type:
                 case EffectType.POISION:
-                    self.lose_hp(damage)
+                    self.lose_hp(property)
                     #TODO: poison effect
                 case EffectType.SLOWDOWN:
                     #TODO: add function to slow enemy down
-                    #TODO: add slow down effect
+                    self.speed = property
+                    pass
                 case EffectType.EFFECT_FINISHED: # effect duration has ended
                     finished_effects.append(effect)
                     
         for finished_effect in finished_effects:
+            
+            match finished_effect.get_effect_type():
+                
+                case EffectType.SLOWDOWN:
+                    self.speed = self.max_speed # restoring speed to its original value
+            
             self.effects.remove(finished_effect)
     
     def update(self, game_pause):
