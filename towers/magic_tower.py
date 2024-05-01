@@ -1,6 +1,8 @@
 import pygame
 from towers.tower import Tower
 from menu import Menu
+from effects.effect import Effect
+from effects.effect_type import EffectType
 
 class MagicTower(Tower):
 
@@ -30,7 +32,8 @@ class MagicTower(Tower):
             # TODO: visual effect
 
             for enemy in enemies_collision:
-                enemy.lose_hp(self.damage)
+                #enemy.lose_hp(self.damage)
+                enemy.add_effect(Effect(EffectType.POISION, 25, 2))
         
 
     def update(self, game_pasue, enemies, screen):

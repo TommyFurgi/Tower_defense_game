@@ -1,17 +1,20 @@
 import pygame, math
 from PIL import Image
 from directions import Direction
+from abc import ABC, abstractmethod
+from effects.effect_type import EffectType
 import random
 
-class Enemy(pygame.sprite.Sprite):
+
+class Enemy(pygame.sprite.Sprite, ABC):
     
-    def __init__(self):
+    def __init__(self, images_filename):
 
         pygame.sprite.Sprite.__init__(self)
 
+        # starting point
         self.x = 540
         self.y = 900
-        
         self.rect = pygame.Rect(self.x, self.y, 64, 64) # Required in order for collisions to work
         
         self.speed = 1.5
@@ -19,6 +22,7 @@ class Enemy(pygame.sprite.Sprite):
         self.max_health = 300
         self.reached_last_point = False
         self.reward = 20
+        self.effects = []
         
         self.damage_animation_duration = 0.5
         self.damage_animation_timer = 0
@@ -38,14 +42,18 @@ class Enemy(pygame.sprite.Sprite):
                 (1329, 191), (1353, 192)
             ]
         
+        self.__load_images(images_filename)
+
+    def __load_images(self, images_filename):
+        
         self.animation_count = random.randint(0, 7) * 10
         self.path_pos = 0
-
         self.imgs_up = []
         self.imgs_down = []
         self.imgs_right = []
         self.imgs_left = []
-        animation_strip = Image.open("assets/enemies/enemy.png")
+        
+        animation_strip = Image.open(images_filename)
         frame_width = 64
         frame_height = 64
         
@@ -66,12 +74,11 @@ class Enemy(pygame.sprite.Sprite):
                     case 3:
                         self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)))
 
-        
         self.direction = Direction.RIGHT
         self.img = self.imgs_right[0]
 
         self.flipped = False
-
+        
     def draw_health_bar(self, screen):
         length = 80
         move_by = length / self.max_health
@@ -149,16 +156,50 @@ class Enemy(pygame.sprite.Sprite):
 
         # return True
     
+    def add_effect(self, new_effect):
+        
+        # Enemy should only have one effect of given type at a time
+        
+        for effect in self.effects:
+            
+            if effect.get_effect_type() == new_effect.get_effect_type():
+                return
+        
+        self.effects.append(new_effect)
+    
+    def handle_effects(self):
+        
+        finished_effects = []
+        
+        for effect in self.effects:
+            
+            effect_type, damage = effect.update()
+            
+            match effect_type:
+                case EffectType.POISION:
+                    self.lose_hp(damage)
+                    #TODO: poison effect
+                case EffectType.SLOWDOWN:
+                    #TODO: add function to slow enemy down
+                    #TODO: add slow down effect
+                case EffectType.EFFECT_FINISHED: # effect duration has ended
+                    finished_effects.append(effect)
+                    
+        for finished_effect in finished_effects:
+            self.effects.remove(finished_effect)
+    
     def update(self, game_pause):
         if not game_pause:
             self.move()
+            self.handle_effects()
             
         #self.draw()
 
+    # Damage
     def lose_hp(self, hp_lost):
         
         self.health -= hp_lost
-
+        
     def to_delete(self):
         return self.reached_last_point
     
