@@ -32,8 +32,8 @@ class MagicTower(Tower):
             # TODO: visual effect
 
             for enemy in enemies_collision:
-                #enemy.lose_hp(self.damage)
-                enemy.add_effect(SlowDownEffect(0.7, 3))
+                enemy.lose_hp(self.damage)
+                enemy.add_effect(SlowDownEffect(0.85, 3))
 
     def update(self, game_pasue, enemies, screen):
         if not game_pasue:

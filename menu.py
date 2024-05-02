@@ -42,6 +42,9 @@ class Menu():
         self.stop = pygame.image.load('assets/menu/stop_button.png')
         self.stop = pygame.transform.scale(self.stop, (60, 60))
 
+        self.music = pygame.image.load('assets/menu/music.png')
+        self.music = pygame.transform.scale(self.music, (60, 60))
+
     def draw_all_menu(self, points, money, hearts, wave):
         pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         self.draw_points(points)
@@ -51,6 +54,7 @@ class Menu():
 
         self.play_rect = self.screen.blit(self.play, (1410, 820))
         self.stop_rect = self.screen.blit(self.stop, (1480, 820))
+        self.music_rect = self.screen.blit(self.music, (1550, 820))
         
         self.draw_towers_shop()
 
@@ -105,6 +109,11 @@ class Menu():
         
         if (self.stop_rect.collidepoint(clicked_position)):
             return None, "stop", 0
+        
+        if (self.music_rect.collidepoint(clicked_position)):
+            return None, "music", 0
+            
+
         
         return None, None, 0
 

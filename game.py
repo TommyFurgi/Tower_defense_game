@@ -4,6 +4,7 @@ from map import Map
 from menu import Menu
 from enemies.enemy_basic import EnemyBasic
 from enemies.enemy_magic import EnemyMagic
+from enemies.enemy_boss import EnemyBoss
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 # from editor import Editor
@@ -37,6 +38,7 @@ class Game():
         self.last_spawn_time = 0
         self.enemies_to_generate = 5
         self.drag_object = None
+        self.sound_play = True
 
         
         self.load_rects("environment/path", self.path_collisions)
@@ -121,7 +123,7 @@ class Game():
         
     def update_game(self):
         self.towers.update(self.game_pause, self.enemies, self.screen)
-        self.enemies.update(self.game_pause)
+        self.enemies.update(self.game_pause, self.enemies)
         
 
         if not self.game_pause:
@@ -131,6 +133,7 @@ class Game():
             if self.enemies_to_generate > 0 and current_time - self.last_spawn_time >= self.spawn_interval:
                 self.enemies.add(EnemyMagic())
                 self.enemies.add(EnemyBasic())
+                self.enemies.add(EnemyBoss())
 
 
                 self.enemies_to_generate -= 1
@@ -211,6 +214,13 @@ class Game():
                                         self.game_pause = False
                                     elif drag_object_name == "stop":
                                         self.game_pause = True
+                                    elif drag_object_name == "music":
+                                        if self.sound_play:
+                                            self.sound_play = False
+                                            pygame.mixer.music.set_volume(0)
+                                        else:
+                                            self.sound_play = True
+                                            pygame.mixer.music.set_volume(0.015)
 
                                     continue
 
