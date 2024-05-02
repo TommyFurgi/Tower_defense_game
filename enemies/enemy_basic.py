@@ -73,30 +73,22 @@ class EnemyBasic(Enemy):
 
     def handle_effects(self):
         
-        finished_effects = []
         
         for effect in self.effects:
             
             effect_type, property = effect.update()
             
+            self.speed = self.max_speed
+
             match effect_type:
                 case EffectType.POISION:
                     # can not be poisoned
                     pass
                 case EffectType.SLOWDOWN:
                     #TODO: visual effect
-                    self.speed = property * self.max_speed
+                    self.speed = property * self.speed
                     pass
+                case EffectType.BOOST:
+                    self.speed = property * self.speed
                 case EffectType.EFFECT_FINISHED: # effect duration has ended
-                    finished_effects.append(effect)
-                case _:
                     pass
-
-        for finished_effect in finished_effects:
-            
-            match finished_effect.get_effect_type():
-                
-                case EffectType.SLOWDOWN:
-                    self.speed = self.max_speed # restoring speed to its original value
-            
-            self.effects.remove(finished_effect)

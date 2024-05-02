@@ -119,7 +119,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
     def handle_effects(self):
         pass
     
-    def update(self, game_pause):
+    def update(self, game_pause, enemies):
         if not game_pause:
             self.move()
             self.handle_effects()
