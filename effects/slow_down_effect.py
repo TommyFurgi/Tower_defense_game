@@ -7,7 +7,7 @@ class SlowDownEffect(Effect):
     def __init__(self, property, duration):
         
         Effect.__init__(self, EffectType.SLOWDOWN, property, duration)
-    
+
     def update(self):
         
         current_time = pygame.time.get_ticks()

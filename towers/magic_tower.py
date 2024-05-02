@@ -1,7 +1,6 @@
 import pygame
 from towers.tower import Tower
 from menu import Menu
-from effects.poison_effect import PoisonEffect
 from effects.slow_down_effect import SlowDownEffect
 from effects.effect_type import EffectType
 
@@ -34,8 +33,7 @@ class MagicTower(Tower):
 
             for enemy in enemies_collision:
                 #enemy.lose_hp(self.damage)
-                enemy.add_effect(PoisonEffect(25, 2))
-                enemy.add_effect(SlowDownEffect(0.7, 2))
+                enemy.add_effect(SlowDownEffect(0.7, 3))
 
     def update(self, game_pasue, enemies, screen):
         if not game_pasue:

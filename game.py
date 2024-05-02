@@ -129,7 +129,7 @@ class Game():
 
             current_time = pygame.time.get_ticks()
             if self.enemies_to_generate > 0 and current_time - self.last_spawn_time >= self.spawn_interval:
-                # self.enemies.add(EnemyMagic())
+                self.enemies.add(EnemyMagic())
                 self.enemies.add(EnemyBasic())
 
 

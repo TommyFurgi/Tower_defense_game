@@ -81,15 +81,17 @@ class EnemyBasic(Enemy):
             
             match effect_type:
                 case EffectType.POISION:
-                    self.lose_hp(property)
-                    #TODO: poison effect
+                    # can not be poisoned
+                    pass
                 case EffectType.SLOWDOWN:
-                    #TODO: add function to slow enemy down
+                    #TODO: visual effect
                     self.speed = property * self.max_speed
                     pass
                 case EffectType.EFFECT_FINISHED: # effect duration has ended
                     finished_effects.append(effect)
-                    
+                case _:
+                    pass
+
         for finished_effect in finished_effects:
             
             match finished_effect.get_effect_type():
