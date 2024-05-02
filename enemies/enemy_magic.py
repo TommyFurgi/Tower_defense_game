@@ -83,7 +83,7 @@ class EnemyMagic(Enemy):
             match effect_type:
                 case EffectType.POISION:
                     self.lose_hp(property)
-                    #TODO: poison effect
+                    #TODO: poison visual effect
                 case EffectType.SLOWDOWN:
                     # can not be slowed down
                     pass

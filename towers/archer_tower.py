@@ -1,6 +1,7 @@
 import pygame
 from towers.tower import Tower
 from towers.bullet import Bullet
+from effects.poison_effect import PoisonEffect
 
 class ArcherTower(Tower):
 
@@ -46,6 +47,7 @@ class ArcherTower(Tower):
         for bullet in self.bullets:
             enemy_hitted = bullet.hit()
             if enemy_hitted:
+                enemy_hitted.add_effect(PoisonEffect(10, 3))
                 enemy_hitted.lose_hp(self.damage)
                 bullets_to_remove.append(bullet)
 

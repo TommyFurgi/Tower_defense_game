@@ -12,7 +12,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         
         self.reached_last_point = False
         
-        self.effects = []
+        self.effects = set()
         
         self.damage_animation_duration = 0.5
         self.damage_animation_timer = 0
@@ -110,9 +110,10 @@ class Enemy(pygame.sprite.Sprite, ABC):
         for effect in self.effects:
             
             if effect.get_effect_type() == new_effect.get_effect_type():
-                return
+                self.effects.remove(effect)
+                break
         
-        self.effects.append(new_effect)
+        self.effects.add(new_effect)
     
     @abstractmethod
     def handle_effects(self):
@@ -127,7 +128,6 @@ class Enemy(pygame.sprite.Sprite, ABC):
 
     # Damage
     def lose_hp(self, hp_lost):
-        
         self.health -= hp_lost
         
     def to_delete(self):
