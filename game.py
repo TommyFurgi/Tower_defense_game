@@ -3,6 +3,7 @@ from pygame.locals import *
 from map import Map 
 from menu import Menu
 from enemies.enemy_basic import EnemyBasic
+from enemies.enemy_magic import EnemyMagic
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 # from editor import Editor
@@ -128,7 +129,9 @@ class Game():
 
             current_time = pygame.time.get_ticks()
             if self.enemies_to_generate > 0 and current_time - self.last_spawn_time >= self.spawn_interval:
+                # self.enemies.add(EnemyMagic())
                 self.enemies.add(EnemyBasic())
+
 
                 self.enemies_to_generate -= 1
                 self.last_spawn_time = current_time
