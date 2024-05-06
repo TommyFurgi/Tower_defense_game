@@ -142,3 +142,10 @@ class Enemy(pygame.sprite.Sprite, ABC):
     def get_position(self):
         return self.x, self.y
         
+    def pause_effects(self):
+        for effect in self.effects:
+            effect.pause_effect()
+
+    def unpause_effects(self):
+        for effect in self.effects:
+            effect.reset()

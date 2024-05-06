@@ -12,7 +12,7 @@ class BoostEffect(Effect):
     def update(self):
         current_time = pygame.time.get_ticks()
 
-        if(current_time - self.start_time <= self.duration * 1000):
+        if (current_time - self.unpause_time <= self.duration * 1000 - self.time_before_pause):
             return self.effect_type, self.property
         else:
             return EffectType.EFFECT_FINISHED, None

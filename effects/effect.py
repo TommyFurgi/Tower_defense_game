@@ -9,19 +9,25 @@ class Effect(ABC):
         self.effect_type = effect_type
         self.property = property
         self.duration = duration
-        self.start_time = pygame.time.get_ticks()
+        
+        self.unpause_time = pygame.time.get_ticks()
+        self.time_before_pause = 0
     
     @abstractmethod
     def update(self):
         pass
         
     def reset(self):
-        self.start_time = pygame.time.get_ticks()
+        self.unpause_time = pygame.time.get_ticks()
         
     def get_effect_type(self):
         return self.effect_type
     
-    def get_property(self):
-        return self.property
+    # def get_property(self):
+    #     return self.property
     
+
+    def pause_effect(self):
+        current_time = pygame.time.get_ticks()
+        self.time_before_pause += current_time - self.unpause_time
     
