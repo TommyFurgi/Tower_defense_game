@@ -27,15 +27,6 @@ class Menu():
         self.hearth = pygame.image.load('assets/menu/lives.png')
         self.hearth = pygame.transform.scale(self.hearth, (20 * self.scale_rate, 20 * self.scale_rate))
         
-        self.archer = pygame.image.load('assets/towers/archer_tower.png')
-        self.archer = pygame.transform.scale(self.archer, (41 * self.scale_rate, 41 * self.scale_rate))
-        self.archer_price = 400
-
-        # Consider using tuple as one object atribute 
-        self.magic = pygame.image.load('assets/towers/magic_tower.png')
-        self.magic = pygame.transform.scale(self.magic, (41 * self.scale_rate, 41 * self.scale_rate))
-        self.magic_price = 300
-
         self.play = pygame.image.load('assets/menu/play_button.png')
         self.play = pygame.transform.scale(self.play, (60, 60))
 
@@ -53,7 +44,21 @@ class Menu():
         self.scroll_down = pygame.transform.rotate(self.scroll_down, 270)
         self.scroll_down = pygame.transform.scale(self.scroll_down, (30, 30))
         
-        self.displayed_towers = []
+        self.displayed_towers = [] # (img, name, price)
+        self.displayed_towers_position = 0
+        
+        archer = pygame.image.load('assets/towers/archer_tower.png')
+        archer = pygame.transform.scale(archer, (41 * self.scale_rate, 41 * self.scale_rate))
+        self.displayed_towers.append((archer, "archer", 400))
+
+        # Consider using tuple as one object atribute 
+        magic = pygame.image.load('assets/towers/magic_tower.png')
+        magic = pygame.transform.scale(magic, (41 * self.scale_rate, 41 * self.scale_rate))
+        self.displayed_towers.append((magic, "magic", 300))
+        
+        cannon = pygame.image.load('assets/towers/cannon_tower.png')
+        cannon = pygame.transform.scale(cannon, (41 * self.scale_rate, 41 * self.scale_rate))
+        self.displayed_towers.append((cannon, "cannon", 300))
         
 
     def draw_all_menu(self, points, money, hearts, wave):
@@ -74,17 +79,24 @@ class Menu():
         self.draw_towers_shop()
 
     def draw_towers_shop(self):
-        ar_price = self.font.render(f'{self.archer_price}', True, (0, 0, 0))
-        self.screen.blit(self.money, (self.left_border + self.width * 0.35 - 10 * self.scale_rate,  self.height * 0.52))
-        self.screen.blit(ar_price, (self.left_border + self.width * 0.4, self.height * 0.52)) 
-        self.archer_tower_rect = self.screen.blit(self.archer, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.32))
+        
+        if self.displayed_towers[self.displayed_towers_position]:
+            
+            tower_img, _, tower_price, = self.displayed_towers[self.displayed_towers_position]
+            
+            first_price = self.font.render(f'{tower_price}', True, (0, 0, 0))
+            self.screen.blit(self.money, (self.left_border + self.width * 0.35 - 10 * self.scale_rate,  self.height * 0.52))
+            self.screen.blit(first_price, (self.left_border + self.width * 0.4, self.height * 0.52)) 
+            self.first_tower_rect = self.screen.blit(tower_img, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.32))
 
-
-        ma_price = self.font.render(f'{self.magic_price}', True, (0, 0, 0))
-        self.screen.blit(self.money, (self.left_border + self.width * 0.35 - 10 * self.scale_rate,  self.height * 0.8))
-        self.screen.blit(ma_price, (self.left_border + self.width * 0.4, self.height * 0.8)) 
-        self.magic_tower_rect = self.screen.blit(self.magic, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.6))
-
+        if self.displayed_towers[self.displayed_towers_position + 1]:
+            
+            tower_img, _, tower_price, = self.displayed_towers[self.displayed_towers_position + 1]
+            
+            second_price = self.font.render(f'{tower_price}', True, (0, 0, 0))
+            self.screen.blit(self.money, (self.left_border + self.width * 0.35 - 10 * self.scale_rate,  self.height * 0.8))
+            self.screen.blit(second_price, (self.left_border + self.width * 0.4, self.height * 0.8)) 
+            self.second_tower_rect = self.screen.blit(tower_img, (self.left_border + self.width * 0.5 - (41 * self.scale_rate) / 2, self.height * 0.6))
 
     def draw_points(self, points):
         score = self.font.render(f'{points}', True, (0, 0, 0))
@@ -113,11 +125,11 @@ class Menu():
 
 
     def handle_click(self, clicked_position):
-        if (self.archer_tower_rect.collidepoint(clicked_position)):
-            return self.archer, "archer", self.archer_price
+        if (self.first_tower_rect.collidepoint(clicked_position)):
+            return self.displayed_towers[self.displayed_towers_position]
         
-        if (self.magic_tower_rect.collidepoint(clicked_position)):
-            return self.magic, "magic", self.magic_price
+        if (self.second_tower_rect.collidepoint(clicked_position)):
+            return self.displayed_towers[self.displayed_towers_position + 1]
         
         if (self.play_rect.collidepoint(clicked_position)):
             return None, "play", 0
@@ -129,16 +141,13 @@ class Menu():
             return None, "music", 0
         
         if(self.scroll_up_rect.collidepoint(clicked_position)):
-            #TODO: scroll up
-            pass
+            if self.displayed_towers_position - 1 >= 0:
+                self.displayed_towers_position -= 1
         
         if(self.scroll_down_rect.collidepoint(clicked_position)):
-            #TODO: scroll down
-            pass
-        
-            
+            if self.displayed_towers_position + 2 < len(self.displayed_towers):
+                self.displayed_towers_position += 1
 
-        
         return None, None, 0
 
         
