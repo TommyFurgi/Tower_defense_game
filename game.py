@@ -40,6 +40,8 @@ class Game():
         self.enemies_to_generate = 5
         self.drag_object = None
         self.sound_play = True
+        
+        self.sped_up = False
 
         
         self.load_rects("environment/path", self.path_collisions)
@@ -215,6 +217,13 @@ class Game():
                                         self.game_pause = False
                                     elif drag_object_name == "stop":
                                         self.game_pause = True
+                                    elif drag_object_name == "speed_up":
+                                        if self.sped_up:
+                                            self.fps = 60
+                                            self.sped_up = False
+                                        else:
+                                            self.fps = 120
+                                            self.sped_up = True
                                     elif drag_object_name == "music":
                                         if self.sound_play:
                                             self.sound_play = False

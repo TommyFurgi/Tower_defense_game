@@ -32,6 +32,9 @@ class Menu():
 
         self.stop = pygame.image.load('assets/menu/stop_button.png')
         self.stop = pygame.transform.scale(self.stop, (60, 60))
+        
+        self.speed_up = pygame.image.load('assets/menu/speed_up_button.png')
+        self.speed_up = pygame.transform.scale(self.speed_up, (60, 60))
 
         self.music = pygame.image.load('assets/menu/music.png')
         self.music = pygame.transform.scale(self.music, (60, 60))
@@ -60,16 +63,22 @@ class Menu():
         cannon = pygame.transform.scale(cannon, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((cannon, "cannon", 500))
         
+        self.game_paused = True
 
     def draw_all_menu(self, points, money, hearts, wave):
         pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
+        pygame.draw.rect(self.screen, (0, 0, 0), (1360, 0, 1, self.height), 2)
         self.draw_points(points)
         self.draw_hearts(hearts)
         self.draw_money(money)
         self.draw_wave_counter(wave)
 
-        self.play_rect = self.screen.blit(self.play, (1380, 820))
-        self.stop_rect = self.screen.blit(self.stop, (1450, 820))
+        if self.game_paused:
+            self.game_pause_rect = self.screen.blit(self.play, (1380, 820))
+        else:
+            self.game_pause_rect = self.screen.blit(self.stop, (1380, 820))
+            
+        self.speed_up_rect = self.screen.blit(self.speed_up, (1450, 820))
         self.music_rect = self.screen.blit(self.music, (1520, 820))
         
         self.scroll_up_rect = self.screen.blit(self.scroll_up, (1465, 245))
@@ -131,11 +140,16 @@ class Menu():
         if (self.second_tower_rect.collidepoint(clicked_position)):
             return self.displayed_towers[self.displayed_towers_position + 1]
         
-        if (self.play_rect.collidepoint(clicked_position)):
-            return None, "play", 0
+        if (self.game_pause_rect.collidepoint(clicked_position)):
+            if self.game_paused:
+                self.game_paused = False
+                return None, "play", 0
+            else:
+                self.game_paused = True
+                return None, "stop", 0
         
-        if (self.stop_rect.collidepoint(clicked_position)):
-            return None, "stop", 0
+        if (self.speed_up_rect.collidepoint(clicked_position)):
+            return None, "speed_up", 0
         
         if (self.music_rect.collidepoint(clicked_position)):
             return None, "music", 0

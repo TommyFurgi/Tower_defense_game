@@ -1,7 +1,7 @@
 import pygame, math
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, bullet_scale, x_start, y_start, x_destination, y_destination, enemy): 
+    def __init__(self, bullet_size, x_start, y_start, x_destination, y_destination, enemy): 
         pygame.sprite.Sprite.__init__(self)
 
         self.x = x_start  
@@ -18,7 +18,7 @@ class Bullet(pygame.sprite.Sprite):
         self.dirn = (self.dirn[0] * self.speed, self.dirn[1] * self.speed)
 
         self.bullet = pygame.image.load('assets/towers/bullet-01.png')
-        self.bullet = pygame.transform.scale(self.bullet, (bullet_scale, bullet_scale))
+        self.bullet = pygame.transform.scale(self.bullet, (bullet_size, bullet_size))
     
     def draw(self, screen):
         screen.blit(self.bullet, (self.x-self.bullet.get_width()//2, self.y-self.bullet.get_height()//2))
