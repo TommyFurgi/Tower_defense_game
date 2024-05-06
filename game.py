@@ -215,8 +215,14 @@ class Game():
                                 if not self.drag_object:
                                     if drag_object_name == "play":
                                         self.game_pause = False
+                                        for enemy in self.enemies:
+                                            enemy.unpause_effects()
+
                                     elif drag_object_name == "stop":
                                         self.game_pause = True
+                                        for enemy in self.enemies:
+                                            enemy.pause_effects()
+
                                     elif drag_object_name == "speed_up":
                                         if self.sped_up:
                                             self.fps = 60
@@ -224,6 +230,7 @@ class Game():
                                         else:
                                             self.fps = 120
                                             self.sped_up = True
+
                                     elif drag_object_name == "music":
                                         if self.sound_play:
                                             self.sound_play = False
