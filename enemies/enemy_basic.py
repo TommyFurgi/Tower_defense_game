@@ -73,7 +73,6 @@ class EnemyBasic(Enemy):
 
     def handle_effects(self):
         
-        
         for effect in self.effects:
             
             effect_type, property = effect.update()

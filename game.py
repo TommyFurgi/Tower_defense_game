@@ -7,6 +7,7 @@ from enemies.enemy_magic import EnemyMagic
 from enemies.enemy_boss import EnemyBoss
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
+from towers.cannon_tower import CannonTower
 # from editor import Editor
 # from debug import Debug
 
@@ -39,6 +40,8 @@ class Game():
         self.enemies_to_generate = 5
         self.drag_object = None
         self.sound_play = True
+        
+        self.sped_up = False
 
         
         self.load_rects("environment/path", self.path_collisions)
@@ -214,6 +217,13 @@ class Game():
                                         self.game_pause = False
                                     elif drag_object_name == "stop":
                                         self.game_pause = True
+                                    elif drag_object_name == "speed_up":
+                                        if self.sped_up:
+                                            self.fps = 60
+                                            self.sped_up = False
+                                        else:
+                                            self.fps = 120
+                                            self.sped_up = True
                                     elif drag_object_name == "music":
                                         if self.sound_play:
                                             self.sound_play = False
@@ -252,6 +262,10 @@ class Game():
 
                                 case "magic":
                                     tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
+                                    self.money -= new_tower_cost
+                                    
+                                case "cannon":
+                                    tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
                                     self.money -= new_tower_cost
 
                             self.towers.add(tower)
