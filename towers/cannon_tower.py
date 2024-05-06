@@ -20,6 +20,9 @@ class CannonTower(Tower):
         self.radius = 100
         self.cooldown = 1700
         
+        self.blast_radius = 70
+        self.blast_damage = 40
+        
         self.bullets = pygame.sprite.Group()
         
     def find_targets(self, enemies):
@@ -42,8 +45,17 @@ class CannonTower(Tower):
         for bullet in self.bullets:
             enemy_hitted = bullet.hit()
             if enemy_hitted:
-                enemy_hitted.lose_hp(self.damage)
+                enemy_hitted.lose_hp(self.damage)    
                 bullets_to_remove.append(bullet)
+                
+                # Creates a blast that hurts all enemies in given radius
+                collision_circle = pygame.sprite.Sprite()
+                collision_circle.rect = pygame.rect.Rect(enemy_hitted.x, enemy_hitted.y, 0, 0)
+                collision_circle.radius = self.blast_radius
+                enemies_collision = pygame.sprite.spritecollide(collision_circle, enemies, False, pygame.sprite.collide_circle)
+                
+                for enemy in enemies_collision:
+                    enemy.lose_hp(self.blast_damage)
 
         for bullet in bullets_to_remove:
             self.bullets.remove(bullet)
