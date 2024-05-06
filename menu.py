@@ -58,7 +58,7 @@ class Menu():
         
         cannon = pygame.image.load('assets/towers/cannon_tower.png')
         cannon = pygame.transform.scale(cannon, (41 * self.scale_rate, 41 * self.scale_rate))
-        self.displayed_towers.append((cannon, "cannon", 300))
+        self.displayed_towers.append((cannon, "cannon", 500))
         
 
     def draw_all_menu(self, points, money, hearts, wave):

@@ -7,6 +7,7 @@ from enemies.enemy_magic import EnemyMagic
 from enemies.enemy_boss import EnemyBoss
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
+from towers.cannon_tower import CannonTower
 # from editor import Editor
 # from debug import Debug
 
@@ -252,6 +253,10 @@ class Game():
 
                                 case "magic":
                                     tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
+                                    self.money -= new_tower_cost
+                                    
+                                case "cannon":
+                                    tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
                                     self.money -= new_tower_cost
 
                             self.towers.add(tower)
