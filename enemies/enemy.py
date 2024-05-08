@@ -9,16 +9,16 @@ class Enemy(pygame.sprite.Sprite, ABC):
 
         pygame.sprite.Sprite.__init__(self)
         
-        
         self.reached_last_point = False
         
         self.effects = set()
         
-        self.damage_animation_duration = 0.5
-        self.damage_animation_timer = 0
+        self.damage_color = (255, 255, 255)
+        
+        self.damage_flash_duration = 100 # ms
+        self.damage_flash_timer = 0
 
         self.load_images(images_filename)
-
         
 
     @abstractmethod
@@ -46,11 +46,21 @@ class Enemy(pygame.sprite.Sprite, ABC):
             case Direction.LEFT:
                 self.img = self.imgs_left[self.animation_count//10]            
 
-        screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height() ))
+        if pygame.time.get_ticks() - self.damage_flash_timer < self.damage_flash_duration:
+            self.draw_damage_flash(screen) # Draws sprite in white color
+        else:
+            screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height())) # Draws sprite in normal color
+        
         self.draw_health_bar(screen)
         
     def draw_on_top(self, screen):
         pass
+
+    def draw_damage_flash(self, screen):
+        
+        img_copy = self.img.convert(self.img) # Creates a copy of img (Could be inefficient, but you can't directly change pixels on img)
+        img_copy.fill(self.damage_color, special_flags = pygame.BLEND_RGB_MAX) # Fills non transparent pixels of copied image with given color
+        screen.blit(img_copy, (self.x - self.img.get_width()/2, self.y - self.img.get_height())) 
 
     def move(self):
 
@@ -113,7 +123,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 self.effects.remove(effect)
                 break
         
-        self.effects.add(new_effect)
+        self.effects.add(new_effect)    
     
     @abstractmethod
     def handle_effects(self):
@@ -127,8 +137,10 @@ class Enemy(pygame.sprite.Sprite, ABC):
         #self.draw()
 
     # Damage
-    def lose_hp(self, hp_lost):
+    def lose_hp(self, hp_lost, damage_color = (255, 255, 255)):
         self.health -= hp_lost
+        self.damage_color = damage_color
+        self.damage_flash_timer = pygame.time.get_ticks()
         
     def to_delete(self):
         return self.reached_last_point
