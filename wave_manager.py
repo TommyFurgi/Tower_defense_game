@@ -12,7 +12,8 @@ class WaveManager():
         
         self.waves = [wave for wave in self.waves_loaded]
         self.current_wave = 0
-        
+    
+    # loads waves data from json
     def load_waves(self):
         
         waves_read = []
@@ -22,6 +23,7 @@ class WaveManager():
             
         return waves_read
     
+    # returns wave object containing information about enemies
     def get_next_wave(self):
 
         if not self.has_next_wave():

@@ -27,7 +27,7 @@ class Game():
         self.money = 10000
         self.points = 0
         self.hearts = 3
-        self.wave = 0
+        self.wave = 1
 
         self.game_pause = True
 
@@ -146,12 +146,12 @@ class Game():
                 
         elif len(self.enemies) == 0: # All enemies were killed
             
-            if self.wave_manager.has_next_wave():
+            if self.wave_manager.has_next_wave(): # There is a next wave
                 self.current_wave = self.wave_manager.get_next_wave()
-            else:
+                self.wave += 1
+            else: # All enemies killed and no next wave
                 # end the game, player won
                 self.game_pause = True
-            
         
         
     def update_game(self):
