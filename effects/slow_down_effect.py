@@ -16,3 +16,5 @@ class SlowDownEffect(Effect):
             return self.effect_type, self.property
         else:
             return EffectType.EFFECT_FINISHED, None
+        
+        
