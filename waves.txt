@@ -1,0 +1,1 @@
+{"wave_1": {"basic": 5, "boss": 1}, "wave_2": {"basic": 5, "boss": 1}}

@@ -8,6 +8,7 @@ from enemies.enemy_boss import EnemyBoss
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 from towers.cannon_tower import CannonTower
+from wave_manager import WaveManager
 # from editor import Editor
 # from debug import Debug
 
