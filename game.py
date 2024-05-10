@@ -8,7 +8,7 @@ from enemies.enemy_boss import EnemyBoss
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 from towers.cannon_tower import CannonTower
-from wave_manager import WaveManager
+from waves.wave_manager import WaveManager
 # from editor import Editor
 # from debug import Debug
 
@@ -24,7 +24,7 @@ class Game():
         self.game_map = Map(self.screen)
         self.menu = Menu(self.screen)
 
-        self.money = 10000
+        self.money = 2000
         self.points = 0
         self.hearts = 3
         self.wave = 1
