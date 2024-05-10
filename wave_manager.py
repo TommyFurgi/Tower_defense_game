@@ -24,6 +24,9 @@ class WaveManager():
     
     def get_next_wave(self):
 
+        if not self.has_next_wave():
+            raise Exception("No more waves!")
+
         enemies = []
         
         for enemy in self.waves_loaded[self.waves[self.current_wave]]:
@@ -32,6 +35,9 @@ class WaveManager():
         self.current_wave += 1
 
         return EnemyWave(enemies)
+    
+    def has_next_wave(self):
+        return self.current_wave < len(self.waves)
     
 # waves = dict()
 #wave_enemies = dict()

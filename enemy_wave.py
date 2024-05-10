@@ -8,7 +8,7 @@ class EnemyWave():
         
     def get_next_enemy(self):
         
-        if self.current >= len(self.enemies):
+        if not self.has_next_enemy():
             raise Exception("Wave has ended!")
         
         if self.current_enemy < self.enemies[self.current][1]:
@@ -18,5 +18,5 @@ class EnemyWave():
             self.current_enemy = 0
             self.current += 1
         
-    def isFinished(self):
-        return self.current >= len(self.enemies)
+    def has_next_enemy(self):
+        return self.current < len(self.enemies)

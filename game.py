@@ -43,7 +43,9 @@ class Game():
         self.sound_play = True
         
         self.sped_up = False
-
+        
+        self.wave_manager = WaveManager()
+        self.current_wave = self.wave_manager.get_next_wave()
         
         self.load_rects("environment/path", self.path_collisions)
         self.load_rects("environment/others", self.other_obstacles_collisions)
@@ -124,6 +126,33 @@ class Game():
             self.screen.blit(surface, (mouse_x - 80, mouse_y - 80))
 
             self.screen.blit(self.drag_object.image, (mouse_x - 80, mouse_y - 120))
+    
+    def spawn_enemies(self):
+        
+        current_time = pygame.time.get_ticks()
+        if self.current_wave.has_next_enemy():
+        
+            if current_time - self.last_spawn_time >= self.spawn_interval:
+            
+                match self.current_wave.get_next_enemy():
+                    case "basic":
+                        self.enemies.add(EnemyBasic())
+                    case "magic":
+                        self.enemies.add(EnemyMagic())
+                    case "boss":
+                        self.enemies.add(EnemyBoss())
+                    
+                self.last_spawn_time = current_time
+                
+        elif len(self.enemies) == 0: # All enemies were killed
+            
+            if self.wave_manager.has_next_wave():
+                self.current_wave = self.wave_manager.get_next_wave()
+            else:
+                # end the game, player won
+                self.game_pause = True
+            
+        
         
     def update_game(self):
         self.towers.update(self.game_pause, self.enemies, self.screen)
@@ -133,15 +162,17 @@ class Game():
         if not self.game_pause:
             self.check_all_enemies()
 
-            current_time = pygame.time.get_ticks()
-            if self.enemies_to_generate > 0 and current_time - self.last_spawn_time >= self.spawn_interval:
-                self.enemies.add(EnemyMagic())
-                self.enemies.add(EnemyBasic())
-                self.enemies.add(EnemyBoss())
+            self.spawn_enemies()
 
-
-                self.enemies_to_generate -= 1
-                self.last_spawn_time = current_time
+            # current_time = pygame.time.get_ticks()
+            # if self.enemies_to_generate > 0 and current_time - self.last_spawn_time >= self.spawn_interval:
+            #     self.enemies.add(EnemyMagic())
+            #     self.enemies.add(EnemyBasic())
+            #     self.enemies.add(EnemyBoss())
+            # 
+            # 
+            #     self.enemies_to_generate -= 1
+            #     self.last_spawn_time = current_time
                 
 
     def check_all_enemies(self):
