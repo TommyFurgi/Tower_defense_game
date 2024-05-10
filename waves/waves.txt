@@ -1,0 +1,21 @@
+{
+	"wave_1": {
+		"basic": 5,
+        "magic": 5
+	},
+	"wave_2": {
+		"basic": 10,
+		"boss": 1
+	},
+    "wave_3": {
+		"basic": 1,
+        "magic": 1
+	},
+    "wave_4": {
+		"boss": 5
+	},
+    "wave_5": {
+		"basic": 25,
+        "magic": 25
+	}
+}
