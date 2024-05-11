@@ -21,7 +21,6 @@ if __name__ == "__main__":
     pygame.mixer.music.set_volume(0.015)
 
     width, height = 1600, 900
-    #width, height = 1920, 1080
     screen = pygame.display.set_mode((width, height), pygame.locals.RESIZABLE)
 
     game = Game(screen)

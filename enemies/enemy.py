@@ -34,6 +34,14 @@ class Enemy(pygame.sprite.Sprite, ABC):
         pygame.draw.rect(screen, (255,0,0), (self.x-42, self.y - 130, length, 10), 0)
         pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
 
+        # Wyświetlanie ilości punktów życia na pasku
+        font = pygame.font.Font(None, 20)
+        text = font.render(f"{self.health}/{self.max_health}", True, (0, 0, 0))
+        text_rect = text.get_rect(center=(self.x, self.y - 125))
+        screen.blit(text, text_rect)
+
+
+
     def draw(self, screen):
 
         match self.direction:
