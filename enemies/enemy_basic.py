@@ -75,7 +75,7 @@ class EnemyBasic(Enemy):
         
         for effect in self.effects:
             
-            effect_type, property = effect.update()
+            effect_type, property, color = effect.update()
             
             self.speed = self.max_speed
 

@@ -2,9 +2,6 @@ import pygame
 from pygame.locals import *
 from map import Map 
 from menu import Menu
-from enemies.enemy_basic import EnemyBasic
-from enemies.enemy_magic import EnemyMagic
-from enemies.enemy_boss import EnemyBoss
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 from towers.cannon_tower import CannonTower
@@ -129,20 +126,13 @@ class Game():
     
     def spawn_enemies(self):
         
-        current_time = pygame.time.get_ticks()
+        # current_time = pygame.time.get_ticks()
         if self.current_wave.has_next_enemy():
-        
-            if current_time - self.last_spawn_time >= self.spawn_interval:
             
-                match self.current_wave.get_next_enemy():
-                    case "basic":
-                        self.enemies.add(EnemyBasic())
-                    case "magic":
-                        self.enemies.add(EnemyMagic())
-                    case "boss":
-                        self.enemies.add(EnemyBoss())
-                    
-                self.last_spawn_time = current_time
+            new_enemy = self.current_wave.get_next_enemy()
+
+            if new_enemy:
+                self.enemies.add(new_enemy)
                 
         elif len(self.enemies) == 0: # All enemies were killed
             
@@ -163,17 +153,6 @@ class Game():
             self.check_all_enemies()
 
             self.spawn_enemies()
-
-            # current_time = pygame.time.get_ticks()
-            # if self.enemies_to_generate > 0 and current_time - self.last_spawn_time >= self.spawn_interval:
-            #     self.enemies.add(EnemyMagic())
-            #     self.enemies.add(EnemyBasic())
-            #     self.enemies.add(EnemyBoss())
-            # 
-            # 
-            #     self.enemies_to_generate -= 1
-            #     self.last_spawn_time = current_time
-                
 
     def check_all_enemies(self):
         enemies_on_end =[]
@@ -247,11 +226,13 @@ class Game():
                                 if not self.drag_object:
                                     if drag_object_name == "play":
                                         self.game_pause = False
+                                        self.current_wave.reset_spawn_time()
                                         for enemy in self.enemies:
                                             enemy.unpause_effects()
 
                                     elif drag_object_name == "stop":
                                         self.game_pause = True
+                                        self.current_wave.pause_spawn_time()
                                         for enemy in self.enemies:
                                             enemy.pause_effects()
 

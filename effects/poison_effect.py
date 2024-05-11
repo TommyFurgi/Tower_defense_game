@@ -10,6 +10,7 @@ class PoisonEffect(Effect):
         
         self.demage_counter = duration
         self.demage = property
+        self.color = (36, 77, 28)
     
     
     def update(self):
@@ -17,11 +18,11 @@ class PoisonEffect(Effect):
         current_time = pygame.time.get_ticks()
 
         if self.demage_counter == 0:
-            return EffectType.EFFECT_FINISHED, None
+            return EffectType.EFFECT_FINISHED, None, None
         
         elif (current_time - self.unpause_time >= 1500 - self.time_before_pause):
             self.unpause_time = current_time
             self.demage_counter -= 1
-            return self.effect_type, self.demage
+            return self.effect_type, self.demage, self.color
         
-        return None, None
+        return None, None, None

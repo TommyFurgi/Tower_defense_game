@@ -76,12 +76,12 @@ class EnemyMagic(Enemy):
                 
         for effect in self.effects:
             
-            effect_type, property = effect.update()
+            effect_type, property, color = effect.update()
             self.speed = self.max_speed
 
             match effect_type:
                 case EffectType.POISION:
-                    self.lose_hp(property, (141, 202, 20))
+                    self.lose_hp(property, color)
                     #TODO: poison visual effect
                 case EffectType.SLOWDOWN:
                     # can not be slowed down
