@@ -86,8 +86,10 @@ class EnemyBasic(Enemy):
                 case EffectType.SLOWDOWN:
                     #TODO: visual effect
                     self.speed = property * self.speed
+                    self.add_color(color)
                     pass
                 case EffectType.BOOST:
                     self.speed = property * self.speed
+                    self.add_color(color)
                 case EffectType.EFFECT_FINISHED: # effect duration has ended
-                    pass
+                    self.remove_color(color)

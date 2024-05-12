@@ -84,15 +84,15 @@ class EnemyBoss(Enemy):
             
             match effect_type:
                 case EffectType.POISION:
-                    self.lose_hp(property, color)
-                    #TODO: poison visual effect
+                    self.lose_hp(property)
+                    self.add_color(color)
                 case EffectType.SLOWDOWN:
-                    #TODO: visual effect
                     self.speed = property * self.max_speed
+                    self.add_color(color)
                 case EffectType.BOOST:
                     pass
                 case EffectType.EFFECT_FINISHED: # effect duration has ended
-                    pass
+                    self.remove_color(color)
 
 
     def update(self, game_pause, enemies):
