@@ -8,7 +8,9 @@ import random
 class EnemyBasic(Enemy):
     
     def __init__(self):
-        Enemy.__init__(self, "assets/enemies/enemy.png")
+        Enemy.__init__(self)
+        image_path = "assets/enemies/enemy.png"
+        self.load_images(image_path)
 
         # starting point
         self.x = 540

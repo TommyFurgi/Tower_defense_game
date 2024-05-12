@@ -1,11 +1,10 @@
 import pygame, math
 from directions import Direction
 from abc import ABC, abstractmethod
-from effects.effect_type import EffectType
 
 class Enemy(pygame.sprite.Sprite, ABC):
     
-    def __init__(self, images_filename):
+    def __init__(self):
 
         pygame.sprite.Sprite.__init__(self)
         
@@ -18,13 +17,6 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.damage_flash_timer = 0
         
         self.colors = set()        
-
-        self.load_images(images_filename)
-        
-
-    @abstractmethod
-    def load_images(self, images_filename):
-        pass
 
 
     def draw_health_bar(self, screen):
@@ -150,7 +142,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
     def handle_effects(self):
         pass
     
-    def update(self, game_pause, enemies):
+    def update(self, game_pause):
         if not game_pause:
             self.move()
             self.handle_effects()
