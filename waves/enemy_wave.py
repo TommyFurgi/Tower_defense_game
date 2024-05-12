@@ -20,13 +20,13 @@ class EnemyWave():
                     case "boss":
                         self.boss_no = enemy_number
 
-        self.basic_enemy_spawn_time = pygame.time.get_ticks()
-        self.magic_enemy_spawn_time = pygame.time.get_ticks()
-        self.boss_enemy_spawn_time = pygame.time.get_ticks()
+        self.basic_enemy_spawn_time = 0
+        self.magic_enemy_spawn_time = 0
+        self.boss_enemy_spawn_time = 0
 
-        self.basic_time_before_pause = 0
-        self.magic_time_before_pause = 0
-        self.boss_time_before_pause = 0
+        self.basic_time_before_pause = pygame.time.get_ticks()
+        self.magic_time_before_pause = pygame.time.get_ticks()
+        self.boss_time_before_pause = pygame.time.get_ticks()
 
 
         self.normal_spawn_interval = 700

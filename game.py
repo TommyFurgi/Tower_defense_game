@@ -33,9 +33,6 @@ class Game():
         self.path_collisions = pygame.sprite.Group()
         self.other_obstacles_collisions = pygame.sprite.Group()
 
-        self.spawn_interval = 700 
-        self.last_spawn_time = 0
-        self.enemies_to_generate = 5
         self.drag_object = None
         self.sound_play = True
         
@@ -135,18 +132,20 @@ class Game():
                 self.enemies.add(new_enemy)
                 
         elif len(self.enemies) == 0: # All enemies were killed
-            
+            self.game_pause = True
+
             if self.wave_manager.has_next_wave(): # There is a next wave
                 self.current_wave = self.wave_manager.get_next_wave()
                 self.wave += 1
             else: # All enemies killed and no next wave
-                # end the game, player won
-                self.game_pause = True
+                # TODO: player win
+                ... 
+            
         
         
     def update_game(self):
         self.towers.update(self.game_pause, self.enemies, self.screen)
-        self.enemies.update(self.game_pause, self.enemies)
+        self.enemies.update(self.game_pause)
         
 
         if not self.game_pause:

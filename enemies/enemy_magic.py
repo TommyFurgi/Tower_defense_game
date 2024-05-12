@@ -8,7 +8,9 @@ import random
 class EnemyMagic(Enemy):
     
     def __init__(self):
-        Enemy.__init__(self, "assets/enemies/enemy.png")
+        Enemy.__init__(self)
+        image_path = "assets/enemies/enemy.png"
+        self.load_images(image_path)
 
         # starting point
         self.x = 1349
@@ -35,8 +37,6 @@ class EnemyMagic(Enemy):
         self.reward = 20
 
         
-
-    
     def load_images(self, images_filename):
         
         self.animation_count = random.randint(0, 7) * 10

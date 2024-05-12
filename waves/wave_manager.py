@@ -40,14 +40,3 @@ class WaveManager():
 
     def has_next_wave(self):
         return self.current_wave < len(self.waves)
-
-# wm = WaveManager()
-    
-# waves = dict()
-#wave_enemies = dict()
-
-#wave_enemies["basic"] = 5
-#wave_enemies["boss"] = 1
-
-#waves["wave_1"] = wave_enemies
-#waves["wave_2"] = wave_enemies
