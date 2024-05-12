@@ -8,21 +8,23 @@ class PoisonEffect(Effect):
         
         Effect.__init__(self, EffectType.POISION, property, duration)
         
+        self.current_time = pygame.time.get_ticks() + 1500 # Zeby efekt zaczął działać od razu, a nie dopiero po 1,5 sekundy
+        
         self.demage_counter = duration
         self.demage = property
-        self.color = (36, 77, 28)
-    
+        self.color = (36, 77, 28) 
+        #self.color = (100, 255, 100)
     
     def update(self):
 
-        current_time = pygame.time.get_ticks()
-
         if self.demage_counter == 0:
-            return EffectType.EFFECT_FINISHED, None, None
+            return EffectType.EFFECT_FINISHED, None, self.color
         
-        elif (current_time - self.unpause_time >= 1500 - self.time_before_pause):
-            self.unpause_time = current_time
+        elif (self.current_time - self.unpause_time >= 1500 - self.time_before_pause):
+            self.unpause_time = self.current_time
             self.demage_counter -= 1
             return self.effect_type, self.demage, self.color
         
-        return None, None, None
+        self.current_time = pygame.time.get_ticks()
+        
+        return None, None, None # Waiting

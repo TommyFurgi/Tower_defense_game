@@ -81,14 +81,15 @@ class EnemyMagic(Enemy):
 
             match effect_type:
                 case EffectType.POISION:
-                    self.lose_hp(property, color)
-                    #TODO: poison visual effect
+                    self.lose_hp(property)
+                    self.add_color(color)
                 case EffectType.SLOWDOWN:
                     # can not be slowed down
                     pass
                 case EffectType.BOOST:
                     self.speed = property * self.speed
+                    self.add_color(color)
 
                 case EffectType.EFFECT_FINISHED: # effect duration has ended
-                    pass
+                    self.remove_color(color)
                     

@@ -15,6 +15,6 @@ class BoostEffect(Effect):
         if (current_time - self.unpause_time <= self.duration * 1000 - self.time_before_pause):
             return self.effect_type, self.property, self.color
         else:
-            return EffectType.EFFECT_FINISHED, None, None
+            return EffectType.EFFECT_FINISHED, None, self.color
         
         
