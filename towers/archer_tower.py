@@ -9,7 +9,7 @@ class ArcherTower(Tower):
         
         Tower.__init__(self, x, y)
 
-        self.image = pygame.image.load('assets/towers/archer_tower.png')
+        self.image = pygame.image.load('assets/towers/archer_tower.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (150, 150))
         
         # This two attributes are required by pygame.sprite.Sprite in order for it to work properly

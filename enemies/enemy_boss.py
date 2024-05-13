@@ -56,18 +56,18 @@ class EnemyBoss(Enemy):
                 frame = animation_strip.crop((frame_width * j, frame_height * i + 40, frame_width * (j + 1), frame_height * (i+1) + 40))
 
                 data = frame.tobytes()
-                pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA")
+                pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA").convert_alpha()
 
                 match i:
                     case 1:
-                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                         pygame_surface_flipped = pygame.transform.flip(pygame_surface, True, False)
-                        self.imgs_left.append(pygame.transform.scale(pygame_surface_flipped, (128, 128)))
+                        self.imgs_left.append(pygame.transform.scale(pygame_surface_flipped, (128, 128)).convert_alpha())
 
                     case 2:
-                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                     case 3:
-                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
 
         self.direction = Direction.RIGHT
         self.img = self.imgs_right[0]

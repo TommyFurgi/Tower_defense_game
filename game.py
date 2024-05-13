@@ -303,4 +303,5 @@ class Game():
             pygame.display.flip()
    
             self.fpsClock.tick(self.fps)
+            print(self.fpsClock.get_fps())
 
