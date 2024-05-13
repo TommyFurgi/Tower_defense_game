@@ -216,9 +216,17 @@ class Game():
 
                         if not self.drag_object:
                             if selected_tower:
-                                selected_tower.selected = False
-                                selected_tower = None
+                                value = selected_tower.manage_tower_action(clicked_position, self.money)
 
+                                self.money += value
+                                if value >= 0: 
+                                    if value > 0: # tower sold
+                                        self.towers.remove(selected_tower)
+
+                                    selected_tower.selected = False
+                                    selected_tower = None
+                                    
+                                    
                             if self.menu.rect.collidepoint(clicked_position):
                                 self.drag_object, drag_object_name, new_tower_cost = self.menu.handle_click(clicked_position)
                                 
@@ -303,5 +311,5 @@ class Game():
             pygame.display.flip()
    
             self.fpsClock.tick(self.fps)
-            print(self.fpsClock.get_fps())
+
 
