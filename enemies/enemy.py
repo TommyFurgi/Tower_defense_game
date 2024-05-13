@@ -16,7 +16,9 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.damage_flash_duration = 100 # ms
         self.damage_flash_timer = 0
         
-        self.colors = set()        
+        self.colors = set()       
+        
+        self.hp_font = pygame.font.Font(None, 20) 
 
 
     def draw_health_bar(self, screen):
@@ -28,8 +30,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
 
         # Wyświetlanie ilości punktów życia na pasku
-        font = pygame.font.Font(None, 20)
-        text = font.render(f"{self.health}/{self.max_health}", True, (0, 0, 0))
+        text = self.hp_font.render(f"{self.health}/{self.max_health}", True, (0, 0, 0))
         text_rect = text.get_rect(center=(self.x, self.y - 125))
         screen.blit(text, text_rect)
 

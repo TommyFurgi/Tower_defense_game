@@ -15,51 +15,51 @@ class Menu():
         self.background_color = (214, 189, 120)
         self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         
-        self.points = pygame.image.load('assets/menu/points.png')
+        self.points = pygame.image.load('assets/menu/points.png').convert_alpha()
         self.points = pygame.transform.scale(self.points, (10* self.scale_rate, 10 * self.scale_rate))
 
-        self.money = pygame.image.load('assets/menu/resources.png')
+        self.money = pygame.image.load('assets/menu/resources.png').convert_alpha()
         self.money = pygame.transform.scale(self.money, (10 * self.scale_rate, 10 * self.scale_rate))
 
-        self.wave = pygame.image.load('assets/menu/wave.png')
+        self.wave = pygame.image.load('assets/menu/wave.png').convert_alpha()
         self.wave = pygame.transform.scale(self.wave, (10 * self.scale_rate, 10 * self.scale_rate))
 
-        self.hearth = pygame.image.load('assets/menu/lives.png')
+        self.hearth = pygame.image.load('assets/menu/lives.png').convert_alpha()
         self.hearth = pygame.transform.scale(self.hearth, (20 * self.scale_rate, 20 * self.scale_rate))
         
-        self.play = pygame.image.load('assets/menu/play_button.png')
+        self.play = pygame.image.load('assets/menu/play_button.png').convert()
         self.play = pygame.transform.scale(self.play, (60, 60))
 
-        self.stop = pygame.image.load('assets/menu/stop_button.png')
+        self.stop = pygame.image.load('assets/menu/stop_button.png').convert()
         self.stop = pygame.transform.scale(self.stop, (60, 60))
         
-        self.speed_up = pygame.image.load('assets/menu/speed_up_button.png')
+        self.speed_up = pygame.image.load('assets/menu/speed_up_button.png').convert()
         self.speed_up = pygame.transform.scale(self.speed_up, (60, 60))
 
-        self.music = pygame.image.load('assets/menu/music.png')
+        self.music = pygame.image.load('assets/menu/music.png').convert()
         self.music = pygame.transform.scale(self.music, (60, 60))
         
-        self.scroll_up = pygame.image.load('assets/menu/play_button.png')
+        self.scroll_up = pygame.image.load('assets/menu/play_button.png').convert()
         self.scroll_up = pygame.transform.rotate(self.scroll_up, 90)
         self.scroll_up = pygame.transform.scale(self.scroll_up, (30, 30))
         
-        self.scroll_down = pygame.image.load('assets/menu/play_button.png')
+        self.scroll_down = pygame.image.load('assets/menu/play_button.png').convert()
         self.scroll_down = pygame.transform.rotate(self.scroll_down, 270)
         self.scroll_down = pygame.transform.scale(self.scroll_down, (30, 30))
         
         self.displayed_towers = [] # (img, name, price)
         self.displayed_towers_position = 0
         
-        archer = pygame.image.load('assets/towers/archer_tower.png')
+        archer = pygame.image.load('assets/towers/archer_tower.png').convert_alpha()
         archer = pygame.transform.scale(archer, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((archer, "archer", 400))
 
         # Consider using tuple as one object atribute 
-        magic = pygame.image.load('assets/towers/magic_tower.png')
+        magic = pygame.image.load('assets/towers/magic_tower.png').convert_alpha()
         magic = pygame.transform.scale(magic, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((magic, "magic", 300))
         
-        cannon = pygame.image.load('assets/towers/cannon_tower.png')
+        cannon = pygame.image.load('assets/towers/cannon_tower.png').convert_alpha()
         cannon = pygame.transform.scale(cannon, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((cannon, "cannon", 500))
         

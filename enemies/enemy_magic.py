@@ -55,17 +55,17 @@ class EnemyMagic(Enemy):
                 frame = animation_strip.crop((frame_width * j, frame_height * i, frame_width * (j + 1), frame_height * (i+1)))
 
                 data = frame.tobytes()
-                pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA")
+                pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA").convert_alpha()
 
                 match i:
                     case 4:
-                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                     case 5:
-                        self.imgs_left.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_left.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                     case 6:
-                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                     case 7:
-                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
 
         self.direction = Direction.RIGHT
         self.img = self.imgs_right[0]

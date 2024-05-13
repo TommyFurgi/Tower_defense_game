@@ -10,7 +10,7 @@ class MagicTower(Tower):
         
         Tower.__init__(self, x, y)
 
-        self.image = pygame.image.load('assets/towers/magic_tower.png')
+        self.image = pygame.image.load('assets/towers/magic_tower.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (150, 150))
         
         self.rect = pygame.Rect(x, y, 50, 50) 

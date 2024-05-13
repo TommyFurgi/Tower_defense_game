@@ -34,9 +34,6 @@ class EnemyBasic(Enemy):
         self.health = 200
         self.max_health = 200
         self.reward = 30
-
-        
-
     
     def load_images(self, images_filename):
         
@@ -46,7 +43,7 @@ class EnemyBasic(Enemy):
         self.imgs_down = []
         self.imgs_right = []
         self.imgs_left = []
-        
+
         animation_strip = Image.open(images_filename)
         frame_width = 64
         frame_height = 64
@@ -60,19 +57,20 @@ class EnemyBasic(Enemy):
 
                 match i:
                     case 0:
-                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                     case 1:
-                        self.imgs_left.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_left.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                     case 2:
-                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
                     case 3:
-                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)))
+                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
 
         self.direction = Direction.RIGHT
         self.img = self.imgs_right[0]
 
         self.flipped = False
 
+    
     def handle_effects(self):
         
         for effect in self.effects:
