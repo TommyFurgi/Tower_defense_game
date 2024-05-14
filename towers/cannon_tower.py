@@ -14,16 +14,17 @@ class CannonTower(Tower):
         self.rect = pygame.Rect(x, y, 50, 50) 
         self.rect.center = (x, y) 
         
-        self.tower_imgs = [self.image]
-
         self.damage = 150
         self.radius = 100
         self.cooldown = 1700
+        self.price = 500
         
         self.blast_radius = 70
         self.blast_damage = 40
         
         self.bullets = pygame.sprite.Group()
+        self.update_tower_feature_rect()
+
         
     def find_targets(self, enemies):
         

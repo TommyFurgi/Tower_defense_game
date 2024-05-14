@@ -16,13 +16,15 @@ class ArcherTower(Tower):
         self.rect = pygame.Rect(x, y, 50, 50) # Rect(left, top, width, height), but we want x,y to be the center of the tower
         self.rect.center = (x, y) # thus this line is needed
         
-        self.tower_imgs = [self.image]
+        # self.tower_imgs = [self.image]
 
         self.damage = 100
         self.radius = 150
         self.cooldown = 700
+        self.price = 400
 
         self.bullets = pygame.sprite.Group()
+        self.update_tower_feature_rect()
     
 
     def find_targets(self, enemies):
@@ -54,9 +56,12 @@ class ArcherTower(Tower):
         for bullet in bullets_to_remove:
             self.bullets.remove(bullet)
 
-        #self.draw(screen)
         
-    
+    # def draw_tower_menu(self, screen):
+    #     screen.blit(self.sell_icon, (self.x + 30, self.y + self.range))
+    #     screen.blit(self.upgrade_icon, (self.x - 30, self.y + self.range))
+
+
         
     
         

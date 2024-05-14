@@ -16,15 +16,16 @@ class MagicTower(Tower):
         self.rect = pygame.Rect(x, y, 50, 50) 
         self.rect.center = (x, y) 
         
-        self.tower_imgs = [self.image]
-
         self.damage = 75
         self.radius = 120
         self.cooldown = 1000
+        self.price = 300
 
         self.damage_flash_duration = 200 # ms
         self.damage_flash_timer = -float('inf')
         self.damage_color = (224, 237, 111, 100)
+
+        self.update_tower_feature_rect()
 
 
 
