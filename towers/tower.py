@@ -1,4 +1,3 @@
-from typing import Any
 import pygame
 from abc import ABC, abstractmethod
 
@@ -86,7 +85,7 @@ class Tower(pygame.sprite.Sprite, ABC):
 
         screen.blit(surface, (self.x - self.radius * scale_rate, self.y - self.radius * scale_rate))
 
-    def click(self, X, Y):
+    def select_tower(self, X, Y):
         if abs(X-self.x) < self.image.get_width()//2:
             if abs(Y-self.y) < self.image.get_height()//2:
                 self.selected = True

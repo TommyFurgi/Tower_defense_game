@@ -59,8 +59,6 @@ class MagicTower(Tower):
     def update(self, game_pasue, enemies, screen):
         if not game_pasue:
             self.find_targets(enemies)
-
-        self.draw(screen)
         
         
     

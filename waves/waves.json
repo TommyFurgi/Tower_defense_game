@@ -1,7 +1,8 @@
 {
 	"wave_0": {
 		"basic": 25,
-		"magic" : 25
+		"magic" : 25,
+		"boss": 1
 	},
 	"wave_1": {
 		"basic": 5,

@@ -2,7 +2,7 @@ import json
 from collections import OrderedDict
 from waves.enemy_wave import EnemyWave
 
-WAVE_FILENAME = "waves/waves.txt"
+WAVE_FILENAME = "waves/waves.json"
 
 class WaveManager():
 
