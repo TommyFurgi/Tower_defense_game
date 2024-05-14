@@ -72,9 +72,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         screen.blit(self.img, (self.x - self.img.get_width()/2, self.y - self.img.get_height())) # Draws sprite in normal color
         
         self.draw_health_bar(screen)
-        
-    def draw_on_top(self, screen):
-        pass
+
 
     def move(self):
 
@@ -143,7 +141,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
     def handle_effects(self):
         pass
     
-    def update(self, game_pause):
+    def update(self, game_pause, enemies):
         if not game_pause:
             self.move()
             self.handle_effects()

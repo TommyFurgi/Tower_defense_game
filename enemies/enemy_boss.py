@@ -113,14 +113,3 @@ class EnemyBoss(Enemy):
                 enemy.add_effect(BoostEffect(1.6, 3))
 
 
-    def add_effect(self, new_effect):
-    
-        # Enemy should only have one effect of given type at a time
-
-        for effect in self.effects:
-            
-            if effect.get_effect_type() == new_effect.get_effect_type():
-                self.effects.remove(effect)
-                break
-        
-        self.effects.add(new_effect)

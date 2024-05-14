@@ -27,6 +27,8 @@ class Game():
         self.wave = 1
 
         self.game_pause = True
+        self.game_running = True
+        self.player_won = True
 
         self.enemies = pygame.sprite.Group()
         self.towers = pygame.sprite.Group() 
@@ -41,8 +43,8 @@ class Game():
         self.wave_manager = WaveManager()
         self.current_wave = self.wave_manager.get_next_wave()
         
-        self.load_rects("environment/path", self.path_collisions)
-        self.load_rects("environment/others", self.other_obstacles_collisions)
+        # self.load_rects("environment/path", self.path_collisions)
+        # self.load_rects("environment/others", self.other_obstacles_collisions)
 
         # # Editor related
         # editor = [Editor(screen, "environment/path"),
@@ -92,14 +94,13 @@ class Game():
 
     # Images and effects that have to appear on top of everything else
     def draw_on_top(self):
-        
-        sprites = self.enemies.sprites() + self.towers.sprites()
+        sprites = self.towers.sprites()
         
         for sprite in sprites:
             sprite.draw_on_top(self.screen)
 
     def update_screen(self):
-        self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave)
+        self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave, self.game_pause)
         self.game_map.draw_background()
         self.draw_enemies_and_towers()
         self.draw_on_top()
@@ -120,6 +121,9 @@ class Game():
             self.screen.blit(surface, (mouse_x - 80, mouse_y - 80))
 
             self.screen.blit(self.drag_object.image, (mouse_x - 80, mouse_y - 120))
+
+        if not self.game_running:
+            self.game_map.draw_end_game_buttons(self.player_won)
     
     def spawn_enemies(self):
         
@@ -138,19 +142,16 @@ class Game():
                 self.current_wave = self.wave_manager.get_next_wave()
                 self.wave += 1
             else: # All enemies killed and no next wave
-                # TODO: player win
-                ... 
-            
+                self.player_won = True
+                self.game_running = False
         
         
     def update_game(self):
         self.towers.update(self.game_pause, self.enemies, self.screen)
-        self.enemies.update(self.game_pause)
+        self.enemies.update(self.game_pause, self.enemies)
         
-
         if not self.game_pause:
             self.check_all_enemies()
-
             self.spawn_enemies()
 
     def check_all_enemies(self):
@@ -180,7 +181,33 @@ class Game():
 
             if self.hearts <= 0:
                 self.game_pause = True
-                # TODO: end game
+                self.game_running = False
+                self.player_won = False
+                self.game_running = False
+
+    def handle_restart_game(self): 
+        self.money = 2000
+        self.points = 0
+        self.hearts = 3
+        self.wave = 1
+
+        self.game_pause = True
+
+        self.enemies = pygame.sprite.Group()
+        self.towers = pygame.sprite.Group() 
+
+        self.drag_object = None                                
+        self.sped_up = False
+        
+        self.wave_manager = WaveManager()
+        self.current_wave = self.wave_manager.get_next_wave()
+
+        self.player_won = False
+        self.game_running = True
+        # self.game
+
+
+
 
     def run(self):
         selected_tower = None
@@ -190,6 +217,29 @@ class Game():
         running = True
         while running:
             self.update_screen()
+
+            if not self.game_running:
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        running = False
+
+                    elif event.type == MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            clicked_position = pygame.mouse.get_pos()
+
+                            match self.game_map.handle_end_game_action(clicked_position):
+                                case "restart":
+                                    self.handle_restart_game()
+                                    selected_tower = None
+                                    drag_object_name = None
+                                case "back_to_menu":
+                                    # TODO: show menu
+                                    selected_tower = None
+                                    drag_object_name = None
+                                case _:
+                                    pass 
+
+            else:    
 
             # if debug_mode:
             #     debug.draw_path_collisions_rect(path_collisions)
@@ -203,110 +253,110 @@ class Game():
             #     pygame.display.flip() # Required by editor
             #     continue
             
-            self.update_game()
+                self.update_game()
 
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    running = False
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        running = False
 
-                elif event.type == MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        clicked_position = pygame.mouse.get_pos()
-                        # print(clicked_position)
+                    elif event.type == MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            clicked_position = pygame.mouse.get_pos()
+                            # print(clicked_position)
 
-                        if not self.drag_object:
-                            if selected_tower:
-                                value = selected_tower.manage_tower_action(clicked_position, self.money)
+                            if not self.drag_object:
+                                if selected_tower:
+                                    value = selected_tower.manage_tower_action(clicked_position, self.money)
 
-                                self.money += value
-                                if value >= 0: 
-                                    if value > 0: # tower sold
-                                        self.towers.remove(selected_tower)
+                                    self.money += value
+                                    if value >= 0: 
+                                        if value > 0: # tower sold
+                                            self.towers.remove(selected_tower)
 
-                                    selected_tower.selected = False
-                                    selected_tower = None
+                                        selected_tower.selected = False
+                                        selected_tower = None
+                                        
+                                        
+                                if self.menu.rect.collidepoint(clicked_position):
+                                    self.drag_object, drag_object_name, new_tower_cost = self.menu.handle_click(clicked_position, self.game_pause)
                                     
+                                    if not self.drag_object:
+                                        if drag_object_name == "play":
+                                            self.game_pause = False
+                                            self.current_wave.reset_spawn_time()
+                                            for enemy in self.enemies:
+                                                enemy.unpause_effects()
+
+                                        elif drag_object_name == "stop":
+                                            self.game_pause = True
+                                            self.current_wave.pause_spawn_time()
+                                            for enemy in self.enemies:
+                                                enemy.pause_effects()
+
+                                        elif drag_object_name == "speed_up":
+                                            if self.sped_up:
+                                                self.fps = 60
+                                                self.sped_up = False
+                                            else:
+                                                self.fps = 120
+                                                self.sped_up = True
+
+                                        elif drag_object_name == "music":
+                                            if self.sound_play:
+                                                self.sound_play = False
+                                                pygame.mixer.music.set_volume(0)
+                                            else:
+                                                self.sound_play = True
+                                                pygame.mixer.music.set_volume(0.015)
+
+                                        continue
+
+
+                                    temp_sprite = pygame.sprite.Sprite()
+                                    temp_sprite.image = self.drag_object
+                                    temp_sprite.rect = pygame.rect.Rect(clicked_position[0], clicked_position[1], 50, 50)
+                                    self.drag_object = temp_sprite
                                     
-                            if self.menu.rect.collidepoint(clicked_position):
-                                self.drag_object, drag_object_name, new_tower_cost = self.menu.handle_click(clicked_position)
-                                
-                                if not self.drag_object:
-                                    if drag_object_name == "play":
-                                        self.game_pause = False
-                                        self.current_wave.reset_spawn_time()
-                                        for enemy in self.enemies:
-                                            enemy.unpause_effects()
 
-                                    elif drag_object_name == "stop":
-                                        self.game_pause = True
-                                        self.current_wave.pause_spawn_time()
-                                        for enemy in self.enemies:
-                                            enemy.pause_effects()
+                                for tower in self.towers:
+                                    if tower.select_tower(clicked_position[0], clicked_position[1]):
+                                        selected_tower = tower
+                                        break
 
-                                    elif drag_object_name == "speed_up":
-                                        if self.sped_up:
-                                            self.fps = 60
-                                            self.sped_up = False
-                                        else:
-                                            self.fps = 120
-                                            self.sped_up = True
+                            elif self.drag_object and not self.drag_object_conflict():
 
-                                    elif drag_object_name == "music":
-                                        if self.sound_play:
-                                            self.sound_play = False
-                                            pygame.mixer.music.set_volume(0)
-                                        else:
-                                            self.sound_play = True
-                                            pygame.mixer.music.set_volume(0.015)
-
+                                if self.money - new_tower_cost < 0:
+                                    self.drag_object = None
+                                    drag_object_name = None
+                                    new_tower_cost = 0
+                                    # TODO: inform about not enought amount of money
                                     continue
 
+                                match drag_object_name:
+                                    case "archer":
+                                        tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42)
+                                        self.money -= new_tower_cost
 
-                                temp_sprite = pygame.sprite.Sprite()
-                                temp_sprite.image = self.drag_object
-                                temp_sprite.rect = pygame.rect.Rect(clicked_position[0], clicked_position[1], 50, 50)
-                                self.drag_object = temp_sprite
-                                
+                                    case "magic":
+                                        tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
+                                        self.money -= new_tower_cost
+                                        
+                                    case "cannon":
+                                        tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
+                                        self.money -= new_tower_cost
 
-                            for tower in self.towers:
-                                if tower.click(clicked_position[0], clicked_position[1]):
-                                    selected_tower = tower
-                                    break
-
-                        elif self.drag_object and not self.drag_object_conflict():
-
-                            if self.money - new_tower_cost < 0:
+                                self.towers.add(tower)
                                 self.drag_object = None
-                                drag_object_name = None
-                                new_tower_cost = 0
-                                # TODO: inform about not enought amount of money
-                                continue
 
-                            match drag_object_name:
-                                case "archer":
-                                    tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42)
-                                    self.money -= new_tower_cost
 
-                                case "magic":
-                                    tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
-                                    self.money -= new_tower_cost
-                                    
-                                case "cannon":
-                                    tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
-                                    self.money -= new_tower_cost
+                        elif event.button == 3:
+                            if selected_tower:
+                                    selected_tower.selected = False
+                                    selected_tower = None
 
-                            self.towers.add(tower)
                             self.drag_object = None
-
-
-                    elif event.button == 3:
-                        if selected_tower:
-                                selected_tower.selected = False
-                                selected_tower = None
-
-                        self.drag_object = None
-                        drag_object_name = None
-                        new_tower_cost = 0
+                            drag_object_name = None
+                            new_tower_cost = 0
 
             pygame.display.flip()
    
