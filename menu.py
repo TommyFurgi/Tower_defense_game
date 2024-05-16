@@ -39,12 +39,12 @@ class Menu():
         self.music = pygame.image.load('assets/menu/music.png').convert()
         self.music = pygame.transform.scale(self.music, (60, 60))
         
-        self.scroll_up = pygame.image.load('assets/menu/play_button.png').convert()
-        self.scroll_up = pygame.transform.rotate(self.scroll_up, 90)
+        scroll_image = pygame.image.load('assets/menu/play_button.png').convert()
+        self.scroll_up = pygame.transform.rotate(scroll_image, 90)
         self.scroll_up = pygame.transform.scale(self.scroll_up, (30, 30))
         
-        self.scroll_down = pygame.image.load('assets/menu/play_button.png').convert()
-        self.scroll_down = pygame.transform.rotate(self.scroll_down, 270)
+        # self.scroll_down = pygame.image.load('assets/menu/play_button.png').convert()
+        self.scroll_down = pygame.transform.rotate(scroll_image, 270)
         self.scroll_down = pygame.transform.scale(self.scroll_down, (30, 30))
         
         self.displayed_towers = [] # (img, name, price)

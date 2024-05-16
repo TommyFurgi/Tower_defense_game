@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from map import Map 
 from menu import Menu
+from main_menu import Main_menu
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 from towers.cannon_tower import CannonTower
@@ -20,6 +21,7 @@ class Game():
         
         self.game_map = Map(self.screen)
         self.menu = Menu(self.screen)
+        self.main_menu = Main_menu(self.screen)
 
         self.money = 2000
         self.points = 0
@@ -27,8 +29,10 @@ class Game():
         self.wave = 1
 
         self.game_pause = True
-        self.game_running = True
+        self.game_running = False
         self.player_won = True
+        self.show_main_menu = True
+        self.end_game = False
 
         self.enemies = pygame.sprite.Group()
         self.towers = pygame.sprite.Group() 
@@ -43,8 +47,8 @@ class Game():
         self.wave_manager = WaveManager()
         self.current_wave = self.wave_manager.get_next_wave()
         
-        # self.load_rects("environment/path", self.path_collisions)
-        # self.load_rects("environment/others", self.other_obstacles_collisions)
+        self.load_rects("environment/path", self.path_collisions)
+        self.load_rects("environment/others", self.other_obstacles_collisions)
 
         # # Editor related
         # editor = [Editor(screen, "environment/path"),
@@ -67,6 +71,7 @@ class Game():
         
         return rectangles
     
+
     # Loads rectangles from file and adds them to group
     def load_rects(self, filename, group):
 
@@ -85,6 +90,7 @@ class Game():
                 pygame.sprite.spritecollide(self.drag_object, self.path_collisions, False) or
                 pygame.sprite.spritecollide(self.drag_object, self.other_obstacles_collisions, False))  
 
+
     def draw_enemies_and_towers(self):
         
         sprites = self.enemies.sprites() + self.towers.sprites()
@@ -92,12 +98,14 @@ class Game():
         for sprite in sorted(sprites, key=lambda s: s.y):
             sprite.draw(self.screen)
 
+
     # Images and effects that have to appear on top of everything else
     def draw_on_top(self):
         sprites = self.towers.sprites()
         
         for sprite in sprites:
             sprite.draw_on_top(self.screen)
+
 
     def update_screen(self):
         self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave, self.game_pause)
@@ -122,8 +130,14 @@ class Game():
 
             self.screen.blit(self.drag_object.image, (mouse_x - 80, mouse_y - 120))
 
-        if not self.game_running:
-            self.game_map.draw_end_game_buttons(self.player_won)
+        if self.show_main_menu:
+            if self.end_game:
+                self.main_menu.draw_end_menu(self.screen, self.player_won, self.points)
+            else:
+                self.main_menu.draw_start_menu(self.screen, self.game_running)
+
+        # elif self.end_game:
+        #     self.game_map.draw_end_game_buttons(self.player_won)
     
     def spawn_enemies(self):
         
@@ -143,9 +157,11 @@ class Game():
                 self.wave += 1
             else: # All enemies killed and no next wave
                 self.player_won = True
-                self.game_running = False
+                self.end_game = True
+                self.show_main_menu = True
+                self.game_running = False        
         
-        
+
     def update_game(self):
         self.towers.update(self.game_pause, self.enemies, self.screen)
         self.enemies.update(self.game_pause, self.enemies)
@@ -153,6 +169,7 @@ class Game():
         if not self.game_pause:
             self.check_all_enemies()
             self.spawn_enemies()
+
 
     def check_all_enemies(self):
         enemies_on_end =[]
@@ -183,7 +200,9 @@ class Game():
                 self.game_pause = True
                 self.game_running = False
                 self.player_won = False
-                self.game_running = False
+                self.end_game = True
+                self.show_main_menu = True
+
 
     def handle_restart_game(self): 
         self.money = 2000
@@ -204,9 +223,8 @@ class Game():
 
         self.player_won = False
         self.game_running = True
-        # self.game
-
-
+        self.show_main_menu = False
+        self.end_game = False
 
 
     def run(self):
@@ -218,7 +236,7 @@ class Game():
         while running:
             self.update_screen()
 
-            if not self.game_running:
+            if self.show_main_menu:
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         running = False
@@ -227,17 +245,30 @@ class Game():
                         if event.button == 1:
                             clicked_position = pygame.mouse.get_pos()
 
-                            match self.game_map.handle_end_game_action(clicked_position):
-                                case "restart":
+                            match self.main_menu.handle_click_action(clicked_position, self.end_game, self.game_running):
+                                case "music":
+                                    if self.sound_play:
+                                        self.sound_play = False
+                                        pygame.mixer.music.set_volume(0)
+                                    else:
+                                        self.sound_play = True
+                                        pygame.mixer.music.set_volume(0.015)
+                                case "new_game":
                                     self.handle_restart_game()
                                     selected_tower = None
                                     drag_object_name = None
+                                case "countinue":
+                                    self.show_main_menu = False
                                 case "back_to_menu":
-                                    # TODO: show menu
+                                    self.end_game = False
                                     selected_tower = None
                                     drag_object_name = None
                                 case _:
                                     pass 
+                    
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE and self.game_running:
+                            self.show_main_menu = False
 
             else:    
 
@@ -357,6 +388,10 @@ class Game():
                             self.drag_object = None
                             drag_object_name = None
                             new_tower_cost = 0
+
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            self.show_main_menu = True
 
             pygame.display.flip()
    
