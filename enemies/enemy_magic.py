@@ -72,24 +72,8 @@ class EnemyMagic(Enemy):
 
         self.flipped = False
 
-    def handle_effects(self):
-                
-        for effect in self.effects:
-            
-            effect_type, property, color = effect.update()
-            self.speed = self.max_speed
+    # cannot be slowed down
+    def handle_slow_down_effect(self):
+        pass
 
-            match effect_type:
-                case EffectType.POISION:
-                    self.lose_hp(property)
-                    self.add_color(color)
-                case EffectType.SLOWDOWN:
-                    # can not be slowed down
-                    pass
-                case EffectType.BOOST:
-                    self.speed = property * self.speed
-                    self.add_color(color)
-
-                case EffectType.EFFECT_FINISHED: # effect duration has ended
-                    self.remove_color(color)
                     
