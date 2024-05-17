@@ -1,16 +1,14 @@
 from enemies.enemy import Enemy
 import pygame
-from PIL import Image
 from directions import Direction
-from effects.effect_type import EffectType
 import random
+from source_manager import SourceManager
+
 
 class EnemyMagic(Enemy):
-    
     def __init__(self):
         Enemy.__init__(self)
-        image_path = "assets/enemies/enemy.png"
-        self.load_images(image_path)
+        self.load_images("enemy")
 
         # starting point
         self.x = 1349
@@ -38,7 +36,6 @@ class EnemyMagic(Enemy):
 
         
     def load_images(self, images_filename):
-        
         self.animation_count = random.randint(0, 7) * 10
         self.path_pos = 0
         self.imgs_up = []
@@ -46,7 +43,7 @@ class EnemyMagic(Enemy):
         self.imgs_right = []
         self.imgs_left = []
         
-        animation_strip = Image.open(images_filename)
+        animation_strip = SourceManager.get_image(images_filename)
         frame_width = 64
         frame_height = 64
         
@@ -75,5 +72,3 @@ class EnemyMagic(Enemy):
     # cannot be slowed down
     def handle_slow_down_effect(self):
         pass
-
-                    

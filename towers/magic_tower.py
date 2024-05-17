@@ -1,16 +1,15 @@
 import pygame
 from towers.tower import Tower
-from menu import Menu
 from effects.slow_down_effect import SlowDownEffect
-from effects.effect_type import EffectType
+from source_manager import SourceManager
+
 
 class MagicTower(Tower):
-
     def __init__(self, x, y):
-        
         Tower.__init__(self, x, y)
 
-        self.image = pygame.image.load('assets/towers/magic_tower.png').convert_alpha()
+        self.image = SourceManager.get_image("magic_tower").convert_alpha()
+
         self.image = pygame.transform.scale(self.image, (150, 150))
         
         self.rect = pygame.Rect(x, y, 50, 50) 
@@ -40,6 +39,7 @@ class MagicTower(Tower):
                 enemy.lose_hp(self.damage)
                 enemy.add_effect(SlowDownEffect(0.85, 3))
         
+
     def draw(self, screen):
         super().draw(screen)
         

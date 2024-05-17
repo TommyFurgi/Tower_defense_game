@@ -1,5 +1,7 @@
 import pygame
 from towers.tower import Tower
+from source_manager import SourceManager
+
 
 class Menu():
     def __init__(self, screen):
@@ -15,51 +17,48 @@ class Menu():
         self.background_color = (214, 189, 120)
         self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         
-        self.points = pygame.image.load('assets/menu/points.png').convert_alpha()
+        self.points = SourceManager.get_image("points").convert_alpha()
         self.points = pygame.transform.scale(self.points, (10* self.scale_rate, 10 * self.scale_rate))
 
-        self.money = pygame.image.load('assets/menu/resources.png').convert_alpha()
+        self.money = SourceManager.get_image("resources").convert_alpha()
         self.money = pygame.transform.scale(self.money, (10 * self.scale_rate, 10 * self.scale_rate))
 
-        self.wave = pygame.image.load('assets/menu/wave.png').convert_alpha()
+        self.wave = SourceManager.get_image("wave").convert_alpha()
         self.wave = pygame.transform.scale(self.wave, (10 * self.scale_rate, 10 * self.scale_rate))
 
-        self.hearth = pygame.image.load('assets/menu/lives.png').convert_alpha()
+        self.hearth = SourceManager.get_image("lives").convert_alpha()
         self.hearth = pygame.transform.scale(self.hearth, (20 * self.scale_rate, 20 * self.scale_rate))
         
-        self.play = pygame.image.load('assets/menu/play_button.png').convert()
-        self.play = pygame.transform.scale(self.play, (60, 60))
+        play_button = SourceManager.get_image("play_button").convert_alpha()
+        self.play = pygame.transform.scale((play_button), (60, 60))
 
-        self.stop = pygame.image.load('assets/menu/stop_button.png').convert()
+        self.stop = SourceManager.get_image("stop_button").convert_alpha()
         self.stop = pygame.transform.scale(self.stop, (60, 60))
         
-        self.speed_up = pygame.image.load('assets/menu/speed_up_button.png').convert()
+        self.speed_up = SourceManager.get_image("speed_up_button").convert_alpha()
         self.speed_up = pygame.transform.scale(self.speed_up, (60, 60))
 
-        self.music = pygame.image.load('assets/menu/music.png').convert()
+        self.music = SourceManager.get_image("music").convert_alpha()
         self.music = pygame.transform.scale(self.music, (60, 60))
         
-        scroll_image = pygame.image.load('assets/menu/play_button.png').convert()
-        self.scroll_up = pygame.transform.rotate(scroll_image, 90)
+        self.scroll_up = pygame.transform.rotate(play_button, 90)
         self.scroll_up = pygame.transform.scale(self.scroll_up, (30, 30))
         
-        # self.scroll_down = pygame.image.load('assets/menu/play_button.png').convert()
-        self.scroll_down = pygame.transform.rotate(scroll_image, 270)
+        self.scroll_down = pygame.transform.rotate(play_button, 270)
         self.scroll_down = pygame.transform.scale(self.scroll_down, (30, 30))
         
         self.displayed_towers = [] # (img, name, price)
         self.displayed_towers_position = 0
         
-        archer = pygame.image.load('assets/towers/archer_tower.png').convert_alpha()
+        archer = SourceManager.get_image("archer_tower").convert_alpha()
         archer = pygame.transform.scale(archer, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((archer, "archer", 400))
 
-        # Consider using tuple as one object atribute 
-        magic = pygame.image.load('assets/towers/magic_tower.png').convert_alpha()
+        magic = SourceManager.get_image("magic_tower").convert_alpha()
         magic = pygame.transform.scale(magic, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((magic, "magic", 300))
         
-        cannon = pygame.image.load('assets/towers/cannon_tower.png').convert_alpha()
+        cannon = SourceManager.get_image("cannon_tower").convert_alpha()
         cannon = pygame.transform.scale(cannon, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((cannon, "cannon", 500))
         

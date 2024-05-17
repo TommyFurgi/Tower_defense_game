@@ -1,11 +1,9 @@
 import pygame
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Tower(pygame.sprite.Sprite, ABC): 
-    
     def __init__(self, x, y): 
-
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -21,8 +19,10 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.upgrade_icon = pygame.transform.scale(upgrade_icon, (50, 50))
         self.font = pygame.font.Font(None, 24) 
         
+
     def draw(self, screen):
         screen.blit(self.image, (self.x-self.image.get_width()//2, self.y-self.image.get_height()//2))
+
 
     def draw_tower_menu(self, screen):
         upgrade_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3 - 5, 150, 60)
@@ -47,11 +47,11 @@ class Tower(pygame.sprite.Sprite, ABC):
 
 
     def draw_on_top(self, screen):
-    
         if self.selected:
             self.draw_radius(screen)
             self.draw(screen) # So the tower isn't drawn under the circle
             self.draw_tower_menu(screen)
+
 
     def manage_tower_action(self, clicked_position, money):
         if self.sell_icon_rect.collidepoint(clicked_position):
@@ -73,9 +73,11 @@ class Tower(pygame.sprite.Sprite, ABC):
         
         return 0
 
+
     def update_tower_feature_rect(self):
         self.sell_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3, 50, 50) 
         self.upgrade_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y - self.radius * 0.3, 50, 50)  
+
 
     def draw_radius(self, screen):
         scale_rate = 1.3
@@ -85,6 +87,7 @@ class Tower(pygame.sprite.Sprite, ABC):
 
         screen.blit(surface, (self.x - self.radius * scale_rate, self.y - self.radius * scale_rate))
 
+
     def select_tower(self, X, Y):
         if abs(X-self.x) < self.image.get_width()//2:
             if abs(Y-self.y) < self.image.get_height()//2:
@@ -93,8 +96,3 @@ class Tower(pygame.sprite.Sprite, ABC):
                 return True
         return False
     
-    
-    
-        
-        
-        

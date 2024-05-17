@@ -1,10 +1,10 @@
 import pygame, math
 from directions import Direction
-from abc import ABC, abstractmethod
+from abc import ABC
 from effects.effect_type import EffectType
 
+
 class Enemy(pygame.sprite.Sprite, ABC):
-    
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         
@@ -23,6 +23,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         
         self.hp_font = pygame.font.Font(None, 20) 
 
+
     def draw_health_bar(self, screen):
         length = 80
         move_by = length / self.max_health
@@ -36,15 +37,17 @@ class Enemy(pygame.sprite.Sprite, ABC):
         text_rect = text.get_rect(center=(self.x, self.y - 125))
         screen.blit(text, text_rect)
 
+
     def add_color(self, color):
         self.colors.add(color)
     
+
     def remove_color(self, color):
         if color in self.colors:
             self.colors.remove(color)
 
+
     def enemy_animation(self):
-        
         match self.direction:
             case Direction.UP:
                 self.img = self.imgs_up[self.animation_count//10]
@@ -55,8 +58,8 @@ class Enemy(pygame.sprite.Sprite, ABC):
             case Direction.LEFT:
                 self.img = self.imgs_left[self.animation_count//10] 
 
-    def draw(self, screen):
 
+    def draw(self, screen):
         self.enemy_animation()
     
         if pygame.time.get_ticks() - self.damage_flash_timer < self.damage_flash_duration:
@@ -76,8 +79,8 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.draw_health_bar(screen)
 
 
-    def move(self):
 
+    def move(self):
         self.animation_count += 1
         if self.animation_count >= len(self.imgs_up) * 10:
             self.animation_count = 0
@@ -125,7 +128,6 @@ class Enemy(pygame.sprite.Sprite, ABC):
         # Setting direction
         self.direction = Direction.set_direction(dirn)
 
-        # return True
 
     def update(self, game_pause, enemies):
         if not game_pause:
@@ -141,18 +143,22 @@ class Enemy(pygame.sprite.Sprite, ABC):
             self.damage_flash_color = color
             self.damage_flash_timer = pygame.time.get_ticks()
         
+
     def to_delete(self):
         return self.reached_last_point
     
+
     def is_killed(self):
         if self.health <= 0:
             return True, self.reward
         
         return False, None
     
+
     def get_position(self):
         return self.x, self.y
         
+
     def pause_effects(self):
         for effect in self.effects:
             effect.pause_effect()
@@ -161,13 +167,13 @@ class Enemy(pygame.sprite.Sprite, ABC):
         for effect in self.effects:
             effect.reset()
 
-    def prepare_effects_dict(self):
 
+    def prepare_effects_dict(self):
         for effect in EffectType:
             self.effects[effect] = None
 
-    def add_effect(self, new_effect):
 
+    def add_effect(self, new_effect):
         # Enemy should only have one effect of given type at a time 
         match new_effect.get_effect_type():
 
@@ -196,6 +202,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 self.effects[EffectType.SLOWDOWN] = new_effect
                 self.handle_slow_down_effect()
     
+
     def remove_effect(self, effect_type):
             
             if self.effects[effect_type]:
@@ -208,15 +215,15 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 
                 self.effects[effect_type] = None
 
-    def remove_inactive_effects(self):
 
+    def remove_inactive_effects(self):
         for effect in EffectType:
             if self.effects[effect]:
                 if not self.effects[effect].is_active():
                     self.remove_effect(effect)
 
+
     def handle_poison_effect(self):
-        
         if self.effects[EffectType.POISON]:
             value, color = self.effects[EffectType.POISON].update()
             
@@ -225,16 +232,16 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 if color not in self.colors:
                     self.add_color(color)
 
-    def handle_boost_effect(self):
 
+    def handle_boost_effect(self):
         if self.effects[EffectType.BOOST]:
             value, color = self.effects[EffectType.BOOST].get_values()
 
             self.speed = value * self.max_speed
             self.add_color(color)
 
-    def handle_slow_down_effect(self):
 
+    def handle_slow_down_effect(self):
         if self.effects[EffectType.SLOWDOWN]:
             value, color = self.effects[EffectType.SLOWDOWN].get_values()
 

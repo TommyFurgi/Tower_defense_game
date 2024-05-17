@@ -1,14 +1,15 @@
 import pygame
 from towers.tower import Tower
 from towers.bullet import Bullet
+from source_manager import SourceManager
+
 
 class CannonTower(Tower):
-    
     def __init__(self, x, y):
-        
         Tower.__init__(self, x, y)
 
-        self.image = pygame.image.load('assets/towers/cannon_tower.png').convert_alpha()
+        self.image = SourceManager.get_image("cannon_tower").convert_alpha()
+
         self.image = pygame.transform.scale(self.image, (150, 150))
         
         self.rect = pygame.Rect(x, y, 50, 50) 
@@ -34,6 +35,7 @@ class CannonTower(Tower):
             self.time_from_last_shot = pygame.time.get_ticks()
             enemy_x, enemy_y = enemies_collision[0].get_position()
             self.bullets.add(Bullet(25, self.x, self.y-70, enemy_x, enemy_y - 60, enemies_collision[0]))
+
 
     def update(self, game_pasue, enemies, screen):
         if not game_pasue:
