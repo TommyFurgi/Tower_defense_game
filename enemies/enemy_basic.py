@@ -70,26 +70,6 @@ class EnemyBasic(Enemy):
 
         self.flipped = False
 
-    
-    def handle_effects(self):
-        
-        for effect in self.effects:
-            
-            effect_type, property, color = effect.update()
-            
-            self.speed = self.max_speed
-
-            match effect_type:
-                case EffectType.POISION:
-                    # can not be poisoned
-                    pass
-                case EffectType.SLOWDOWN:
-                    #TODO: visual effect
-                    self.speed = property * self.speed
-                    self.add_color(color)
-                    pass
-                case EffectType.BOOST:
-                    self.speed = property * self.speed
-                    self.add_color(color)
-                case EffectType.EFFECT_FINISHED: # effect duration has ended
-                    self.remove_color(color)
+    # cannot be poisoned
+    def handle_poison_effect(self):
+        pass

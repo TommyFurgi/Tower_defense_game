@@ -75,33 +75,9 @@ class EnemyBoss(Enemy):
         self.flipped = False
 
 
-
-    def handle_effects(self):
-        
-        for effect in self.effects:
-            
-            effect_type, property, color = effect.update()
-            self.speed = self.max_speed
-
-            
-            match effect_type:
-                case EffectType.POISION:
-                    self.lose_hp(property)
-                    self.add_color(color)
-                case EffectType.SLOWDOWN:
-                    self.speed = property * self.max_speed
-                    self.add_color(color)
-                case EffectType.BOOST:
-                    pass
-                case EffectType.EFFECT_FINISHED: # effect duration has ended
-                    self.remove_color(color)
-
-
     def update(self, game_pause, enemies):
-        if not game_pause:
-            self.move()
-            self.find_enemies_around(enemies)
-            self.handle_effects()
+        super().update(game_pause, enemies)
+        self.find_enemies_around(enemies)
 
 
     def find_enemies_around(self, enemies):

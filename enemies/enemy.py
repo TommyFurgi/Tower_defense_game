@@ -1,17 +1,20 @@
 import pygame, math
 from directions import Direction
 from abc import ABC, abstractmethod
+from effects.effect_type import EffectType
 
 class Enemy(pygame.sprite.Sprite, ABC):
     
     def __init__(self):
-
         pygame.sprite.Sprite.__init__(self)
         
         self.reached_last_point = False
         
-        self.effects = set()
+        self.effects = dict()
+        self.prepare_effects_dict()
         
+        self.poison_resistance = 0.25 # 0.25%
+
         self.damage_flash_color = (255, 255, 255)
         self.damage_flash_duration = 100 # ms
         self.damage_flash_timer = 0
@@ -19,7 +22,6 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.colors = set()       
         
         self.hp_font = pygame.font.Font(None, 20) 
-
 
     def draw_health_bar(self, screen):
         length = 80
@@ -124,30 +126,13 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.direction = Direction.set_direction(dirn)
 
         # return True
-    
-    def add_effect(self, new_effect):
-        
-        # Enemy should only have one effect of given type at a time
-        
-        for effect in self.effects:
-            
-            if effect.get_effect_type() == new_effect.get_effect_type():
-                self.effects.remove(effect)
-                break
-        
-        self.effects.add(new_effect)    
-    
-    @abstractmethod
-    def handle_effects(self):
-        pass
-    
+
     def update(self, game_pause, enemies):
         if not game_pause:
             self.move()
-            self.handle_effects()
+            self.remove_inactive_effects()
+            self.handle_poison_effect()
             
-        #self.draw()
-
     # Damage
     def lose_hp(self, hp_lost, color = (255, 255, 255)):
         self.health -= hp_lost
@@ -175,3 +160,83 @@ class Enemy(pygame.sprite.Sprite, ABC):
     def unpause_effects(self):
         for effect in self.effects:
             effect.reset()
+
+    def prepare_effects_dict(self):
+
+        for effect in EffectType:
+            self.effects[effect] = None
+
+    def add_effect(self, new_effect):
+
+        # Enemy should only have one effect of given type at a time 
+        match new_effect.get_effect_type():
+
+            case EffectType.POISON:
+                
+                self.remove_effect(EffectType.POISON)
+                self.effects[EffectType.POISON] = new_effect
+
+            case EffectType.BOOST:
+                
+                #Slowdown cancels boost
+                if self.effects[EffectType.SLOWDOWN]:
+                    return
+
+                self.remove_effect(EffectType.BOOST)
+                self.effects[EffectType.BOOST] = new_effect
+                self.handle_boost_effect()
+
+            case EffectType.SLOWDOWN:
+                
+                #Slowdown cancels boost
+                if self.effects[EffectType.BOOST]:
+                    self.remove_effect(EffectType.BOOST)
+
+                self.remove_effect(EffectType.SLOWDOWN)
+                self.effects[EffectType.SLOWDOWN] = new_effect
+                self.handle_slow_down_effect()
+    
+    def remove_effect(self, effect_type):
+            
+            if self.effects[effect_type]:
+                _, color = self.effects[effect_type].get_values()
+                self.remove_color(color)
+                self.effects[effect_type] = None
+
+                if effect_type == EffectType.BOOST or effect_type == EffectType.SLOWDOWN:
+                    self.speed = self.max_speed
+                
+                self.effects[effect_type] = None
+
+    def remove_inactive_effects(self):
+
+        for effect in EffectType:
+            if self.effects[effect]:
+                if not self.effects[effect].is_active():
+                    self.remove_effect(effect)
+
+    def handle_poison_effect(self):
+        
+        if self.effects[EffectType.POISON]:
+            value, color = self.effects[EffectType.POISON].update()
+            
+            if value and color:
+                self.lose_hp(value * (1 - self.poison_resistance))
+                if color not in self.colors:
+                    self.add_color(color)
+
+    def handle_boost_effect(self):
+
+        if self.effects[EffectType.BOOST]:
+            value, color = self.effects[EffectType.BOOST].get_values()
+
+            self.speed = value * self.max_speed
+            self.add_color(color)
+
+    def handle_slow_down_effect(self):
+
+        if self.effects[EffectType.SLOWDOWN]:
+            value, color = self.effects[EffectType.SLOWDOWN].get_values()
+
+            self.speed = value * self.max_speed
+            self.add_color(color)
