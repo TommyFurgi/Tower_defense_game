@@ -1,4 +1,6 @@
 import pygame, math
+from source_manager import SourceManager
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, bullet_size, x_start, y_start, x_destination, y_destination, enemy): 
@@ -17,11 +19,13 @@ class Bullet(pygame.sprite.Sprite):
         self.dirn = (self.dirn[0]/self.length, self.dirn[1]/self.length)
         self.dirn = (self.dirn[0] * self.speed, self.dirn[1] * self.speed)
 
-        self.bullet = pygame.image.load('assets/towers/bullet-01.png')
+        self.bullet = SourceManager.get_image("bullet-01").convert_alpha()
         self.bullet = pygame.transform.scale(self.bullet, (bullet_size, bullet_size))
     
+
     def draw(self, screen):
         screen.blit(self.bullet, (self.x-self.bullet.get_width()//2, self.y-self.bullet.get_height()//2))
+
 
     def update(self, game_pause, screen):
         if not game_pause:

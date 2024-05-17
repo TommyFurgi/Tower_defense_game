@@ -7,6 +7,7 @@ from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 from towers.cannon_tower import CannonTower
 from waves.wave_manager import WaveManager
+from source_manager import SourceManager
 # from editor import Editor
 # from debug import Debug
 
@@ -47,8 +48,10 @@ class Game():
         self.wave_manager = WaveManager()
         self.current_wave = self.wave_manager.get_next_wave()
         
-        self.load_rects("environment/path", self.path_collisions)
-        self.load_rects("environment/others", self.other_obstacles_collisions)
+        self.load_rects("path", self.path_collisions)
+        self.load_rects("others", self.other_obstacles_collisions)
+
+        self.background_music = SourceManager.get_sound("music")
 
         # # Editor related
         # editor = [Editor(screen, "environment/path"),
@@ -58,24 +61,11 @@ class Game():
         # # Debug related
         # debug = Debug(screen)
         # debug_mode = False
-
-    def load_rectangles_from_file(self, filename):
-        try:
-            with open(filename, "r") as file:
-                rectangles = []
-                for line in file:
-                    rect_x, rect_y, rect_width, rect_height = map(int, line.strip().split())
-                    rectangles.append((rect_x, rect_y, rect_width, rect_height))
-        except FileNotFoundError:
-            print(f"File '{filename}' not found. No rectangles loaded.")
-        
-        return rectangles
     
 
     # Loads rectangles from file and adds them to group
-    def load_rects(self, filename, group):
-
-        rectangles = self.load_rectangles_from_file(filename)
+    def load_rects(self, name, group):
+        rectangles = SourceManager.get_rectangles(name)
         
         for rectangle in rectangles:
             rect_sprite = pygame.sprite.Sprite()
@@ -136,12 +126,8 @@ class Game():
             else:
                 self.main_menu.draw_start_menu(self.screen, self.game_running)
 
-        # elif self.end_game:
-        #     self.game_map.draw_end_game_buttons(self.player_won)
     
     def spawn_enemies(self):
-        
-        # current_time = pygame.time.get_ticks()
         if self.current_wave.has_next_enemy():
             
             new_enemy = self.current_wave.get_next_enemy()
@@ -249,10 +235,10 @@ class Game():
                                 case "music":
                                     if self.sound_play:
                                         self.sound_play = False
-                                        pygame.mixer.music.set_volume(0)
+                                        self.background_music.set_volume(0)
                                     else:
                                         self.sound_play = True
-                                        pygame.mixer.music.set_volume(0.015)
+                                        self.background_music.set_volume(0.015)
                                 case "new_game":
                                     self.handle_restart_game()
                                     selected_tower = None
@@ -335,10 +321,10 @@ class Game():
                                         elif drag_object_name == "music":
                                             if self.sound_play:
                                                 self.sound_play = False
-                                                pygame.mixer.music.set_volume(0)
+                                                self.background_music.set_volume(0)
                                             else:
                                                 self.sound_play = True
-                                                pygame.mixer.music.set_volume(0.015)
+                                                self.background_music.set_volume(0.015)
 
                                         continue
 

@@ -3,10 +3,9 @@ from enemies.enemy_basic import EnemyBasic
 from enemies.enemy_magic import EnemyMagic
 from enemies.enemy_boss import EnemyBoss
 
+
 class EnemyWave():
-    
     def __init__(self, enemies):
-        
         self.basic_no = 0
         self.magic_no = 0
         self.boss_no = 0
@@ -59,6 +58,7 @@ class EnemyWave():
         
         return None
         
+
     def has_next_enemy(self):
         return self.basic_no + self.magic_no + self.boss_no
     
@@ -69,7 +69,6 @@ class EnemyWave():
         self.boss_enemy_spawn_time = pygame.time.get_ticks()
 
         
-
     def pause_spawn_time(self):
         current_time = pygame.time.get_ticks()
         self.basic_time_before_pause +=  current_time - self.basic_enemy_spawn_time

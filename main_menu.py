@@ -1,14 +1,16 @@
 import pygame
+from source_manager import SourceManager
+
 
 class Main_menu():
     def __init__(self, screen):
         self.width, self.height = screen.get_size()
 
-        self.music = pygame.image.load('assets/menu/music.png').convert()
+        self.music = SourceManager.get_image("music").convert()
         self.music = pygame.transform.scale(self.music, (60, 60))
 
-        knight = pygame.image.load('assets/knight.png').convert()
-        self.knight = pygame.transform.scale(knight, (170, 500))
+        self.knight = SourceManager.get_image("knight").convert()
+        self.knight = pygame.transform.scale(self.knight, (170, 500))
 
         self.font_buttons = pygame.font.Font(None, 24) 
         self.font_title = pygame.font.Font(None, 128)
@@ -99,7 +101,6 @@ class Main_menu():
             if self.return_to_menu_rect.collidepoint(clicked_position):
                 return "back_to_menu"
             
-
         return None
 
         

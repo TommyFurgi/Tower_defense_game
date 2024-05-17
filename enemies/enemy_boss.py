@@ -1,17 +1,15 @@
 from enemies.enemy import Enemy
 import pygame
-from PIL import Image
 from directions import Direction
-from effects.effect_type import EffectType
 from effects.boost_effect import BoostEffect
 import random
+from source_manager import SourceManager
+
 
 class EnemyBoss(Enemy):
-    
     def __init__(self):
         Enemy.__init__(self)
-        image_path = "assets/enemies/boss.png"
-        self.load_images(image_path)
+        self.load_images("boss")
 
         # starting point
         self.x = 540
@@ -38,7 +36,6 @@ class EnemyBoss(Enemy):
 
         
     def load_images(self, images_filename):
-        
         self.animation_count = random.randint(0, 2) * 10
         
         self.path_pos = 0
@@ -47,7 +44,7 @@ class EnemyBoss(Enemy):
         self.imgs_right = []
         self.imgs_left = []
         
-        animation_strip = Image.open(images_filename)
+        animation_strip = SourceManager.get_image(images_filename)
         frame_width = 120
         frame_height = 120
         
@@ -87,5 +84,3 @@ class EnemyBoss(Enemy):
             # Bosses can not boost each other
             if not isinstance(enemy, EnemyBoss):
                 enemy.add_effect(BoostEffect(1.6, 3))
-
-

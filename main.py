@@ -1,6 +1,8 @@
 import pygame
 import sys
 from game import Game
+from source_manager import SourceManager
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -9,19 +11,21 @@ if __name__ == "__main__":
     width, height = 1600, 900
     screen = pygame.display.set_mode((width, height), pygame.locals.RESIZABLE | pygame.locals.DOUBLEBUF, 16)
 
-    cursor_image = pygame.image.load("assets/cursor.png").convert_alpha()
+    SourceManager.load_images("./assets/images")
+    SourceManager.load_sounds("./assets/sounds")
+    SourceManager.load_rectangles("./assets/environment")
+
+    cursor_image = SourceManager.get_image("cursor").convert_alpha()
     cursor_surface = pygame.Surface(cursor_image.get_size(), pygame.SRCALPHA)
     cursor_surface.blit(cursor_image, (0, 0))
-
     pygame.mouse.set_cursor((0, 0), cursor_surface)
 
-    icon_image = pygame.image.load("assets/towers/archer_tower.png").convert_alpha()
+    icon_image = SourceManager.get_image("archer_tower").convert_alpha()
     pygame.display.set_icon(icon_image)
 
-    pygame.mixer.init()
-    pygame.mixer.music.load("assets/music.mp3")  
-    pygame.mixer.music.play(loops=1)
-    pygame.mixer.music.set_volume(0.015)
+    background_music = SourceManager.get_sound("music")
+    background_music.play(loops=-1)
+    background_music.set_volume(0.015)
 
     game = Game(screen)
     game.run()
