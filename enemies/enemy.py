@@ -154,12 +154,14 @@ class Enemy(pygame.sprite.Sprite, ABC):
         return self.x, self.y
         
     def pause_effects(self):
-        for effect in self.effects:
-            effect.pause_effect()
+        for effect in EffectType:
+            if self.effects[effect]:
+                self.effects[effect].pause_effect()
 
     def unpause_effects(self):
-        for effect in self.effects:
-            effect.reset()
+        for effect in EffectType:
+            if self.effects[effect]:
+                self.effects[effect].pause_effect()
 
     def prepare_effects_dict(self):
 
