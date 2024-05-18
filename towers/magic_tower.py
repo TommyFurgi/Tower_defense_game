@@ -38,6 +38,7 @@ class MagicTower(Tower):
             for enemy in enemies_collision:
                 enemy.lose_hp(self.damage)
                 enemy.add_effect(SlowDownEffect(0.85, 3))
+                self.damage_dealt += self.damage
         
 
     def draw(self, screen):

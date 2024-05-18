@@ -1,22 +1,214 @@
 {
 	"wave_0": {
-		"basic": 25,
-		"magic" : 25,
-		"boss": 1
+		"basic": 3
 	},
 	"wave_1": {
-		"basic": 5,
-        "magic": 5
+		"basic": 4
 	},
 	"wave_2": {
-		"basic": 10,
+		"basic": 5
+	},
+	"wave_3": {
+		"basic": 6,
 		"boss": 1
 	},
-    "wave_3": {
-		"basic": 1,
-        "magic": 1
+	"wave_4": {
+		"basic": 7,
+		"magic": 5
 	},
-    "wave_4": {
+	"wave_5": {
+		"basic": 8,
+		"magic": 6
+	},
+	"wave_6": {
+		"basic": 9,
+		"magic": 12,
+		"boss": 2
+	},
+	"wave_7": {
+		"basic": 10,
+		"magic": 8
+	},
+	"wave_8": {
+		"basic": 11,
+		"magic": 9
+	},
+	"wave_9": {
+		"basic": 12,
+		"magic": 14,
+		"boss": 3
+	},
+	"wave_10": {
+		"basic": 13,
+		"magic": 10
+	},
+	"wave_11": {
+		"basic": 14,
+		"magic": 11
+	},
+	"wave_12": {
+		"basic": 15,
+		"magic": 17,
+		"boss": 4
+	},
+	"wave_13": {
+		"basic": 16,
+		"magic": 13
+	},
+	"wave_14": {
+		"basic": 17,
+		"magic": 14
+	},
+	"wave_15": {
+		"basic": 18,
+		"magic": 21,
 		"boss": 5
+	},
+	"wave_16": {
+		"basic": 19,
+		"magic": 16
+	},
+	"wave_17": {
+		"basic": 20,
+		"magic": 17
+	},
+	"wave_18": {
+		"basic": 21,
+		"magic": 25,
+		"boss": 6
+	},
+	"wave_19": {
+		"basic": 22,
+		"magic": 19
+	},
+	"wave_20": {
+		"basic": 23,
+		"magic": 20
+	},
+	"wave_21": {
+		"basic": 24,
+		"magic": 27,
+		"boss": 7
+	},
+	"wave_22": {
+		"basic": 25,
+		"magic": 22
+	},
+	"wave_23": {
+		"basic": 26,
+		"magic": 23
+	},
+	"wave_24": {
+		"basic": 27,
+		"magic": 30,
+		"boss": 8
+	},
+	"wave_25": {
+		"basic": 28,
+		"magic": 25
+	},
+	"wave_26": {
+		"basic": 29,
+		"magic": 26
+	},
+	"wave_27": {
+		"basic": 30,
+		"magic": 32,
+		"boss": 9
+	},
+	"wave_28": {
+		"basic": 31,
+		"magic": 28
+	},
+	"wave_29": {
+		"basic": 32,
+		"magic": 29
+	},
+	"wave_30": {
+		"basic": 33,
+		"magic": 35,
+		"boss": 10
+	},
+	"wave_31": {
+		"basic": 34,
+		"magic": 31
+	},
+	"wave_32": {
+		"basic": 35,
+		"magic": 32
+	},
+	"wave_33": {
+		"basic": 36,
+		"magic": 37,
+		"boss": 11
+	},
+	"wave_34": {
+		"basic": 37,
+		"magic": 34
+	},
+	"wave_35": {
+		"basic": 38,
+		"magic": 35
+	},
+	"wave_36": {
+		"basic": 39,
+		"magic": 40,
+		"boss": 12
+	},
+	"wave_37": {
+		"basic": 40,
+		"magic": 37
+	},
+	"wave_38": {
+		"basic": 41,
+		"magic": 38
+	},
+	"wave_39": {
+		"basic": 42,
+		"magic": 42,
+		"boss": 13
+	},
+	"wave_40": {
+		"basic": 43,
+		"magic": 40
+	},
+	"wave_41": {
+		"basic": 44,
+		"magic": 41
+	},
+	"wave_42": {
+		"basic": 45,
+		"magic": 45,
+		"boss": 14
+	},
+	"wave_43": {
+		"basic": 46,
+		"magic": 43
+	},
+	"wave_44": {
+		"basic": 47,
+		"magic": 44
+	},
+	"wave_45": {
+		"basic": 48,
+		"magic": 47,
+		"boss": 15
+	},
+	"wave_46": {
+		"basic": 49,
+		"magic": 46
+	},
+	"wave_47": {
+		"basic": 50,
+		"magic": 48
+	},
+	"wave_48": {
+		"basic": 51,
+		"magic": 51,
+		"boss": 16
+	},
+	"wave_49": {
+		"basic": 52,
+		"magic": 50
 	}
 }
