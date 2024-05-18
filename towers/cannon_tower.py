@@ -48,7 +48,8 @@ class CannonTower(Tower):
         for bullet in self.bullets:
             enemy_hitted = bullet.hit()
             if enemy_hitted:
-                enemy_hitted.lose_hp(self.damage)    
+                enemy_hitted.lose_hp(self.damage) 
+                self.damage_dealt += self.damage   
                 bullets_to_remove.append(bullet)
                 
                 # Creates a blast that hurts all enemies in given radius
@@ -59,6 +60,7 @@ class CannonTower(Tower):
                 
                 for enemy in enemies_collision:
                     enemy.lose_hp(self.blast_damage)
+                    self.damage_dealt += self.blast_damage
 
         for bullet in bullets_to_remove:
             self.bullets.remove(bullet)

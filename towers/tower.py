@@ -10,12 +10,14 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.level = 1
         self.selected = False
 
+        self.damage_dealt = 0
+
         self.time_from_last_shot = pygame.time.get_ticks()
 
-        sell_icon = pygame.image.load('assets/towers/sell_icon.png').convert_alpha()
+        sell_icon = pygame.image.load('assets/images/towers/sell_icon.png').convert_alpha()
         self.sell_icon = pygame.transform.scale(sell_icon, (50, 50))
 
-        upgrade_icon = pygame.image.load('assets/towers/upgraded_icon.png').convert_alpha()
+        upgrade_icon = pygame.image.load('assets/images/towers/upgraded_icon.png').convert_alpha()
         self.upgrade_icon = pygame.transform.scale(upgrade_icon, (50, 50))
         self.font = pygame.font.Font(None, 24) 
         
@@ -25,6 +27,9 @@ class Tower(pygame.sprite.Sprite, ABC):
 
 
     def draw_tower_menu(self, screen):
+
+        self.draw_stats(screen)
+
         upgrade_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3 - 5, 150, 60)
         pygame.draw.ellipse(screen, (133, 98, 42), upgrade_rect)
 
@@ -44,6 +49,38 @@ class Tower(pygame.sprite.Sprite, ABC):
 
             level_text = self.font.render("Level: " + str(self.level), True, (255, 255, 255))
             screen.blit(level_text, (self.x + self.radius * 0.5 + 60, self.y - self.radius * 0.3 + 30))
+
+    def draw_stats(self, screen):
+
+        damage_dealt_rect = pygame.Rect(self.x - 75, self.y - self.radius - 60, 150, 60)
+        pygame.draw.ellipse(screen, (133, 98, 42), damage_dealt_rect)
+
+        damage_dealt_info_text = self.font.render("Damage dealt", True, (255, 255, 255))
+        screen.blit(damage_dealt_info_text, (self.x - 50, self.y - self.radius - 45))
+
+        
+        damage_dealt_str = str(int(self.damage_dealt))
+        if(int(self.damage_dealt) >= 1_000_000_000):
+            damage_dealt_str = str(int(self.damage_dealt // 1_000_000_000)) + " B"
+        # Possibly can add more checks for M, K, etc.
+
+        offset_damage_dealt = 5 * (len(damage_dealt_str) - 1) if len(damage_dealt_str) > 1 else 0
+        damage_dealt_amount_text = self.font.render(damage_dealt_str, True, (255, 255, 255))
+        screen.blit(damage_dealt_amount_text, (self.x - offset_damage_dealt, self.y - self.radius - 25))
+        
+        damage_info_rect = pygame.Rect(self.x - self.radius * 0.5 - 150, self.y - self.radius * 0.3 - 5, 150, 60)
+        pygame.draw.ellipse(screen, (133, 98, 42), damage_info_rect)
+
+        damage_text = self.font.render("Damage: " + str(int(self.damage)), True, (255, 255, 255))
+        screen.blit(damage_text, (self.x - self.radius * 0.5 - 120, self.y - self.radius * 0.3 + 15))
+
+        cooldown_info_rect = pygame.Rect(self.x - self.radius * 0.5 - 150, self.y + self.radius * 0.3 - 5, 150, 60)
+        pygame.draw.ellipse(screen, (133, 98, 42), cooldown_info_rect)
+
+        damage_str = str(int(self.cooldown))
+        offset_damage = 10 * (len(damage_str) - 3) if len(damage_str) > 3 else 0
+        damage_text = self.font.render("Cooldown: " + damage_str, True, (255, 255, 255))
+        screen.blit(damage_text, (self.x - self.radius * 0.5 - 130 - offset_damage , self.y + self.radius * 0.3 + 15))
 
 
     def draw_on_top(self, screen):
