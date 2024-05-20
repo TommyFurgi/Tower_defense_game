@@ -13,6 +13,9 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.effects = dict()
         self.prepare_effects_dict()
         
+        self.effects_resistance = dict() # dictionary of effects that enemy is resistant to
+        self.prepare_effects_resistance_dict()
+        
         self.poison_resistance = 0.25 # 0.25%
 
         self.damage_flash_color = (255, 255, 255)
@@ -137,11 +140,19 @@ class Enemy(pygame.sprite.Sprite, ABC):
             
     # Damage
     def lose_hp(self, hp_lost, color = (255, 255, 255)):
-        self.health -= hp_lost
+        
+        if self.health < hp_lost:
+            actual_damage = self.health
+            self.health = 0
+        else:
+            actual_damage = hp_lost
+            self.health -= hp_lost
         
         if pygame.time.get_ticks() - self.damage_flash_timer > self.damage_flash_duration:
             self.damage_flash_color = color
             self.damage_flash_timer = pygame.time.get_ticks()
+            
+        return actual_damage
         
 
     def to_delete(self):
@@ -174,17 +185,24 @@ class Enemy(pygame.sprite.Sprite, ABC):
         for effect in EffectType:
             self.effects[effect] = None
 
+    def prepare_effects_resistance_dict(self):
+        for effect in EffectType:
+            self.effects_resistance[effect] = False
 
+    def is_resistant(self, effect_type):
+        return self.effects_resistance[effect_type]
+    
     def add_effect(self, new_effect):
         # Enemy should only have one effect of given type at a time 
         match new_effect.get_effect_type():
 
-            case EffectType.POISON:
+            case EffectType.POISON if not self.is_resistant(EffectType.POISON):
                 
                 self.remove_effect(EffectType.POISON)
                 self.effects[EffectType.POISON] = new_effect
+                return True
 
-            case EffectType.BOOST:
+            case EffectType.BOOST if not self.is_resistant(EffectType.BOOST):
                 
                 #Slowdown cancels boost
                 if self.effects[EffectType.SLOWDOWN]:
@@ -193,8 +211,9 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 self.remove_effect(EffectType.BOOST)
                 self.effects[EffectType.BOOST] = new_effect
                 self.handle_boost_effect()
+                return True
 
-            case EffectType.SLOWDOWN:
+            case EffectType.SLOWDOWN if not self.is_resistant(EffectType.SLOWDOWN):
                 
                 #Slowdown cancels boost
                 if self.effects[EffectType.BOOST]:
@@ -203,6 +222,9 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 self.remove_effect(EffectType.SLOWDOWN)
                 self.effects[EffectType.SLOWDOWN] = new_effect
                 self.handle_slow_down_effect()
+                return True
+    
+        return False
     
 
     def remove_effect(self, effect_type):
