@@ -1,5 +1,7 @@
 import pygame
 from source_manager import SourceManager
+import pygame
+from source_manager import SourceManager
  
  
 class Map():
@@ -23,4 +25,4 @@ class Map():
 
     def draw_background(self):
         self.screen.blit(self.background, (0, 0))
-        
+       

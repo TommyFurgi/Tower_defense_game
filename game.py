@@ -8,6 +8,7 @@ from towers.magic_tower import MagicTower
 from towers.cannon_tower import CannonTower
 from waves.wave_manager import WaveManager
 from source_manager import SourceManager
+from text_alert import TextAlert
 # from editor import Editor
 # from debug import Debug
 
@@ -24,7 +25,7 @@ class Game():
         self.menu = Menu(self.screen)
         self.main_menu = Main_menu(self.screen)
 
-        self.money = 2000
+        self.money = 800
         self.points = 0
         self.hearts = 3
         self.wave = 1
@@ -42,8 +43,10 @@ class Game():
 
         self.drag_object = None
         self.sound_play = True
-        
+         
         self.sped_up = False
+        
+        self.text_alerts = set()
         
         self.wave_manager = WaveManager()
         self.current_wave = self.wave_manager.get_next_wave()
@@ -102,6 +105,7 @@ class Game():
         self.game_map.draw_background()
         self.draw_enemies_and_towers()
         self.draw_on_top()
+        self.draw_text_alerts()
         
     
         if self.drag_object:
@@ -135,8 +139,9 @@ class Game():
             if new_enemy:
                 self.enemies.add(new_enemy)
                 
-        elif len(self.enemies) == 0: # All enemies were killed
+        elif len(self.enemies) == 0 and self.end_game == False: # All enemies were killed
             self.game_pause = True
+            self.text_alerts.add(TextAlert("Wave " + str(self.wave) + " completed!", 2000, (0, 255, 0)))
 
             if self.wave_manager.has_next_wave(): # There is a next wave
                 self.current_wave = self.wave_manager.get_next_wave()
@@ -188,10 +193,11 @@ class Game():
                 self.player_won = False
                 self.end_game = True
                 self.show_main_menu = True
+                self.text_alerts.add(TextAlert("Game over!", 2000, (255, 0, 0)))
 
 
     def handle_restart_game(self): 
-        self.money = 2000
+        self.money = 800
         self.points = 0
         self.hearts = 3
         self.wave = 1
@@ -212,6 +218,16 @@ class Game():
         self.show_main_menu = False
         self.end_game = False
 
+    def draw_text_alerts(self):
+        
+        alerts_to_delete = []
+        
+        for text_alert in self.text_alerts:
+            if not text_alert.draw(self.screen):
+                alerts_to_delete.append(text_alert)
+                
+        for alert in alerts_to_delete:
+            self.text_alerts.remove(alert)
 
     def run(self):
         selected_tower = None
@@ -283,7 +299,7 @@ class Game():
 
                             if not self.drag_object:
                                 if selected_tower:
-                                    value = selected_tower.manage_tower_action(clicked_position, self.money)
+                                    value = selected_tower.manage_tower_action(clicked_position, self.money, self.text_alerts)
 
                                     self.money += value
                                     if value >= 0: 
@@ -346,7 +362,7 @@ class Game():
                                     self.drag_object = None
                                     drag_object_name = None
                                     new_tower_cost = 0
-                                    # TODO: inform about not enought amount of money
+                                    self.text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0)))
                                     continue
 
                                 match drag_object_name:

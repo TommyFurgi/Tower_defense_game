@@ -1,6 +1,6 @@
 import pygame
 from abc import ABC
-
+from text_alert import TextAlert
 
 class Tower(pygame.sprite.Sprite, ABC): 
     def __init__(self, x, y): 
@@ -90,13 +90,13 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.draw_tower_menu(screen)
 
 
-    def manage_tower_action(self, clicked_position, money):
+    def manage_tower_action(self, clicked_position, money, text_alerts):
         if self.sell_icon_rect.collidepoint(clicked_position):
             return self.price
 
         if self.level <= 3 and self.upgrade_icon_rect.collidepoint(clicked_position):
             if money - self.price < 0:
-                # TODO: inform about not enough money
+                text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0)))
                 return 0
             
             self.level += 1
