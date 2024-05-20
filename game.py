@@ -139,7 +139,7 @@ class Game():
             if new_enemy:
                 self.enemies.add(new_enemy)
                 
-        elif len(self.enemies) == 0: # All enemies were killed
+        elif len(self.enemies) == 0 and self.end_game == False: # All enemies were killed
             self.game_pause = True
             self.text_alerts.add(TextAlert("Wave " + str(self.wave) + " completed!", 2000, (0, 255, 0)))
 
@@ -193,6 +193,7 @@ class Game():
                 self.player_won = False
                 self.end_game = True
                 self.show_main_menu = True
+                self.text_alerts.add(TextAlert("Game over!", 2000, (255, 0, 0)))
 
 
     def handle_restart_game(self): 
