@@ -3,6 +3,7 @@ import pygame
 from directions import Direction
 import random
 from source_manager import SourceManager
+from effects.effect_type import EffectType
 
 
 class EnemyMagic(Enemy):
@@ -33,6 +34,8 @@ class EnemyMagic(Enemy):
         self.health = 300
         self.max_health = 300
         self.reward = 20
+
+        self.effects_resistance[EffectType.SLOWDOWN] = True # Cannot be slowed down
 
         
     def load_images(self, images_filename):
@@ -68,7 +71,3 @@ class EnemyMagic(Enemy):
         self.img = self.imgs_right[0]
 
         self.flipped = False
-
-    # cannot be slowed down
-    def handle_slow_down_effect(self):
-        pass

@@ -36,9 +36,10 @@ class MagicTower(Tower):
             self.damage_flash_timer = pygame.time.get_ticks()
 
             for enemy in enemies_collision:
-                enemy.lose_hp(self.damage)
+                actual_damage = enemy.lose_hp(self.damage)
+                self.damage_dealt += actual_damage
                 enemy.add_effect(SlowDownEffect(0.85, 3))
-                self.damage_dealt += self.damage
+                
         
 
     def draw(self, screen):

@@ -3,6 +3,7 @@ import pygame
 from directions import Direction
 import random
 from source_manager import SourceManager
+from effects.effect_type import EffectType
 
 
 class EnemyBasic(Enemy):
@@ -32,6 +33,8 @@ class EnemyBasic(Enemy):
         self.health = 200
         self.max_health = 200
         self.reward = 30
+        
+        self.effects_resistance[EffectType.POISON] = True # Cannot be poisoned
     
 
     def load_images(self, images_filename):
@@ -67,7 +70,3 @@ class EnemyBasic(Enemy):
         self.img = self.imgs_right[0]
 
         self.flipped = False
-
-    # cannot be poisoned
-    def handle_poison_effect(self):
-        pass

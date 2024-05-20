@@ -45,10 +45,11 @@ class ArcherTower(Tower):
         for bullet in self.bullets:
             enemy_hitted = bullet.hit()
             if enemy_hitted:
-                enemy_hitted.add_effect(PoisonEffect(10, 3))
-                self.damage_dealt += 3 * 10
-                enemy_hitted.lose_hp(self.damage)
-                self.damage_dealt += self.damage
+                if(enemy_hitted.add_effect(PoisonEffect(10, 3))): # Returns true if the effect was added, false if enemy is resistant to the effect
+                    self.damage_dealt += 3 * 10
+                actual_damage = enemy_hitted.lose_hp(self.damage)
+                self.damage_dealt += actual_damage
+                
                 bullets_to_remove.append(bullet)
 
         for bullet in bullets_to_remove:
