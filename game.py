@@ -356,30 +356,36 @@ class Game():
                                         selected_tower = tower
                                         break
 
-                            elif self.drag_object and not self.drag_object_conflict():
+                            elif self.drag_object:
+                                
+                                if not self.drag_object_conflict():
+                                
+                                    if self.money - new_tower_cost < 0:
+                                        self.drag_object = None
+                                        drag_object_name = None
+                                        new_tower_cost = 0
+                                        self.text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0)))
+                                        continue
 
-                                if self.money - new_tower_cost < 0:
+                                    match drag_object_name:
+                                        case "archer":
+                                            tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42)
+                                            self.money -= new_tower_cost
+
+                                        case "magic":
+                                            tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
+                                            self.money -= new_tower_cost
+                                            
+                                        case "cannon":
+                                            tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
+                                            self.money -= new_tower_cost
+
+                                    self.towers.add(tower)
                                     self.drag_object = None
-                                    drag_object_name = None
-                                    new_tower_cost = 0
-                                    self.text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0)))
-                                    continue
-
-                                match drag_object_name:
-                                    case "archer":
-                                        tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42)
-                                        self.money -= new_tower_cost
-
-                                    case "magic":
-                                        tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
-                                        self.money -= new_tower_cost
-                                        
-                                    case "cannon":
-                                        tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
-                                        self.money -= new_tower_cost
-
-                                self.towers.add(tower)
-                                self.drag_object = None
+                                    
+                                else:
+                                    
+                                    self.text_alerts.add(TextAlert("Can't place a tower here!", 2000, (255, 0, 0)))
 
 
                         elif event.button == 3:
