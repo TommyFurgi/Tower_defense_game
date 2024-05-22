@@ -72,8 +72,8 @@ class EnemyBoss(Enemy):
         self.flipped = False
 
 
-    def update(self, game_pause, enemies):
-        super().update(game_pause, enemies)
+    def update(self, game_pause, enemies, delta_time):
+        super().update(game_pause, enemies, delta_time)
         self.find_enemies_around(enemies)
 
 
