@@ -27,7 +27,9 @@ class ArcherTower(Tower):
         self.bullets = pygame.sprite.Group()
         self.update_tower_feature_rect()
 
-        self.set_tower_target(Target.LEAST_HEALTH)
+        self.set_tower_target(Target.FIRST)
+
+        self.target_modes = [Target.FIRST, Target.ALL, Target.LEAST_HEALTH, Target.MOST_HEALTH]
     
 
     def find_targets(self, enemies, delta_time):

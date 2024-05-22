@@ -31,6 +31,8 @@ class MagicTower(Tower):
 
         self.set_tower_target(Target.ALL)
 
+        self.target_modes = [Target.ALL]
+
 
 
     def find_targets(self, enemies, delta_time):
