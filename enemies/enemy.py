@@ -7,7 +7,7 @@ from effects.effect_type import EffectType
 class Enemy(pygame.sprite.Sprite, ABC):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        
+
         self.reached_last_point = False
         
         self.effects = dict()
@@ -62,14 +62,17 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 self.img = self.imgs_left[self.animation_count//10] 
 
 
-    def draw(self, screen):
+    def draw(self, screen, delta_time):
         self.enemy_animation()
     
-        if pygame.time.get_ticks() - self.damage_flash_timer < self.damage_flash_duration:
+        if self.damage_flash_timer > 0:
+            
             img_copy = self.img.copy() # Creates a copy of img (Could be inefficient, but you can't directly change pixels on img)
             img_copy.fill(self.damage_flash_color, special_flags = pygame.BLEND_RGB_MAX) # Fills non transparent pixels of copied image with given color
             self.img = img_copy
-            #screen.blit(img_copy, (self.x - self.img.get_width()/2, self.y - self.img.get_height())) 
+            
+            self.damage_flash_timer -= delta_time
+            
             
         if len(self.colors) > 0:
             img_copy = self.img.copy()
@@ -83,7 +86,9 @@ class Enemy(pygame.sprite.Sprite, ABC):
 
 
 
-    def move(self):
+    def move(self, delta_time):
+        
+        
         self.animation_count += 1
         if self.animation_count >= len(self.imgs_up) * 10:
             self.animation_count = 0
@@ -94,7 +99,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         else:
             self.reached_last_point = True
             return
-        
+            
         if self.x > 1350:
             self.reached_last_point = True
             return
@@ -108,7 +113,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         move_x, move_y = ((self.x + dirn[0]), (self.y + dirn[1]))
         self.x = move_x
         self.y = move_y
-        
+            
         self.rect.center = (move_x, move_y)
 
         # Go to next point
@@ -126,15 +131,15 @@ class Enemy(pygame.sprite.Sprite, ABC):
             else:
                 if self.x <= x2 and self.y <= y2:
                     self.path_pos += 1
- 
-        
+    
+            
         # Setting direction
         self.direction = Direction.set_direction(dirn)
 
 
-    def update(self, game_pause, enemies):
+    def update(self, game_pause, enemies, delta_time):
         if not game_pause:
-            self.move()
+            self.move(delta_time)
             self.remove_inactive_effects()
             self.handle_poison_effect()
             
@@ -148,9 +153,9 @@ class Enemy(pygame.sprite.Sprite, ABC):
             actual_damage = hp_lost
             self.health -= hp_lost
         
-        if pygame.time.get_ticks() - self.damage_flash_timer > self.damage_flash_duration:
+        if self.damage_flash_timer <= 0:
             self.damage_flash_color = color
-            self.damage_flash_timer = pygame.time.get_ticks()
+            self.damage_flash_timer = self.damage_flash_duration
             
         return actual_damage
         

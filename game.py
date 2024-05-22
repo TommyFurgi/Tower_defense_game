@@ -17,6 +17,8 @@ class Game():
     def __init__(self, screen):
         self.fps = 60
         self.fpsClock = pygame.time.Clock()
+        self.time_scale = 1
+        self.delta_time = self.fpsClock.get_time() * self.time_scale # time since last frame multiplied by time scale (eg. timescale = 2 => 2x speed)
         
         self.screen = screen
         self.width, self.height = screen.get_width(), screen.get_height()
@@ -89,7 +91,7 @@ class Game():
         sprites = self.enemies.sprites() + self.towers.sprites()
         
         for sprite in sorted(sprites, key=lambda s: s.y):
-            sprite.draw(self.screen)
+            sprite.draw(self.screen, self.delta_time)
 
 
     # Images and effects that have to appear on top of everything else
@@ -97,7 +99,7 @@ class Game():
         sprites = self.towers.sprites()
         
         for sprite in sprites:
-            sprite.draw_on_top(self.screen)
+            sprite.draw_on_top(self.screen, self.delta_time)
 
 
     def update_screen(self):
@@ -154,8 +156,8 @@ class Game():
         
 
     def update_game(self):
-        self.towers.update(self.game_pause, self.enemies, self.screen)
-        self.enemies.update(self.game_pause, self.enemies)
+        self.towers.update(self.game_pause, self.enemies, self.screen, self.delta_time)
+        self.enemies.update(self.game_pause, self.enemies, self.delta_time)
         
         if not self.game_pause:
             self.check_all_enemies()
@@ -328,9 +330,11 @@ class Game():
 
                                         elif drag_object_name == "speed_up":
                                             if self.sped_up:
+                                                self.time_scale = 1
                                                 self.fps = 60
                                                 self.sped_up = False
                                             else:
+                                                self.time_scale = 2
                                                 self.fps = 120
                                                 self.sped_up = True
 
@@ -404,5 +408,7 @@ class Game():
             pygame.display.flip()
    
             self.fpsClock.tick(self.fps)
-
+            self.delta_time = self.fpsClock.get_time() * self.time_scale
+            
+            print("fps: ", self.fpsClock.get_fps())
 

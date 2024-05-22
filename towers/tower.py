@@ -22,7 +22,7 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.font = pygame.font.Font(None, 24) 
         
 
-    def draw(self, screen):
+    def draw(self, screen, delta_time):
         screen.blit(self.image, (self.x-self.image.get_width()//2, self.y-self.image.get_height()//2))
 
 
@@ -83,10 +83,10 @@ class Tower(pygame.sprite.Sprite, ABC):
         screen.blit(damage_text, (self.x - self.radius * 0.5 - 130 - offset_damage , self.y + self.radius * 0.3 + 15))
 
 
-    def draw_on_top(self, screen):
+    def draw_on_top(self, screen, delta_time):
         if self.selected:
             self.draw_radius(screen)
-            self.draw(screen) # So the tower isn't drawn under the circle
+            self.draw(screen, delta_time) # So the tower isn't drawn under the circle
             self.draw_tower_menu(screen)
 
 
