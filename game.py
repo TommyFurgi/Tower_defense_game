@@ -300,16 +300,21 @@ class Game():
                             # print(clicked_position)
 
                             if not self.drag_object:
+                                
                                 if selected_tower:
+                                    
+                                    arrow_clicked = selected_tower.manage_tower_target_mode(clicked_position)
+                                    
                                     value = selected_tower.manage_tower_action(clicked_position, self.money, self.text_alerts)
-
+                                    
                                     self.money += value
                                     if value >= 0: 
                                         if value > 0: # tower sold
                                             self.towers.remove(selected_tower)
 
-                                        selected_tower.selected = False
-                                        selected_tower = None
+                                        if not arrow_clicked:
+                                            selected_tower.selected = False
+                                            selected_tower = None
                                         
                                         
                                 if self.menu.rect.collidepoint(clicked_position):
@@ -409,6 +414,4 @@ class Game():
    
             self.fpsClock.tick(self.fps)
             self.delta_time = self.fpsClock.get_time() * self.time_scale
-            
-            print("fps: ", self.fpsClock.get_fps())
 

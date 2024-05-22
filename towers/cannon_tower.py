@@ -2,6 +2,7 @@ import pygame
 from towers.tower import Tower
 from towers.bullet import Bullet
 from source_manager import SourceManager
+from towers.target import Target
 
 
 class CannonTower(Tower):
@@ -28,18 +29,22 @@ class CannonTower(Tower):
         self.bullets = pygame.sprite.Group()
         self.update_tower_feature_rect()
 
+        self.set_tower_target(Target.FIRST)
+
+        self.target_modes = [Target.FIRST, Target.LAST, Target.LEAST_HEALTH, Target.MOST_HEALTH]
+
         
     def find_targets(self, enemies, delta_time):
 
         if self.cooldown_timer <= 0:
             
-            enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
+            enemy = self.get_tower_target(enemies)
             
-            if enemies_collision:
+            if enemy:
                 
                 self.cooldown_timer = self.cooldown
-                enemy_x, enemy_y = enemies_collision[0].get_position()
-                self.bullets.add(Bullet(25, self.x, self.y-70, enemy_x, enemy_y - 60, enemies_collision[0]))
+                enemy_x, enemy_y = enemy.get_position()
+                self.bullets.add(Bullet(25, self.x, self.y-70, enemy_x, enemy_y - 60, enemy))
                 
         else:
             self.cooldown_timer -= delta_time

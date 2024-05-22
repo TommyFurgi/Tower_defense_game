@@ -1,6 +1,7 @@
 import pygame
 from abc import ABC
 from text_alert import TextAlert
+from towers.target import Target
 
 class Tower(pygame.sprite.Sprite, ABC): 
     def __init__(self, x, y): 
@@ -12,6 +13,11 @@ class Tower(pygame.sprite.Sprite, ABC):
 
         self.damage_dealt = 0
 
+        self.tower_target = Target.NOT_SET
+
+        self.target_modes = []
+        self.current_target_mode = 0
+
         self.time_from_last_shot = pygame.time.get_ticks()
 
         sell_icon = pygame.image.load('assets/images/towers/sell_icon.png').convert_alpha()
@@ -21,6 +27,11 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.upgrade_icon = pygame.transform.scale(upgrade_icon, (50, 50))
         self.font = pygame.font.Font(None, 24) 
         
+        self.arrow_icon = pygame.image.load('assets/images/towers/arrow.png').convert_alpha()
+        self.arrow_right = pygame.transform.scale(self.arrow_icon, (30, 30))
+        self.arrow_left = pygame.transform.rotate(self.arrow_icon, 180)
+        self.arrow_left = pygame.transform.scale(self.arrow_left, (30, 30))
+
 
     def draw(self, screen, delta_time):
         screen.blit(self.image, (self.x-self.image.get_width()//2, self.y-self.image.get_height()//2))
@@ -29,6 +40,7 @@ class Tower(pygame.sprite.Sprite, ABC):
     def draw_tower_menu(self, screen):
 
         self.draw_stats(screen)
+        self.draw_target_mode_selection(screen)
 
         upgrade_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3 - 5, 150, 60)
         pygame.draw.ellipse(screen, (133, 98, 42), upgrade_rect)
@@ -55,7 +67,7 @@ class Tower(pygame.sprite.Sprite, ABC):
         damage_dealt_rect = pygame.Rect(self.x - 75, self.y - self.radius - 60, 150, 60)
         pygame.draw.ellipse(screen, (133, 98, 42), damage_dealt_rect)
 
-        damage_dealt_info_text = self.font.render("Damage dealt", True, (255, 255, 255))
+        damage_dealt_info_text = self.font.render("Damage dealt:", True, (255, 255, 255))
         screen.blit(damage_dealt_info_text, (self.x - 50, self.y - self.radius - 45))
 
         
@@ -82,6 +94,21 @@ class Tower(pygame.sprite.Sprite, ABC):
         damage_text = self.font.render("Cooldown: " + damage_str, True, (255, 255, 255))
         screen.blit(damage_text, (self.x - self.radius * 0.5 - 130 - offset_damage , self.y + self.radius * 0.3 + 15))
 
+    def draw_target_mode_selection(self, screen):
+
+        target_mode_rect = pygame.Rect(self.x - 75, self.y + self.radius, 150, 60)
+        pygame.draw.ellipse(screen, (133, 98, 42), target_mode_rect)        
+
+        target_mode_info_text = self.font.render("Target mode:", True, (255, 255, 255))
+        screen.blit(target_mode_info_text, (self.x - 45, self.y + self.radius + 15))
+
+        target_mode_text = self.font.render(self.tower_target.value, True, (255, 255, 255))
+        text_width = target_mode_text.get_width()
+        text_x = self.x - text_width // 2
+        screen.blit(target_mode_text, (text_x, self.y + self.radius + 35))
+
+        screen.blit(self.arrow_right, (self.x + 60, self.y + self.radius + 15))
+        screen.blit(self.arrow_left, (self.x - 90, self.y + self.radius + 15))
 
     def draw_on_top(self, screen, delta_time):
         if self.selected:
@@ -89,6 +116,63 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.draw(screen, delta_time) # So the tower isn't drawn under the circle
             self.draw_tower_menu(screen)
 
+
+    def set_tower_target(self, target):
+        self.tower_target = target
+
+    def get_tower_target(self, enemies):
+
+        enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
+
+        if enemies_collision:
+
+            match self.tower_target:
+                case Target.FIRST:
+                    
+                    first_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.path_pos > first_enemy.path_pos:
+                            first_enemy = enemy
+                    
+                    return first_enemy
+
+                case Target.LAST:
+                    
+                    last_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.path_pos < last_enemy.path_pos:
+                            last_enemy = enemy
+
+                    return last_enemy
+
+                case Target.MOST_HEALTH:
+                    
+                    most_hp_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.health > most_hp_enemy.health:
+                            most_hp_enemy = enemy
+                    
+                    return most_hp_enemy
+
+                case Target.LEAST_HEALTH:
+                    
+                    least_hp_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.health < least_hp_enemy.health:
+                            least_hp_enemy = enemy
+
+                    return least_hp_enemy
+
+                case Target.ALL:
+                    return enemies_collision
+                case Target.NOT_SET:
+                    raise ValueError("Tower target not set!")
+                
+        return []
 
     def manage_tower_action(self, clicked_position, money, text_alerts):
         if self.sell_icon_rect.collidepoint(clicked_position):
@@ -107,13 +191,33 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.update_tower_feature_rect()
 
             return -self.price
-        
         return 0
+
+    
+    def manage_tower_target_mode(self, clicked_position):
+        
+        if self.arrow_right_rect.collidepoint(clicked_position):
+            self.current_target_mode = (self.current_target_mode + 1) % len(self.target_modes)
+            self.tower_target = self.target_modes[self.current_target_mode]
+            return True
+        
+        if self.arrow_left_rect.collidepoint(clicked_position):
+            if self.current_target_mode == 0:
+                self.current_target_mode = len(self.target_modes) - 1
+            else:
+                self.current_target_mode -= 1
+
+            self.tower_target = self.target_modes[self.current_target_mode]
+            return True
+        
+        return False
 
 
     def update_tower_feature_rect(self):
         self.sell_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3, 50, 50) 
-        self.upgrade_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y - self.radius * 0.3, 50, 50)  
+        self.upgrade_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y - self.radius * 0.3, 50, 50) 
+        self.arrow_right_rect = pygame.Rect(self.x + 60, self.y + self.radius + 15, 30, 30) 
+        self.arrow_left_rect = pygame.Rect(self.x - 90, self.y + self.radius + 15, 30, 30)
 
 
     def draw_radius(self, screen):
