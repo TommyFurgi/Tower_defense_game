@@ -7,10 +7,7 @@ from effects.effect_type import EffectType
 class Enemy(pygame.sprite.Sprite, ABC):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        
-        self.move_cooldown = 100
-        self.move_cooldown_timer = 0
-        
+
         self.reached_last_point = False
         
         self.effects = dict()
@@ -91,60 +88,53 @@ class Enemy(pygame.sprite.Sprite, ABC):
 
     def move(self, delta_time):
         
-        #print(self.move_cooldown_timer, delta_time)
-        if self.move_cooldown_timer <= 0:
         
-            self.animation_count += 1
-            if self.animation_count >= len(self.imgs_up) * 10:
-                self.animation_count = 0
+        self.animation_count += 1
+        if self.animation_count >= len(self.imgs_up) * 10:
+            self.animation_count = 0
 
-            x1, y1 = self.path[self.path_pos]
-            if self.path_pos + 1 < len(self.path):
-                x2, y2 = self.path[self.path_pos+1]
+        x1, y1 = self.path[self.path_pos]
+        if self.path_pos + 1 < len(self.path):
+            x2, y2 = self.path[self.path_pos+1]
+        else:
+            self.reached_last_point = True
+            return
+            
+        if self.x > 1350:
+            self.reached_last_point = True
+            return
+
+        dirn = ((x2-x1)*2, (y2-y1)*2)
+        length = math.sqrt((dirn[0])**2 + (dirn[1])**2)
+        dirn = (dirn[0]/length, dirn[1]/length)
+        dirn = (dirn[0] * self.speed, dirn[1] * self.speed)
+
+
+        move_x, move_y = ((self.x + dirn[0]), (self.y + dirn[1]))
+        self.x = move_x
+        self.y = move_y
+            
+        self.rect.center = (move_x, move_y)
+
+        # Go to next point
+        if dirn[0] >= 0: # moving right
+            if dirn[1] >= 0: # moving down
+                if self.x >= x2 and self.y >= y2:
+                    self.path_pos += 1
             else:
-                self.reached_last_point = True
-                return
-            
-            if self.x > 1350:
-                self.reached_last_point = True
-                return
-
-            dirn = ((x2-x1)*2, (y2-y1)*2)
-            length = math.sqrt((dirn[0])**2 + (dirn[1])**2)
-            dirn = (dirn[0]/length, dirn[1]/length)
-            dirn = (dirn[0] * self.speed, dirn[1] * self.speed)
-
-
-            move_x, move_y = ((self.x + dirn[0]), (self.y + dirn[1]))
-            self.x = move_x
-            self.y = move_y
-            
-            self.rect.center = (move_x, move_y)
-
-            # Go to next point
-            if dirn[0] >= 0: # moving right
-                if dirn[1] >= 0: # moving down
-                    if self.x >= x2 and self.y >= y2:
-                        self.path_pos += 1
-                else:
-                    if self.x >= x2 and self.y <= y2:
-                        self.path_pos += 1
-            else: # moving left
-                if dirn[1] >= 0:  # moving down
-                    if self.x <= x2 and self.y >= y2:
-                        self.path_pos += 1
-                else:
-                    if self.x <= x2 and self.y <= y2:
-                        self.path_pos += 1
+                if self.x >= x2 and self.y <= y2:
+                    self.path_pos += 1
+        else: # moving left
+            if dirn[1] >= 0:  # moving down
+                if self.x <= x2 and self.y >= y2:
+                    self.path_pos += 1
+            else:
+                if self.x <= x2 and self.y <= y2:
+                    self.path_pos += 1
     
             
-            # Setting direction
-            self.direction = Direction.set_direction(dirn)
-            
-            self.move_cooldown_timer = self.move_cooldown
-            
-        else:
-            self.move_cooldown_timer -= delta_time
+        # Setting direction
+        self.direction = Direction.set_direction(dirn)
 
 
     def update(self, game_pause, enemies, delta_time):

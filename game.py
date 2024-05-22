@@ -15,7 +15,7 @@ from text_alert import TextAlert
 
 class Game():
     def __init__(self, screen):
-        #self.fps = 60
+        self.fps = 60
         self.fpsClock = pygame.time.Clock()
         self.time_scale = 1
         self.delta_time = self.fpsClock.get_time() * self.time_scale # time since last frame multiplied by time scale (eg. timescale = 2 => 2x speed)
@@ -330,9 +330,11 @@ class Game():
 
                                         elif drag_object_name == "speed_up":
                                             if self.sped_up:
+                                                self.time_scale = 1
                                                 self.fps = 60
                                                 self.sped_up = False
                                             else:
+                                                self.time_scale = 2
                                                 self.fps = 120
                                                 self.sped_up = True
 
@@ -405,8 +407,8 @@ class Game():
 
             pygame.display.flip()
    
-            self.fpsClock.tick()
+            self.fpsClock.tick(self.fps)
             self.delta_time = self.fpsClock.get_time() * self.time_scale
             
-            #print("fps: ", self.fpsClock.get_fps())
+            print("fps: ", self.fpsClock.get_fps())
 
