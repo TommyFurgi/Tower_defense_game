@@ -16,9 +16,11 @@ class CannonTower(Tower):
         self.rect.center = (x, y) 
         
         self.damage = 150
-        self.radius = 100
+        self.radius = 130
         self.cooldown = 1700
         self.price = 500
+        
+        self.cooldown_timer = self.cooldown
         
         self.blast_radius = 70
         self.blast_damage = 40
@@ -27,19 +29,24 @@ class CannonTower(Tower):
         self.update_tower_feature_rect()
 
         
-    def find_targets(self, enemies):
-        
-        enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
+    def find_targets(self, enemies, delta_time):
 
-        if enemies_collision and pygame.time.get_ticks() - self.time_from_last_shot > self.cooldown:
-            self.time_from_last_shot = pygame.time.get_ticks()
-            enemy_x, enemy_y = enemies_collision[0].get_position()
-            self.bullets.add(Bullet(25, self.x, self.y-70, enemy_x, enemy_y - 60, enemies_collision[0]))
+        if self.cooldown_timer <= 0:
+            
+            enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
+            
+            if enemies_collision:
+                
+                self.cooldown_timer = self.cooldown
+                enemy_x, enemy_y = enemies_collision[0].get_position()
+                self.bullets.add(Bullet(25, self.x, self.y-70, enemy_x, enemy_y - 60, enemies_collision[0]))
+                
+        else:
+            self.cooldown_timer -= delta_time
 
-
-    def update(self, game_pasue, enemies, screen):
+    def update(self, game_pasue, enemies, screen, delta_time):
         if not game_pasue:
-            self.find_targets(enemies)
+            self.find_targets(enemies, delta_time)
 
         self.bullets.update(game_pasue, screen)
 
