@@ -1,6 +1,7 @@
 import pygame
 from abc import ABC
 from text_alert import TextAlert
+from towers.target import Target
 
 class Tower(pygame.sprite.Sprite, ABC): 
     def __init__(self, x, y): 
@@ -12,6 +13,7 @@ class Tower(pygame.sprite.Sprite, ABC):
 
         self.damage_dealt = 0
 
+        self.tower_target = Target.NOT_SET
         self.time_from_last_shot = pygame.time.get_ticks()
 
         sell_icon = pygame.image.load('assets/images/towers/sell_icon.png').convert_alpha()
@@ -82,13 +84,69 @@ class Tower(pygame.sprite.Sprite, ABC):
         damage_text = self.font.render("Cooldown: " + damage_str, True, (255, 255, 255))
         screen.blit(damage_text, (self.x - self.radius * 0.5 - 130 - offset_damage , self.y + self.radius * 0.3 + 15))
 
-
     def draw_on_top(self, screen, delta_time):
         if self.selected:
             self.draw_radius(screen)
             self.draw(screen, delta_time) # So the tower isn't drawn under the circle
             self.draw_tower_menu(screen)
 
+
+    def set_tower_target(self, target):
+        self.tower_target = target
+
+    def get_tower_target(self, enemies):
+
+        enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
+
+        if enemies_collision:
+
+            match self.tower_target:
+                case Target.FIRST:
+                    
+                    first_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.path_pos > first_enemy.path_pos:
+                            first_enemy = enemy
+                    
+                    return first_enemy
+
+                case Target.LAST:
+                    
+                    last_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.path_pos < last_enemy.path_pos:
+                            last_enemy = enemy
+
+                    return last_enemy
+
+                case Target.MOST_HEALTH:
+                    
+                    most_hp_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.health > most_hp_enemy.health:
+                            most_hp_enemy = enemy
+                    
+                    return most_hp_enemy
+
+                case Target.LEAST_HEALTH:
+                    
+                    least_hp_enemy = enemies_collision[0]
+
+                    for enemy in enemies_collision:
+                        if enemy.health < least_hp_enemy.health:
+                            least_hp_enemy = enemy
+
+                    return least_hp_enemy
+
+                case Target.ALL:
+                    return enemies_collision
+                case Target.NOT_SET:
+                    raise ValueError("Tower target not set!")
+                
+        return []
 
     def manage_tower_action(self, clicked_position, money, text_alerts):
         if self.sell_icon_rect.collidepoint(clicked_position):

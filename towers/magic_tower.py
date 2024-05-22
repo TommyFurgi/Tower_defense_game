@@ -2,6 +2,7 @@ import pygame
 from towers.tower import Tower
 from effects.slow_down_effect import SlowDownEffect
 from source_manager import SourceManager
+from towers.target import Target
 
 
 class MagicTower(Tower):
@@ -28,13 +29,15 @@ class MagicTower(Tower):
 
         self.update_tower_feature_rect()
 
+        self.set_tower_target(Target.ALL)
+
 
 
     def find_targets(self, enemies, delta_time):
         
         if self.cooldown_timer <= 0:
                 
-            enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
+            enemies_collision = self.get_tower_target(enemies)
                 
             if enemies_collision:
                 
