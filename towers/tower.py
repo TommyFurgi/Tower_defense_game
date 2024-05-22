@@ -27,7 +27,7 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.upgrade_icon = pygame.transform.scale(upgrade_icon, (50, 50))
         self.font = pygame.font.Font(None, 24) 
         
-        self.arrow_icon = pygame.image.load('assets/images/menu/play_button.png').convert_alpha()
+        self.arrow_icon = pygame.image.load('assets/images/towers/arrow.png').convert_alpha()
         self.arrow_right = pygame.transform.scale(self.arrow_icon, (30, 30))
         self.arrow_left = pygame.transform.rotate(self.arrow_icon, 180)
         self.arrow_left = pygame.transform.scale(self.arrow_left, (30, 30))
@@ -103,10 +103,12 @@ class Tower(pygame.sprite.Sprite, ABC):
         screen.blit(target_mode_info_text, (self.x - 45, self.y + self.radius + 15))
 
         target_mode_text = self.font.render(self.tower_target.value, True, (255, 255, 255))
-        screen.blit(target_mode_text, (self.x - 45, self.y + self.radius + 30))
+        text_width = target_mode_text.get_width()
+        text_x = self.x - text_width // 2
+        screen.blit(target_mode_text, (text_x, self.y + self.radius + 35))
 
-        screen.blit(self.arrow_right, (self.x + 75, self.y + self.radius + 15))
-        screen.blit(self.arrow_left, (self.x - 105, self.y + self.radius + 15))
+        screen.blit(self.arrow_right, (self.x + 60, self.y + self.radius + 15))
+        screen.blit(self.arrow_left, (self.x - 90, self.y + self.radius + 15))
 
     def draw_on_top(self, screen, delta_time):
         if self.selected:
@@ -189,10 +191,15 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.update_tower_feature_rect()
 
             return -self.price
+        return 0
+
+    
+    def manage_tower_target_mode(self, clicked_position):
         
         if self.arrow_right_rect.collidepoint(clicked_position):
             self.current_target_mode = (self.current_target_mode + 1) % len(self.target_modes)
             self.tower_target = self.target_modes[self.current_target_mode]
+            return True
         
         if self.arrow_left_rect.collidepoint(clicked_position):
             if self.current_target_mode == 0:
@@ -201,15 +208,16 @@ class Tower(pygame.sprite.Sprite, ABC):
                 self.current_target_mode -= 1
 
             self.tower_target = self.target_modes[self.current_target_mode]
+            return True
         
-        return 0
+        return False
 
 
     def update_tower_feature_rect(self):
         self.sell_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3, 50, 50) 
         self.upgrade_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y - self.radius * 0.3, 50, 50) 
-        self.arrow_right_rect = pygame.Rect(self.x + 75, self.y + self.radius + 15, 30, 30) 
-        self.arrow_left_rect = pygame.Rect(self.x - 105, self.y + self.radius + 15, 30, 30)
+        self.arrow_right_rect = pygame.Rect(self.x + 60, self.y + self.radius + 15, 30, 30) 
+        self.arrow_left_rect = pygame.Rect(self.x - 90, self.y + self.radius + 15, 30, 30)
 
 
     def draw_radius(self, screen):

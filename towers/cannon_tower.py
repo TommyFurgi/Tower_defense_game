@@ -31,7 +31,7 @@ class CannonTower(Tower):
 
         self.set_tower_target(Target.FIRST)
 
-        self.target_modes = [Target.FIRST, Target.ALL, Target.LEAST_HEALTH, Target.MOST_HEALTH]
+        self.target_modes = [Target.FIRST, Target.LAST, Target.LEAST_HEALTH, Target.MOST_HEALTH]
 
         
     def find_targets(self, enemies, delta_time):
