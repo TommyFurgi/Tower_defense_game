@@ -6,19 +6,55 @@ class Main_menu():
     def __init__(self, screen):
         self.width, self.height = screen.get_size()
 
-        self.music = SourceManager.get_image("music").convert()
-        self.music = pygame.transform.scale(self.music, (60, 60))
+        self.music = SourceManager.get_image("music2").convert()
+        self.music = pygame.transform.scale(self.music, (100, 100))
 
         self.knight = SourceManager.get_image("knight").convert()
         self.knight = pygame.transform.scale(self.knight, (170, 500))
+
+        self.info = SourceManager.get_image("question").convert()
+        self.info = pygame.transform.scale(self.info, (100, 100))
+
+        self.back = SourceManager.get_image("back").convert()
+        self.back = pygame.transform.scale(self.back, (100, 100))
+
+        self.instruction = SourceManager.get_image("instruction").convert()
 
         self.font_buttons = pygame.font.Font(None, 24) 
         self.font_title = pygame.font.Font(None, 128)
         self.font_score = pygame.font.Font(None, 80)
         self.button_color = (83, 142, 237, 50)
         
-
         self.play_rect = pygame.Rect(0, 0, 0, 0)
+
+        self.show_info = False
+
+
+    # Getter
+    @property
+    def show_info(self):
+        return self._show_info
+    
+
+    # Setter
+    @show_info.setter
+    def show_info(self, value):
+        if not isinstance(value, bool):
+            raise ValueError("Wartość show_info musi być typu bool")
+        self._show_info = value
+
+
+    def draw_main_menu(self, screen, game_running, player_won, points):
+        self.draw_back_tamplate((19, 9, 56, 255), 30, screen)
+        self.music_rect = screen.blit(self.music, (220 , 680))
+        self.info_rect = screen.blit(self.info, (220, 560))
+
+        if self.show_info:
+            self.draw_info_menu(screen)
+        elif player_won != None: 
+            self.draw_end_menu(screen, player_won, points)
+        else:
+            self.draw_start_menu(screen, game_running)
 
 
     def draw_back_tamplate(self, color, radius, screen):
@@ -33,9 +69,11 @@ class Main_menu():
 
         screen.blit(background, (200, 100))
 
+        self.music_rect = screen.blit(self.music, (220 , 680))
+        self.info_rect = screen.blit(self.info, (220, 560))
+
 
     def draw_start_menu(self, screen, game_running):
-        self.draw_back_tamplate((19, 9, 56, 255), 30, screen)
         screen.blit(self.knight, (1050, 300))
 
         text = self.font_title.render("Witaj rycerzu!", True, (114, 179, 73))
@@ -54,11 +92,9 @@ class Main_menu():
             text = self.font_buttons.render("Kontynuuj", True, (255, 255, 255))
             screen.blit(text, (self.width/2 - 300 + 60, self.height/2 + 150 + 25))
 
-        self.music_rect = screen.blit(self.music, (1520, 820))
-
 
     def draw_end_menu(self, screen, player_won, score):
-        self.draw_back_tamplate((19, 9, 56, 230), 30, screen)
+        self.draw_back_tamplate((19, 9, 56, 255), 30, screen)
 
         if player_won:
             main_text = "Wygrałeś!!!"
@@ -83,7 +119,11 @@ class Main_menu():
         text = self.font_buttons.render("Zagraj ponowenie", True, (255, 255, 255))
         screen.blit(text, (self.width/2 + 110 + 40, self.height/2 + 100 + 30))
         
-        self.music_rect = screen.blit(self.music, (1520, 820))
+
+    def draw_info_menu(self, screen):
+        self.draw_back_tamplate((19, 9, 56, 255), 30, screen)
+        self.back_rect = screen.blit(self.back, (220, 440))
+        screen.blit(self.instruction, (320, 115))
         
 
     def handle_click_action(self, clicked_position, end_game, game_runnig):
@@ -92,6 +132,15 @@ class Main_menu():
         
         if (self.new_game_rect.collidepoint(clicked_position)):
             return "new_game"
+        
+        if (self.info_rect.collidepoint(clicked_position)):
+            self.show_info = True
+            return None
+        
+        if self.show_info:
+            if (self.back_rect.collidepoint(clicked_position)):
+                self.show_info = False
+                return None
         
         if not end_game:
             if game_runnig and (self.reasume_rect.collidepoint(clicked_position)):

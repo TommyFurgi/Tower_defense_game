@@ -27,31 +27,15 @@ class Game():
         self.menu = Menu(self.screen)
         self.main_menu = Main_menu(self.screen)
 
-        self.money = 800
-        self.points = 0
-        self.hearts = 3
-        self.wave = 1
-
-        self.game_pause = True
-        self.game_running = False
-        self.player_won = True
+        self.handle_restart_game()
         self.show_main_menu = True
-        self.end_game = False
+        self.game_running = False
 
-        self.enemies = pygame.sprite.Group()
-        self.towers = pygame.sprite.Group() 
         self.path_collisions = pygame.sprite.Group()
         self.other_obstacles_collisions = pygame.sprite.Group()
 
-        self.drag_object = None
-        self.sound_play = True
-         
-        self.sped_up = False
-        
+        self.sound_play = True 
         self.text_alerts = set()
-        
-        self.wave_manager = WaveManager()
-        self.current_wave = self.wave_manager.get_next_wave()
         
         self.load_rects("path", self.path_collisions)
         self.load_rects("others", self.other_obstacles_collisions)
@@ -127,10 +111,7 @@ class Game():
             self.screen.blit(self.drag_object.image, (mouse_x - 80, mouse_y - 120))
 
         if self.show_main_menu:
-            if self.end_game:
-                self.main_menu.draw_end_menu(self.screen, self.player_won, self.points)
-            else:
-                self.main_menu.draw_start_menu(self.screen, self.game_running)
+            self.main_menu.draw_main_menu(self.screen, self.game_running, self.player_won, self.points)
 
     
     def spawn_enemies(self):
@@ -152,7 +133,8 @@ class Game():
                 self.player_won = True
                 self.end_game = True
                 self.show_main_menu = True
-                self.game_running = False        
+                self.game_running = False 
+                self.main_menu.show_info = False       
         
 
     def update_game(self):
@@ -195,6 +177,7 @@ class Game():
                 self.player_won = False
                 self.end_game = True
                 self.show_main_menu = True
+                self.main_menu.show_info = False   
                 self.text_alerts.add(TextAlert("Game over!", 2000, (255, 0, 0)))
 
 
@@ -215,7 +198,7 @@ class Game():
         self.wave_manager = WaveManager()
         self.current_wave = self.wave_manager.get_next_wave()
 
-        self.player_won = False
+        self.player_won = None
         self.game_running = True
         self.show_main_menu = False
         self.end_game = False
