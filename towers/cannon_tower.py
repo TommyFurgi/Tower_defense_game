@@ -32,6 +32,8 @@ class CannonTower(Tower):
         self.set_tower_target(Target.FIRST)
 
         self.target_modes = [Target.FIRST, Target.LAST, Target.LEAST_HEALTH, Target.MOST_HEALTH]
+        self.shot_sound = SourceManager.get_sound("cannon_shot")
+
 
         
     def find_targets(self, enemies, delta_time):
@@ -41,7 +43,7 @@ class CannonTower(Tower):
             enemy = self.get_tower_target(enemies)
             
             if enemy:
-                
+                self.shot_sound.play()
                 self.cooldown_timer = self.cooldown
                 enemy_x, enemy_y = enemy.get_position()
                 self.bullets.add(Bullet(25, self.x, self.y-70, enemy_x, enemy_y - 60, enemy))

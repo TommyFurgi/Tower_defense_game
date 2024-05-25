@@ -23,9 +23,9 @@ if __name__ == "__main__":
     icon_image = SourceManager.get_image("archer_tower").convert_alpha()
     pygame.display.set_icon(icon_image)
 
-    background_music = SourceManager.get_sound("music")
-    background_music.play(loops=-1)
-    background_music.set_volume(0.015)
+    background_music = SourceManager.get_sound("background_music")
+    background_music.play(loops = -1)
+    SourceManager.set_sounds_volume(0.05)
 
     game = Game(screen)
     game.run()

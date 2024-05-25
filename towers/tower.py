@@ -2,6 +2,7 @@ import pygame
 from abc import ABC
 from text_alert import TextAlert
 from towers.target import Target
+from source_manager import SourceManager
 
 class Tower(pygame.sprite.Sprite, ABC): 
     def __init__(self, x, y): 
@@ -31,6 +32,9 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.arrow_right = pygame.transform.scale(self.arrow_icon, (30, 30))
         self.arrow_left = pygame.transform.rotate(self.arrow_icon, 180)
         self.arrow_left = pygame.transform.scale(self.arrow_left, (30, 30))
+
+        self.sell_sound = SourceManager.get_sound("selling")
+        self.upgrade_sound = SourceManager.get_sound("upgrade")
 
 
     def draw(self, screen, delta_time):
@@ -176,6 +180,7 @@ class Tower(pygame.sprite.Sprite, ABC):
 
     def manage_tower_action(self, clicked_position, money, text_alerts):
         if self.sell_icon_rect.collidepoint(clicked_position):
+            self.sell_sound.play()
             return self.price
 
         if self.level <= 3 and self.upgrade_icon_rect.collidepoint(clicked_position):
@@ -189,6 +194,7 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.cooldown *= 0.9
 
             self.update_tower_feature_rect()
+            self.upgrade_sound.play()
 
             return -self.price
         return 0

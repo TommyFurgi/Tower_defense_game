@@ -32,6 +32,7 @@ class MagicTower(Tower):
         self.set_tower_target(Target.ALL)
 
         self.target_modes = [Target.ALL]
+        self.shot_sound = SourceManager.get_sound("magic_shot")
 
 
 
@@ -42,7 +43,7 @@ class MagicTower(Tower):
             enemies_collision = self.get_tower_target(enemies)
                 
             if enemies_collision:
-                
+                self.shot_sound.play()
                 self.cooldown_timer = self.cooldown
                 #self.damage_flash_timer = pygame.time.get_ticks()
                 self.damage_flash_timer = self.damage_flash_duration # resetting flash damage timer
