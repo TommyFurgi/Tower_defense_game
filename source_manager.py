@@ -29,17 +29,27 @@ class SourceManager():
 
     @classmethod
     def load_sounds(cls, sounds_folder):
-        for filename in os.listdir(sounds_folder):
-            if filename.endswith('.mp3'):
-                name = os.path.splitext(filename)[0]
-                path = os.path.join(sounds_folder, filename)
-                if name not in cls._sounds:
-                    cls._sounds[name] = pygame.mixer.Sound(path)
+        for root, dirs, files in os.walk(sounds_folder):
+            for filename in files:
+                if filename.endswith(('.mp3', '.wav')):
+                    name = os.path.splitext(filename)[0]
+                    path = os.path.join(root, filename)
+                    if name not in cls._sounds:
+                        cls._sounds[name] = pygame.mixer.Sound(path)
 
 
     @classmethod
     def get_sound(cls, name):
         return cls._sounds.get(name)
+    
+
+    @classmethod
+    def set_sounds_volume(cls, volume):
+        if not 0.0 <= volume <= 1.0:
+            return
+        
+        for sound in cls._sounds.values():
+            sound.set_volume(volume)
     
 
     @classmethod

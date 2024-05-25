@@ -40,7 +40,11 @@ class Game():
         self.load_rects("path", self.path_collisions)
         self.load_rects("others", self.other_obstacles_collisions)
 
-        self.background_music = SourceManager.get_sound("music")
+        self.success_sound = SourceManager.get_sound("success")
+        self.failture_sound = SourceManager.get_sound("failture")
+        self.success_sound_end_game = SourceManager.get_sound("success_end_game")
+        self.building_sound = SourceManager.get_sound("building")
+
 
         # # Editor related
         # editor = [Editor(screen, "environment/path"),
@@ -127,9 +131,11 @@ class Game():
             self.text_alerts.add(TextAlert("Wave " + str(self.wave) + " completed!", 2000, (0, 255, 0)))
 
             if self.wave_manager.has_next_wave(): # There is a next wave
+                self.success_sound.play()
                 self.current_wave = self.wave_manager.get_next_wave()
                 self.wave += 1
             else: # All enemies killed and no next wave
+                self.success_sound_end_game.play()
                 self.player_won = True
                 self.end_game = True
                 self.show_main_menu = True
@@ -172,6 +178,7 @@ class Game():
             self.hearts -= 1
 
             if self.hearts <= 0:
+                self.failture_sound.play()
                 self.game_pause = True
                 self.game_running = False
                 self.player_won = False
@@ -236,10 +243,10 @@ class Game():
                                 case "music":
                                     if self.sound_play:
                                         self.sound_play = False
-                                        self.background_music.set_volume(0)
+                                        SourceManager.set_sounds_volume(0)
                                     else:
                                         self.sound_play = True
-                                        self.background_music.set_volume(0.015)
+                                        SourceManager.set_sounds_volume(0.015)
                                 case "new_game":
                                     self.handle_restart_game()
                                     selected_tower = None
@@ -248,6 +255,8 @@ class Game():
                                     self.show_main_menu = False
                                 case "back_to_menu":
                                     self.end_game = False
+                                    self.game_running = False
+                                    self.player_won = None
                                     selected_tower = None
                                     drag_object_name = None
                                 case _:
@@ -329,10 +338,10 @@ class Game():
                                         elif drag_object_name == "music":
                                             if self.sound_play:
                                                 self.sound_play = False
-                                                self.background_music.set_volume(0)
+                                                SourceManager.set_sounds_volume(0)
                                             else:
                                                 self.sound_play = True
-                                                self.background_music.set_volume(0.015)
+                                                SourceManager.set_sounds_volume(0.015)
 
                                         continue
 
@@ -372,6 +381,7 @@ class Game():
                                             tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
                                             self.money -= new_tower_cost
 
+                                    self.building_sound.play()
                                     self.towers.add(tower)
                                     self.drag_object = None
                                     
