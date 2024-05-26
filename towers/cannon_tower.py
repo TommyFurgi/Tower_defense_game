@@ -27,7 +27,7 @@ class CannonTower(Tower):
         self.blast_damage = 40
         
         self.bullets = pygame.sprite.Group()
-        self.update_tower_feature_rect()
+        #self.update_tower_feature_rect()
 
         self.set_tower_target(Target.FIRST)
 
