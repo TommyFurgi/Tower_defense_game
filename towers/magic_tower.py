@@ -27,7 +27,7 @@ class MagicTower(Tower):
         self.damage_flash_timer = 0
         self.damage_color = (224, 237, 111, 100)
 
-        self.update_tower_feature_rect()
+        #self.update_tower_feature_rect()
 
         self.set_tower_target(Target.ALL)
 

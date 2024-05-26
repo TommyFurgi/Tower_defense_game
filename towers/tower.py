@@ -35,90 +35,209 @@ class Tower(pygame.sprite.Sprite, ABC):
 
         self.sell_sound = SourceManager.get_sound("selling")
         self.upgrade_sound = SourceManager.get_sound("upgrade")
+        
+        self.scale_rate = 1.3
+        
+        self.elipse_color = (133, 98, 42)
+        self.elipse_width = 150
+        self.elipse_height = 60
+        
+        self.text_color = (255, 255, 255)
 
 
     def draw(self, screen, delta_time):
         screen.blit(self.image, (self.x-self.image.get_width()//2, self.y-self.image.get_height()//2))
 
+    def draw_radius(self, tower_menu_surface):
 
-    def draw_tower_menu(self, screen):
+        pygame.draw.circle(tower_menu_surface, (0, 0, 255, 100), (self.radius * self.scale_rate * 1.5,
+                                                                  self.radius * self.scale_rate * 1.5),
+                                                                  self.radius * self.scale_rate, 0)    
 
-        self.draw_stats(screen)
-        self.draw_target_mode_selection(screen)
-
-        upgrade_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3 - 5, 150, 60)
-        pygame.draw.ellipse(screen, (133, 98, 42), upgrade_rect)
-
-        screen.blit(self.sell_icon, (self.x + self.radius * 0.5, self.y + self.radius * 0.3))
-
-        text = self.font.render("Price: " + str(self.price), True, (255, 255, 255))
-        screen.blit(text, (self.x + self.radius * 0.5 + 60, self.y + self.radius * 0.3 + 15))
-
-        if self.level <= 3:
-            upgrade_rect = pygame.Rect(self.x + self.radius * 0.5, self.y - self.radius * 0.3 - 5, 150, 60)
-            pygame.draw.ellipse(screen, (133, 98, 42), upgrade_rect)
-
-            screen.blit(self.upgrade_icon, (self.x + self.radius * 0.5, self.y - self.radius * 0.3))
-
-            text = self.font.render("Price: " + str(self.price), True, (255, 255, 255))
-            screen.blit(text, (self.x + self.radius * 0.5 + 60, self.y - self.radius * 0.3 + 10))
-
-            level_text = self.font.render("Level: " + str(self.level), True, (255, 255, 255))
-            screen.blit(level_text, (self.x + self.radius * 0.5 + 60, self.y - self.radius * 0.3 + 30))
-
-    def draw_stats(self, screen):
-
-        damage_dealt_rect = pygame.Rect(self.x - 75, self.y - self.radius - 60, 150, 60)
-        pygame.draw.ellipse(screen, (133, 98, 42), damage_dealt_rect)
-
-        damage_dealt_info_text = self.font.render("Damage dealt:", True, (255, 255, 255))
-        screen.blit(damage_dealt_info_text, (self.x - 50, self.y - self.radius - 45))
-
+    def draw_cooldown_ellipse(self, tower_menu_surface):
         
+        # Tower cooldown ellipse position
+        cooldown_rect = pygame.Rect(self.elipse_width // 4, self.radius * self.scale_rate * 1.5 - self.elipse_height // 2 + 50, 150, 60)
+        
+        # Creating the ellipse surface
+        cooldown_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
+        
+        # Drawing the ellipse
+        pygame.draw.ellipse(cooldown_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
+        
+        # Drawing cooldown info
+        cooldown_text = self.font.render("Cooldown: " + str(int(self.cooldown)), True, self.text_color)
+        cooldown_surface.blit(cooldown_text, (self.elipse_width // 2 - cooldown_text.get_width() // 2, self.elipse_height // 2 - cooldown_text.get_height() // 2))
+        
+        # Blitting the ellipse on the tower_menu_surface
+        tower_menu_surface.blit(cooldown_surface, (cooldown_rect.x, cooldown_rect.y))
+
+    def draw_damage_ellipse(self, tower_menu_surface):
+        
+        # Tower damage ellipse position
+        damage_rect = pygame.Rect(self.elipse_width // 4, self.radius * self.scale_rate * 1.5 - self.elipse_height // 2 - 20, 150, 60)
+        
+        # Creating the ellipse surface
+        damage_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
+        
+        pygame.draw.ellipse(damage_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
+
+        damage_text = self.font.render("Damage: " + str(int(self.damage)), True, self.text_color)
+        damage_surface.blit(damage_text, (self.elipse_width // 2 - damage_text.get_width() // 2,
+                                          self.elipse_height // 2 - damage_text.get_height() // 2))
+        
+        # Blitting the ellipse on the tower_menu_surface
+        tower_menu_surface.blit(damage_surface, (damage_rect.x, damage_rect.y))
+
+    def draw_damage_dealt_ellipse(self, tower_menu_surface):
+        # Tower damage dealt ellipse position
+        damage_dealt_rect = pygame.Rect(self.radius * self.scale_rate * 1.5 - self.elipse_width // 2,
+                                        self.radius * self.scale_rate * 0.45,
+                                        150, 60)
+        
+        # Creating the ellipse surface
+        damage_dealt_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
+        
+        # Drawing the ellipse
+        pygame.draw.ellipse(damage_dealt_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
+
+        # Drawing damage dealt info
+        damage_dealt_info_text = self.font.render("Damage dealt:", True, self.text_color)
+        damage_dealt_surface.blit(damage_dealt_info_text, (self.elipse_width // 2 - damage_dealt_info_text.get_width() // 2,
+                                                         self.elipse_height // 2 - damage_dealt_info_text.get_height() // 2 - 10))
+        # Drawing damage dealt amount
         damage_dealt_str = str(int(self.damage_dealt))
-        if(int(self.damage_dealt) >= 1_000_000_000):
+        if int(self.damage_dealt) >= 1_000_000_000_000:
+            damage_dealt_str = str(int(self.damage_dealt // 1_000_000_000_000)) + " T"
+        elif int(self.damage_dealt) >= 1_000_000_000:
             damage_dealt_str = str(int(self.damage_dealt // 1_000_000_000)) + " B"
-        # Possibly can add more checks for M, K, etc.
+        elif int(self.damage_dealt) >= 1_000_000:
+            damage_dealt_str = str(int(self.damage_dealt // 1_000_000)) + " M"
+        elif int(self.damage_dealt) >= 1_000:
+            damage_dealt_str = str(int(self.damage_dealt // 1_000)) + " K"
+        else:
+            damage_dealt_str = str(int(self.damage_dealt))
 
-        offset_damage_dealt = 5 * (len(damage_dealt_str) - 1) if len(damage_dealt_str) > 1 else 0
-        damage_dealt_amount_text = self.font.render(damage_dealt_str, True, (255, 255, 255))
-        screen.blit(damage_dealt_amount_text, (self.x - offset_damage_dealt, self.y - self.radius - 25))
+        damage_dealt_amount_text = self.font.render(damage_dealt_str, True, self.text_color)
+        damage_dealt_surface.blit(damage_dealt_amount_text, (self.elipse_width // 2 - damage_dealt_amount_text.get_width() // 2,
+                                                         self.elipse_height // 2 - damage_dealt_amount_text.get_height() // 2 + 10))
         
-        damage_info_rect = pygame.Rect(self.x - self.radius * 0.5 - 150, self.y - self.radius * 0.3 - 5, 150, 60)
-        pygame.draw.ellipse(screen, (133, 98, 42), damage_info_rect)
+        # Blitting the ellipse on the tower_menu_surface
+        tower_menu_surface.blit(damage_dealt_surface, (damage_dealt_rect.x, damage_dealt_rect.y))
+        
 
-        damage_text = self.font.render("Damage: " + str(int(self.damage)), True, (255, 255, 255))
-        screen.blit(damage_text, (self.x - self.radius * 0.5 - 120, self.y - self.radius * 0.3 + 15))
+    def draw_target_mode_ellipse(self, tower_menu_surface):
+        # Tower target mode ellipse position
+        target_mode_rect = pygame.Rect(self.radius * self.scale_rate * 1.5 - self.elipse_width // 2,
+                                       self.radius * self.scale_rate * 2 + self.elipse_height - 10,
+                                       150, 60)
+        
+        # Creating the ellipse surface
+        target_mode_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
+        
+        # Drawing the elipse
+        pygame.draw.ellipse(target_mode_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))        
 
-        cooldown_info_rect = pygame.Rect(self.x - self.radius * 0.5 - 150, self.y + self.radius * 0.3 - 5, 150, 60)
-        pygame.draw.ellipse(screen, (133, 98, 42), cooldown_info_rect)
+        # Drawing target mode info
+        target_mode_info_text = self.font.render("Target:", True, self.text_color)
+        target_mode_surface.blit(target_mode_info_text, (self.elipse_width // 2 - target_mode_info_text.get_width() // 2,
+                                                         self.elipse_height // 2 - target_mode_info_text.get_height() // 2 - 10))
 
-        damage_str = str(int(self.cooldown))
-        offset_damage = 10 * (len(damage_str) - 3) if len(damage_str) > 3 else 0
-        damage_text = self.font.render("Cooldown: " + damage_str, True, (255, 255, 255))
-        screen.blit(damage_text, (self.x - self.radius * 0.5 - 130 - offset_damage , self.y + self.radius * 0.3 + 15))
+        # Drawing current target mode
+        target_mode_text = self.font.render(self.tower_target.value, True, self.text_color)
+        target_mode_surface.blit(target_mode_text, (self.elipse_width // 2 - target_mode_text.get_width() // 2,
+                                                    self.elipse_height // 2 - target_mode_text.get_height() // 2 + 10))
 
-    def draw_target_mode_selection(self, screen):
+        # Drawing arrows and updating their position
+        self.arrow_left_rect = target_mode_surface.blit(self.arrow_left, (0, self.elipse_height // 2 - self.arrow_left.get_height() // 2))
+        self.arrow_left_rect.x += target_mode_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
+        self.arrow_left_rect.y += target_mode_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
+        
+        self.arrow_right_rect = target_mode_surface.blit(self.arrow_right, (self.elipse_width - self.arrow_right.get_width(), self.elipse_height // 2 - self.arrow_right.get_height() // 2))
+        self.arrow_right_rect.x += target_mode_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
+        self.arrow_right_rect.y += target_mode_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
+        
+        # Blitting the ellipse on the tower_menu_surface
+        tower_menu_surface.blit(target_mode_surface, (target_mode_rect.x, target_mode_rect.y))
 
-        target_mode_rect = pygame.Rect(self.x - 75, self.y + self.radius, 150, 60)
-        pygame.draw.ellipse(screen, (133, 98, 42), target_mode_rect)        
 
-        target_mode_info_text = self.font.render("Target mode:", True, (255, 255, 255))
-        screen.blit(target_mode_info_text, (self.x - 45, self.y + self.radius + 15))
+    def draw_sell_ellipse(self, tower_menu_surface):
+        # Tower selling ellipse position
+        sell_rect = pygame.Rect(self.radius * self.scale_rate * 2, self.radius * self.scale_rate * 1.5 - self.elipse_height // 2 + 50, 150, 60)
+        
+        # Creating the ellipse surface
+        sell_ellipse_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
+        
+        # Drawing the ellipse
+        pygame.draw.ellipse(sell_ellipse_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
+        
+        # Drawing the sell icon and updating its position
+        self.sell_icon_rect = sell_ellipse_surface.blit(self.sell_icon, (0, 5))
+        self.sell_icon_rect.x += sell_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
+        self.sell_icon_rect.y += sell_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
+        
+        # Drawing sell price
+        text = self.font.render("Price: " + str(self.price), True, self.text_color)
+        sell_ellipse_surface.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + 20, self.elipse_height // 2 - text.get_height() // 2))
 
-        target_mode_text = self.font.render(self.tower_target.value, True, (255, 255, 255))
-        text_width = target_mode_text.get_width()
-        text_x = self.x - text_width // 2
-        screen.blit(target_mode_text, (text_x, self.y + self.radius + 35))
+        # Blitting the ellipse on the tower_menu_surface
+        tower_menu_surface.blit(sell_ellipse_surface, (sell_rect.x, sell_rect.y))
 
-        screen.blit(self.arrow_right, (self.x + 60, self.y + self.radius + 15))
-        screen.blit(self.arrow_left, (self.x - 90, self.y + self.radius + 15))
+    def draw_upgrade_ellipse(self, tower_menu_surface):
+        
+        if self.level <= 3:
+            # Tower upgrading ellips position
+            upgrade_rect = pygame.Rect(self.radius * self.scale_rate * 2, self.radius * self.scale_rate * 1.5 - self.elipse_height // 2 - 20, 150, 60)
+            
+            # Creating the ellipse surface
+            upgrade_ellipse_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
+            
+            # Drawing the ellipse
+            pygame.draw.ellipse(upgrade_ellipse_surface,self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
+            
+            # Drawing the upgrade icon and updating its position
+            self.upgrade_icon_rect = upgrade_ellipse_surface.blit(self.upgrade_icon, (0, 5))
+            self.upgrade_icon_rect.x += upgrade_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
+            self.upgrade_icon_rect.y += upgrade_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
+            
+            # Drawing upgrade price
+            text = self.font.render("Price: " + str(self.price), True, self.text_color)
+            upgrade_ellipse_surface.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + 20,self.elipse_height // 2 - text.get_height() // 2 + 10))
+
+            # Drawing current level
+            level_text = self.font.render("Level: " + str(self.level), True, self.text_color)
+            upgrade_ellipse_surface.blit(level_text, (self.elipse_width // 2 - text.get_width() // 2 + 20, self.elipse_height // 2 - text.get_height() // 2 - 10))
+
+             # Blitting the ellipse on the tower_menu_surface
+            tower_menu_surface.blit(upgrade_ellipse_surface, (upgrade_rect.x, upgrade_rect.y))
+
+    
+    def create_tower_menu_surface(self):
+        
+        tower_menu_surface = pygame.Surface((self.radius * 3 * self.scale_rate, self.radius * 3 * self.scale_rate), pygame.SRCALPHA, 32)
+          
+        return tower_menu_surface  
+    
 
     def draw_on_top(self, screen, delta_time):
         if self.selected:
-            self.draw_radius(screen)
-            self.draw(screen, delta_time) # So the tower isn't drawn under the circle
-            self.draw_tower_menu(screen)
+            
+            tower_menu_surface = self.create_tower_menu_surface()
+            
+            # Drawing on the tower_menu_sufrace
+            self.draw_radius(tower_menu_surface)
+            self.draw_damage_ellipse(tower_menu_surface)
+            self.draw_cooldown_ellipse(tower_menu_surface)
+            self.draw_damage_dealt_ellipse(tower_menu_surface)
+            self.draw_target_mode_ellipse(tower_menu_surface)
+            self.draw_sell_ellipse(tower_menu_surface)
+            self.draw_upgrade_ellipse(tower_menu_surface)
+            
+            # Drawing tower_menu_surface on the screen
+            screen.blit(tower_menu_surface, (self.x - (self.radius * 1.5 * self.scale_rate), self.y - (self.radius * 1.5 * self.scale_rate)))
+            
+            # Drawing tower on top so it isn't under the tower menu
+            self.draw(screen, delta_time) 
 
 
     def set_tower_target(self, target):
@@ -193,7 +312,6 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.radius *= 1.1
             self.cooldown *= 0.9
 
-            self.update_tower_feature_rect()
             self.upgrade_sound.play()
 
             return -self.price
@@ -217,23 +335,6 @@ class Tower(pygame.sprite.Sprite, ABC):
             return True
         
         return False
-
-
-    def update_tower_feature_rect(self):
-        self.sell_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y + self.radius * 0.3, 50, 50) 
-        self.upgrade_icon_rect = pygame.Rect(self.x + self.radius * 0.5, self.y - self.radius * 0.3, 50, 50) 
-        self.arrow_right_rect = pygame.Rect(self.x + 60, self.y + self.radius + 15, 30, 30) 
-        self.arrow_left_rect = pygame.Rect(self.x - 90, self.y + self.radius + 15, 30, 30)
-
-
-    def draw_radius(self, screen):
-        scale_rate = 1.3
-
-        surface = pygame.Surface((self.radius * 2 * scale_rate, self.radius * 2 * scale_rate), pygame.SRCALPHA, 32)
-        pygame.draw.circle(surface, (0, 0, 255, 100), (self.radius*scale_rate, self.radius*scale_rate), self.radius*scale_rate, 0)
-
-        screen.blit(surface, (self.x - self.radius * scale_rate, self.y - self.radius * scale_rate))
-
 
     def select_tower(self, X, Y):
         if abs(X-self.x) < self.image.get_width()//2:
