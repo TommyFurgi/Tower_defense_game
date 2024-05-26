@@ -189,7 +189,7 @@ class Game():
 
 
     def handle_restart_game(self): 
-        self.money = 800
+        self.money = 100_000
         self.points = 0
         self.hearts = 3
         self.wave = 1
