@@ -232,17 +232,25 @@ class Tower(pygame.sprite.Sprite, ABC):
             ]
         
     
-    def draw_menu_change_arrows(self, position, tower_menu_surface):
+    def draw_menu_change_arrows(self, safe_positions, tower_menu_surface):
         
         # Tower damage ellipse position
-        if position == Position.TOP.value:
+        if  Position.TOP in safe_positions:
             change_rect = pygame.Rect(self.radius * self.scale_rate * 1.5 - self.elipse_width // 2,
                                       self.radius * self.scale_rate * 0.925 - self.elipse_height // 2,
                                       150, 60)
-        else:
+        elif Position.BOTTOM in safe_positions:
             change_rect = pygame.Rect(self.radius * self.scale_rate * 1.5 - self.elipse_width // 2,
                                       self.radius * self.scale_rate * 2.075 - self.elipse_height // 2,
                                       150, 60)
+        elif Position.TOP_LEFT in safe_positions or Position.BOTTOM_LEFT in safe_positions:
+            change_rect = pygame.Rect(self.radius * self.scale_rate * 0.925 - self.elipse_width // 2,
+                                        self.radius * self.scale_rate * 1.5 - self.elipse_height // 2,
+                                        150, 60)
+        else:
+            change_rect = pygame.Rect(self.radius * self.scale_rate * 2.075 - self.elipse_width // 2,
+                                        self.radius * self.scale_rate * 1.5 - self.elipse_height // 2,
+                                        150, 60)
         
         # Creating the ellipse surface
         change_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
@@ -283,12 +291,12 @@ class Tower(pygame.sprite.Sprite, ABC):
     
     def get_draw_ellipse_fuctions(self):
         
-        return [self.draw_damage_dealt_ellipse,
-                self.draw_upgrade_ellipse,
+        return [self.draw_upgrade_ellipse,
                 self.draw_sell_ellipse,
                 self.draw_target_mode_ellipse,
                 self.draw_cooldown_ellipse,
-                self.draw_damage_ellipse
+                self.draw_damage_ellipse,
+                self.draw_damage_dealt_ellipse,
                 ]
 
     def draw_on_top(self, screen, delta_time):
@@ -323,11 +331,8 @@ class Tower(pygame.sprite.Sprite, ABC):
                 fn(tower_menu_positions[safe_positions[current_position].value], self.menu_pages[current_page])
                 current_position += 1
             
-            if Position.TOP in safe_positions:
-                self.draw_menu_change_arrows(Position.TOP.value, self.menu_pages[self.current_menu_page])
-            else:
-                self.draw_menu_change_arrows(Position.BOTTOM.value, self.menu_pages[self.current_menu_page])
-            
+            self.draw_menu_change_arrows(safe_positions, self.menu_pages[self.current_menu_page])
+  
             # Drawing tower_menu_surface on the screen
             screen.blit(self.menu_pages[self.current_menu_page], (self.x - (self.radius * 1.5 * self.scale_rate), self.y - (self.radius * 1.5 * self.scale_rate)))
             
