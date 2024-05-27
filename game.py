@@ -91,10 +91,10 @@ class Game():
 
 
     def update_screen(self):
-        self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave, self.game_pause)
         self.game_map.draw_background()
         self.draw_enemies_and_towers()
         self.draw_on_top()
+        self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave, self.game_pause)
         self.draw_text_alerts()
         
     
@@ -189,7 +189,7 @@ class Game():
 
 
     def handle_restart_game(self): 
-        self.money = 800
+        self.money = 100_000
         self.points = 0
         self.hearts = 3
         self.wave = 1
@@ -295,7 +295,8 @@ class Game():
                                 
                                 if selected_tower:
                                     
-                                    arrow_clicked = selected_tower.manage_tower_target_mode(clicked_position)
+                                    target_mode_arrow_clicked = selected_tower.manage_tower_target_mode(clicked_position)
+                                    menu_page_arrow_clicked = selected_tower.manage_tower_menu_page(clicked_position)
                                     
                                     value = selected_tower.manage_tower_action(clicked_position, self.money, self.text_alerts)
                                     
@@ -304,7 +305,7 @@ class Game():
                                         if value > 0: # tower sold
                                             self.towers.remove(selected_tower)
 
-                                        if not arrow_clicked:
+                                        if not target_mode_arrow_clicked and not menu_page_arrow_clicked:
                                             selected_tower.selected = False
                                             selected_tower = None
                                         
