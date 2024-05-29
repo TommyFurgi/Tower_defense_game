@@ -5,11 +5,18 @@ from effects.effect_type import EffectType
 
 
 class Enemy(pygame.sprite.Sprite, ABC):
-    def __init__(self):
+    def __init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
         pygame.sprite.Sprite.__init__(self)
+        self.x_scale_rate = x_scale_rate
+        self.y_scale_rate = y_scale_rate
+
+        self.x_scale_diff = x_scale_diff
+        self.y_scale_diff = y_scale_diff
 
         self.reached_last_point = False
-        
+        self.rect = pygame.Rect(self.x, self.y, 64 * x_scale_rate, 64 * y_scale_rate) # Required in order for collisions to work
+        self.original_sized_images = [[] for _ in range(4)]
+
         self.effects = dict()
         self.prepare_effects_dict()
         
@@ -24,7 +31,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         
         self.colors = set()       
         
-        self.hp_font = pygame.font.Font(None, 20) 
+        self.hp_font = pygame.font.Font(None, int(20 * self.x_scale_rate)) 
 
 
     def draw_health_bar(self, screen):
@@ -32,12 +39,12 @@ class Enemy(pygame.sprite.Sprite, ABC):
         move_by = length / self.max_health
         health_bar = round(move_by * self.health)
 
-        pygame.draw.rect(screen, (255,0,0), (self.x-42, self.y - 130, length, 10), 0)
-        pygame.draw.rect(screen, (0, 255, 0), (self.x-42, self.y - 130, health_bar, 10), 0)
+        pygame.draw.rect(screen, (255,0,0), (self.x - 42 * self.x_scale_rate, self.y - 130 * self.y_scale_rate, length * self.x_scale_rate, 10 * self.y_scale_rate), 0)
+        pygame.draw.rect(screen, (0, 255, 0), (self.x - 42 * self.x_scale_rate, self.y - 130 * self.y_scale_rate, health_bar * self.x_scale_rate, 10 * self.y_scale_rate), 0)
 
         # Wyświetlanie ilości punktów życia na pasku
         text = self.hp_font.render(f"{self.health}/{self.max_health}", True, (0, 0, 0))
-        text_rect = text.get_rect(center=(self.x, self.y - 125))
+        text_rect = text.get_rect(center=(self.x, self.y - 125 * self.y_scale_rate))
         screen.blit(text, text_rect)
 
 
@@ -86,9 +93,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
 
 
 
-    def move(self, delta_time):
-        
-        
+    def move(self):
         self.animation_count += 1
         if self.animation_count >= len(self.imgs_up) * 10:
             self.animation_count = 0
@@ -100,7 +105,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
             self.reached_last_point = True
             return
             
-        if self.x > 1350:
+        if self.x > 1350 * self.x_scale_rate:
             self.reached_last_point = True
             return
 
@@ -110,7 +115,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         dirn = (dirn[0] * self.speed, dirn[1] * self.speed)
 
 
-        move_x, move_y = ((self.x + dirn[0]), (self.y + dirn[1]))
+        move_x, move_y = ((self.x + dirn[0] * self.x_scale_diff), (self.y + dirn[1] * self.y_scale_diff))
         self.x = move_x
         self.y = move_y
             
@@ -119,17 +124,17 @@ class Enemy(pygame.sprite.Sprite, ABC):
         # Go to next point
         if dirn[0] >= 0: # moving right
             if dirn[1] >= 0: # moving down
-                if self.x >= x2 and self.y >= y2:
+                if self.x >= x2 * self.x_scale_rate and self.y >= y2 * self.y_scale_rate:
                     self.path_pos += 1
             else:
-                if self.x >= x2 and self.y <= y2:
+                if self.x >= x2 * self.x_scale_rate and self.y <= y2 * self.y_scale_rate:
                     self.path_pos += 1
         else: # moving left
             if dirn[1] >= 0:  # moving down
-                if self.x <= x2 and self.y >= y2:
+                if self.x <= x2 * self.x_scale_rate and self.y >= y2 * self.y_scale_rate:
                     self.path_pos += 1
             else:
-                if self.x <= x2 and self.y <= y2:
+                if self.x <= x2 * self.x_scale_rate and self.y <= y2 * self.y_scale_rate:
                     self.path_pos += 1
     
             
@@ -137,9 +142,9 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.direction = Direction.set_direction(dirn)
 
 
-    def update(self, game_pause, enemies, delta_time):
+    def update(self, game_pause, enemies):
         if not game_pause:
-            self.move(delta_time)
+            self.move()
             self.remove_inactive_effects()
             self.handle_poison_effect()
             
@@ -276,3 +281,18 @@ class Enemy(pygame.sprite.Sprite, ABC):
 
             self.speed = value * self.max_speed
             self.add_color(color)
+
+
+    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+        self.x_scale_rate = x_scale_rate
+        self.y_scale_rate = y_scale_rate
+
+        self.x_scale_diff = x_scale_diff
+        self.y_scale_diff = y_scale_diff
+
+        self.x *= x_scale_diff
+        self.y *= y_scale_diff
+
+        self.rect = pygame.Rect(self.x, self.y, 64 * x_scale_rate, 64 * y_scale_rate)
+        self.hp_font = pygame.font.Font(None, int(20 * x_scale_rate)) 
+    

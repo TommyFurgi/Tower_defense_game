@@ -3,8 +3,11 @@ from source_manager import SourceManager
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, bullet_size, x_start, y_start, x_destination, y_destination, enemy): 
+    def __init__(self, bullet_size, x_start, y_start, x_destination, y_destination, enemy, x_scale_rate, y_scale_rate): 
         pygame.sprite.Sprite.__init__(self)
+
+        self.x_scale_rate = x_scale_rate
+        self.y_scale_rate = y_scale_rate
 
         self.x = x_start  
         self.y = y_start  
@@ -13,6 +16,7 @@ class Bullet(pygame.sprite.Sprite):
         self.destination_y = y_destination
         self.enemy = enemy
         
+        self.bullet_size = bullet_size
         self.speed = 10
         self.dirn = ((self.destination_x-self.x) * 2, (self.destination_y-self.y) * 2)
         self.length = math.sqrt((self.dirn[0])**2 + (self.dirn[1])**2)
@@ -20,11 +24,11 @@ class Bullet(pygame.sprite.Sprite):
         self.dirn = (self.dirn[0] * self.speed, self.dirn[1] * self.speed)
 
         self.bullet = SourceManager.get_image("bullet-01").convert_alpha()
-        self.bullet = pygame.transform.scale(self.bullet, (bullet_size, bullet_size))
+        self.bullet_transformed = pygame.transform.scale(self.bullet, (bullet_size * x_scale_rate, bullet_size * y_scale_rate))
     
 
     def draw(self, screen):
-        screen.blit(self.bullet, (self.x-self.bullet.get_width()//2, self.y-self.bullet.get_height()//2))
+        screen.blit(self.bullet_transformed, (self.x-self.bullet_transformed.get_width()//2, self.y-self.bullet_transformed.get_height()//2))
 
 
     def update(self, game_pause, screen):
@@ -51,3 +55,9 @@ class Bullet(pygame.sprite.Sprite):
                     return self.enemy
         
         return None
+    
+    def scale_parameters(self, x_scale_rate, y_scale_rate):
+        self.x_scale_rate = x_scale_rate
+        self.y_scale_rate = y_scale_rate
+        
+        self.bullet_transformed = pygame.transform.scale(self.bullet, (self.bullet_size * x_scale_rate, self.bullet_size * x_scale_rate))

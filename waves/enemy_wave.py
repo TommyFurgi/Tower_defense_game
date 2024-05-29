@@ -32,7 +32,7 @@ class EnemyWave():
         self.boss_spawn_interval = 1500 
             
         
-    def get_next_enemy(self):
+    def get_next_enemy(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
         current_time = pygame.time.get_ticks()
 
         if not self.has_next_enemy():
@@ -42,19 +42,19 @@ class EnemyWave():
             self.basic_enemy_spawn_time = current_time
             self.basic_no -= 1
             self.basic_time_before_pause = 0
-            return EnemyBasic()
+            return EnemyBasic(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
         
         if self.magic_no and current_time - self.magic_enemy_spawn_time >= self.normal_spawn_interval - self.magic_time_before_pause:
             self.magic_enemy_spawn_time = current_time
             self.magic_no -= 1
             self.magic_time_before_pause = 0
-            return EnemyMagic()
+            return EnemyMagic(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
         
         if self.boss_no and current_time - self.boss_enemy_spawn_time >= self.boss_spawn_interval - self.boss_time_before_pause:
             self.boss_enemy_spawn_time = current_time
             self.boss_no -= 1
             self.boss_time_before_pause = 0
-            return EnemyBoss()
+            return EnemyBoss(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
         
         return None
         

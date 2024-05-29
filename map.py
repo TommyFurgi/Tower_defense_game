@@ -1,7 +1,5 @@
 import pygame
 from source_manager import SourceManager
-import pygame
-from source_manager import SourceManager
  
  
 class Map():
@@ -12,17 +10,12 @@ class Map():
         self.width = 0.85 * window_width 
 
         self.background = SourceManager.get_image("map").convert()
-        self.background = pygame.transform.scale(self.background, (self.width, self.height))
-        self.draw_background()
-
-        self.font_buttons = pygame.font.Font(None, 24) 
-        self.font_game_status = pygame.font.Font(None, 128)
-        self.button_color = (83, 142, 237, 50)
-
-        self.return_to_menu_rect = pygame.Rect(0, 0, 0, 0)
-        self.restart_game_rect = pygame.Rect(0, 0, 0, 0)
+        self.background_transformated = pygame.transform.scale(self.background, (self.width, self.height))
 
 
     def draw_background(self):
-        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.background_transformated, (0, 0))
        
+
+    def scale_parameters(self, x_scale_rate, y_scale_rate):
+        self.background_transformated = pygame.transform.scale(self.background, (self.width * x_scale_rate, self.height * y_scale_rate))

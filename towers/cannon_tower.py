@@ -3,21 +3,22 @@ from towers.tower import Tower
 from towers.bullet import Bullet
 from source_manager import SourceManager
 from towers.target import Target
+from math import sqrt
 
 
 class CannonTower(Tower):
-    def __init__(self, x, y):
-        Tower.__init__(self, x, y)
+    def __init__(self, x, y, x_scale_rate, y_scale_rate):
+        Tower.__init__(self, x, y, x_scale_rate, y_scale_rate)
 
-        self.image = SourceManager.get_image("cannon_tower").convert_alpha()
-
-        self.image = pygame.transform.scale(self.image, (150, 150))
+        self.tower_img = SourceManager.get_image("cannon_tower").convert_alpha()
+        self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
-        self.rect = pygame.Rect(x, y, 50, 50) 
+        self.rect = pygame.Rect(x, y, 50 * x_scale_rate, 50 * y_scale_rate) 
         self.rect.center = (x, y) 
         
         self.damage = 150
-        self.radius = 130
+        self.radius_start = 130
+        self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)        
         self.cooldown = 1700
         self.price = 500
         
@@ -46,7 +47,7 @@ class CannonTower(Tower):
                 self.shot_sound.play()
                 self.cooldown_timer = self.cooldown
                 enemy_x, enemy_y = enemy.get_position()
-                self.bullets.add(Bullet(25, self.x, self.y-70, enemy_x, enemy_y - 60, enemy))
+                self.bullets.add(Bullet(25, self.x, self.y-70 * self.y_scale_rate, enemy_x, enemy_y - 60 * self.y_scale_rate, enemy, self.x_scale_rate, self._scale_rate))
                 
         else:
             self.cooldown_timer -= delta_time
@@ -78,3 +79,9 @@ class CannonTower(Tower):
 
         for bullet in bullets_to_remove:
             self.bullets.remove(bullet)
+
+    def scale_parameters(self, x_scale_rate, y_scale_rate):
+        super().scale_parameters(x_scale_rate, y_scale_rate)
+
+        for bullet in self.bullets:
+            bullet.scale_parameters(x_scale_rate, y_scale_rate)

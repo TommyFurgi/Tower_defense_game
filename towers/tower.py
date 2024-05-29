@@ -4,10 +4,18 @@ from text_alert import TextAlert
 from towers.target import Target
 from towers.position import Position
 from source_manager import SourceManager
+from math import sqrt
+
 
 class Tower(pygame.sprite.Sprite, ABC): 
-    def __init__(self, x, y): 
+    def __init__(self, x, y, x_scale_rate, y_scale_rate): 
         pygame.sprite.Sprite.__init__(self)
+        self.x_scale_rate = x_scale_rate
+        self.y_scale_rate = y_scale_rate
+
+        self.start_x = x / x_scale_rate 
+        self.start_y = y / y_scale_rate
+
         self.x = x
         self.y = y
         self.level = 1
@@ -22,17 +30,17 @@ class Tower(pygame.sprite.Sprite, ABC):
 
         self.time_from_last_shot = pygame.time.get_ticks()
 
-        sell_icon = pygame.image.load('assets/images/towers/sell_icon.png').convert_alpha()
-        self.sell_icon = pygame.transform.scale(sell_icon, (50, 50))
+        self.sell_icon = pygame.image.load('assets/images/towers/sell_icon.png').convert_alpha()
+        self.sell_icon_transformed = pygame.transform.scale(self.sell_icon, (50 * x_scale_rate, 50 * y_scale_rate))
 
-        upgrade_icon = pygame.image.load('assets/images/towers/upgraded_icon.png').convert_alpha()
-        self.upgrade_icon = pygame.transform.scale(upgrade_icon, (50, 50))
-        self.font = pygame.font.Font(None, 24) 
+        self.upgrade_icon = pygame.image.load('assets/images/towers/upgraded_icon.png').convert_alpha()
+        self.upgrade_icon_transformed = pygame.transform.scale(self.upgrade_icon, (50 * x_scale_rate, 50 * y_scale_rate))
+        self.font = pygame.font.Font(None, int(24 * x_scale_rate)) 
         
-        self.arrow_icon = pygame.image.load('assets/images/towers/arrow.png').convert_alpha()
-        self.arrow_right = pygame.transform.scale(self.arrow_icon, (30, 30))
-        self.arrow_left = pygame.transform.rotate(self.arrow_icon, 180)
-        self.arrow_left = pygame.transform.scale(self.arrow_left, (30, 30))
+        self.arrow_right = pygame.image.load('assets/images/towers/arrow.png').convert_alpha()
+        self.arrow_right_transformed = pygame.transform.scale(self.arrow_right, (30 * x_scale_rate, 30 * y_scale_rate))
+        self.arrow_left = pygame.transform.rotate(self.arrow_right, 180)
+        self.arrow_left_transformed = pygame.transform.scale(self.arrow_left, (30 * x_scale_rate, 30 * y_scale_rate))
 
         self.sell_sound = SourceManager.get_sound("selling")
         self.upgrade_sound = SourceManager.get_sound("upgrade")
@@ -40,29 +48,27 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.scale_rate = 1.3
         
         self.elipse_color = (133, 98, 42)
-        self.elipse_width = 150
-        self.elipse_height = 60
+        self.elipse_width = 150 * x_scale_rate
+        self.elipse_height = 60 * y_scale_rate
         
         self.text_color = (255, 255, 255)
         
         self.menu_pages = []
         self.current_menu_page = 0
         
-        
 
     def draw(self, screen, delta_time):
-        screen.blit(self.image, (self.x-self.image.get_width()//2, self.y-self.image.get_height()//2))
+        screen.blit(self.tower_img_transformed, (self.x - self.tower_img_transformed.get_width() // 2, self.y - self.tower_img_transformed.get_height() // 2))
 
     def draw_radius(self, tower_menu_surface):
-
         pygame.draw.circle(tower_menu_surface, (0, 0, 255, 100), (self.radius * self.scale_rate * 1.5,
                                                                   self.radius * self.scale_rate * 1.5),
                                                                   self.radius * self.scale_rate, 0)    
 
+ 
     def draw_cooldown_ellipse(self, position, tower_menu_surface):
-        
         # Tower cooldown ellipse position
-        cooldown_rect = pygame.Rect(*position, 150, 60)
+        cooldown_rect = pygame.Rect(*position, self.elipse_width, self.elipse_height)
         
         # Creating the ellipse surface
         cooldown_surface = pygame.Surface((self.elipse_width, self.elipse_height), pygame.SRCALPHA, 32)
@@ -76,6 +82,7 @@ class Tower(pygame.sprite.Sprite, ABC):
         
         # Blitting the ellipse on the tower_menu_surface
         tower_menu_surface.blit(cooldown_surface, (cooldown_rect.x, cooldown_rect.y))
+
 
     def draw_damage_ellipse(self, position, tower_menu_surface):
         
@@ -150,11 +157,11 @@ class Tower(pygame.sprite.Sprite, ABC):
                                                     self.elipse_height // 2 - target_mode_text.get_height() // 2 + 10))
 
         # Drawing arrows and updating their position
-        self.arrow_left_rect = target_mode_surface.blit(self.arrow_left, (0, self.elipse_height // 2 - self.arrow_left.get_height() // 2))
+        self.arrow_left_rect = target_mode_surface.blit(self.arrow_left_transformed, (0, self.elipse_height // 2 - self.arrow_left_transformed.get_height() // 2))
         self.arrow_left_rect.x += target_mode_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
         self.arrow_left_rect.y += target_mode_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
         
-        self.arrow_right_rect = target_mode_surface.blit(self.arrow_right, (self.elipse_width - self.arrow_right.get_width(), self.elipse_height // 2 - self.arrow_right.get_height() // 2))
+        self.arrow_right_rect = target_mode_surface.blit(self.arrow_right_transformed, (self.elipse_width - self.arrow_right_transformed.get_width(), self.elipse_height // 2 - self.arrow_right_transformed.get_height() // 2))
         self.arrow_right_rect.x += target_mode_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
         self.arrow_right_rect.y += target_mode_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
         
@@ -173,7 +180,7 @@ class Tower(pygame.sprite.Sprite, ABC):
         pygame.draw.ellipse(sell_ellipse_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
         
         # Drawing the sell icon and updating its position
-        self.sell_icon_rect = sell_ellipse_surface.blit(self.sell_icon, (0, 5))
+        self.sell_icon_rect = sell_ellipse_surface.blit(self.sell_icon_transformed, (0, 5))
         self.sell_icon_rect.x += sell_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
         self.sell_icon_rect.y += sell_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
         
@@ -197,7 +204,7 @@ class Tower(pygame.sprite.Sprite, ABC):
             pygame.draw.ellipse(upgrade_ellipse_surface,self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
             
             # Drawing the upgrade icon and updating its position
-            self.upgrade_icon_rect = upgrade_ellipse_surface.blit(self.upgrade_icon, (0, 5))
+            self.upgrade_icon_rect = upgrade_ellipse_surface.blit(self.upgrade_icon_transformed, (0, 5))
             self.upgrade_icon_rect.x += upgrade_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
             self.upgrade_icon_rect.y += upgrade_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
             
@@ -214,22 +221,20 @@ class Tower(pygame.sprite.Sprite, ABC):
 
     
     def create_tower_menu_surface(self):
-        
         tower_menu_surface = pygame.Surface((self.radius * 3 * self.scale_rate, self.radius * 3 * self.scale_rate), pygame.SRCALPHA, 32)
         self.draw_radius(tower_menu_surface)
-          
-        return tower_menu_surface  
+        return tower_menu_surface
     
     def calculate_menu_positions(self):
-        
         return [
-                (self.radius * self.scale_rate * 1.5 - self.elipse_width // 2, self.radius * self.scale_rate * 0.45), # top
-                (self.radius * self.scale_rate * 1.95, self.radius * self.scale_rate * 1), # top right
-                (self.radius * self.scale_rate * 1.95, self.radius * self.scale_rate * 2 - self.elipse_height), # bottom right
-                (self.radius * self.scale_rate * 1.5 - self.elipse_width // 2, self.radius * self.scale_rate * 2.55 - self.elipse_height), # bottom
-                (self.radius * self.scale_rate * 1 - self.elipse_width, self.radius * self.scale_rate * 2 - self.elipse_height), # bottom left
-                (self.radius * self.scale_rate * 1 - self.elipse_width, self.radius * self.scale_rate * 1), # top left
-            ]
+            (self.radius * self.scale_rate * 1.5 - self.elipse_width // 2, self.radius * self.scale_rate * 0.45 ), # top
+            (self.radius * self.scale_rate * 1.95, self.radius * self.scale_rate * 1), # top right
+            (self.radius * self.scale_rate * 1.95, self.radius * self.scale_rate * 2 - self.elipse_height), # bottom right
+            (self.radius * self.scale_rate * 1.5 - self.elipse_width // 2, self.radius * self.scale_rate * 2.55 - self.elipse_height), # bottom
+            (self.radius * self.scale_rate * 1 - self.elipse_width, self.radius * self.scale_rate * 2 - self.elipse_height), # bottom left
+            (self.radius * self.scale_rate * 1 - self.elipse_width, self.radius * self.scale_rate * 1), # top left
+        ]
+
         
     
     def draw_menu_change_arrows(self, safe_positions, tower_menu_surface):
@@ -262,11 +267,11 @@ class Tower(pygame.sprite.Sprite, ABC):
                                           self.elipse_height // 2 - damage_text.get_height() // 2))
         
         # Drawing arrows and updating their position
-        self.page_arrow_left_rect = change_surface.blit(self.arrow_left, (self.elipse_width // 6, self.elipse_height // 2 - self.arrow_left.get_height() // 2))
+        self.page_arrow_left_rect = change_surface.blit(self.arrow_left_transformed, (self.elipse_width // 6, self.elipse_height // 2 - self.arrow_left_transformed.get_height() // 2))
         self.page_arrow_left_rect.x += change_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
         self.page_arrow_left_rect.y += change_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
         
-        self.page_arrow_right_rect = change_surface.blit(self.arrow_right, (self.elipse_width - self.arrow_right.get_width() - self.elipse_width // 6, self.elipse_height // 2 - self.arrow_right.get_height() // 2))
+        self.page_arrow_right_rect = change_surface.blit(self.arrow_right_transformed, (self.elipse_width - self.arrow_right_transformed.get_width() - self.elipse_width // 6, self.elipse_height // 2 - self.arrow_right_transformed.get_height() // 2))
         self.page_arrow_right_rect.x += change_rect.x + self.x - (self.radius * 1.5 * self.scale_rate)
         self.page_arrow_right_rect.y += change_rect.y + self.y - (self.radius * 1.5 * self.scale_rate)
         
@@ -300,9 +305,7 @@ class Tower(pygame.sprite.Sprite, ABC):
                 ]
 
     def draw_on_top(self, screen, delta_time):
-        
         if self.selected:
-            
             # Calculating ellipses positions
             tower_menu_positions = self.calculate_menu_positions()
             
@@ -322,7 +325,6 @@ class Tower(pygame.sprite.Sprite, ABC):
             current_page = 0
             
             for fn in draw_ellipse_functions:
-                
                 if current_position >= len(safe_positions):
                     current_position = 0
                     current_page += 1
@@ -337,7 +339,7 @@ class Tower(pygame.sprite.Sprite, ABC):
             screen.blit(self.menu_pages[self.current_menu_page], (self.x - (self.radius * 1.5 * self.scale_rate), self.y - (self.radius * 1.5 * self.scale_rate)))
             
             # Drawing tower on top so it isn't under the tower menu
-            self.draw(screen, delta_time) 
+            self.draw(screen, delta_time)
 
 
     def set_tower_target(self, target):
@@ -410,6 +412,7 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.level += 1
             self.damage *= 1.2
             self.radius *= 1.1
+            self.radius_start *= 1.1
             self.cooldown *= 0.9
 
             self.upgrade_sound.play()
@@ -451,10 +454,29 @@ class Tower(pygame.sprite.Sprite, ABC):
         return False
 
     def select_tower(self, X, Y):
-        if abs(X-self.x) < self.image.get_width()//2:
-            if abs(Y-self.y) < self.image.get_height()//2:
+        if abs(X-self.x) < self.tower_img_transformed.get_width()//2:
+            if abs(Y-self.y) < self.tower_img_transformed.get_height()//2:
                 self.selected = True
                 
                 return True
         return False
     
+
+    def scale_parameters(self, x_scale_rate, y_scale_rate):
+        self.x_scale_rate = x_scale_rate
+        self.y_scale_rate = y_scale_rate
+
+        self.x = self.start_x * x_scale_rate
+        self.y = self.start_y * y_scale_rate
+
+        self.font = pygame.font.Font(None, int(24 * x_scale_rate)) 
+        self.sell_icon_transformed = pygame.transform.scale(self.sell_icon, (50 * x_scale_rate, 50 * y_scale_rate))
+        self.upgrade_icon_transformed = pygame.transform.scale(self.upgrade_icon, (50 * x_scale_rate, 50 * y_scale_rate))
+        self.arrow_right_transformed = pygame.transform.scale(self.arrow_right, (30 * x_scale_rate, 30 * y_scale_rate))
+        self.arrow_left_transformed = pygame.transform.scale(self.arrow_left, (30 * x_scale_rate, 30 * y_scale_rate))
+        self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
+
+        self.elipse_width = 150 * x_scale_rate
+        self.elipse_height = 60 * y_scale_rate
+
+        self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)
