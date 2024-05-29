@@ -21,10 +21,6 @@ class EnemyMagic(Enemy):
             (1288, 193), (1324, 190), (1353, 187), (1381, 185)
         ]
 
-        # starting point
-        self.x = 1349 * x_scale_rate
-        self.y = 755 * y_scale_rate
-
         Enemy.__init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
         self.load_images("enemy")
 

@@ -13,9 +13,6 @@ class MagicTower(Tower):
         self.tower_img = SourceManager.get_image("magic_tower").convert_alpha()
         self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
-        self.rect = pygame.Rect(x, y, 50 * x_scale_rate, 50 * y_scale_rate) 
-        self.rect.center = (x, y) 
-        
         self.damage = 75
         self.radius_start = 120
         self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)
@@ -27,8 +24,6 @@ class MagicTower(Tower):
         self.damage_flash_duration = 200
         self.damage_flash_timer = 0
         self.damage_color = (224, 237, 111, 100)
-
-        #self.update_tower_feature_rect()
 
         self.set_tower_target(Target.ALL)
 

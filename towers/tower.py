@@ -21,6 +21,9 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.level = 1
         self.selected = False
 
+        self.rect = pygame.Rect(x, y, 50 * x_scale_rate, 50 * y_scale_rate) 
+        self.rect.center = (x, y) 
+
         self.damage_dealt = 0
 
         self.tower_target = Target.NOT_SET
@@ -480,3 +483,5 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.elipse_height = 60 * y_scale_rate
 
         self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)
+        self.rect = pygame.Rect(self.x, self.y, 50 * x_scale_rate, 50 * y_scale_rate) 
+        self.rect.center = (self.x, self.y) 

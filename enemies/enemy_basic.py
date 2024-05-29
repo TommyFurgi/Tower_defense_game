@@ -20,10 +20,6 @@ class EnemyBasic(Enemy):
             (979, 193), (1019, 194), (1055, 193), (1098, 191), (1147, 192),
             (1195, 190), (1246, 191), (1289, 190), (1329, 191), (1353, 192)
         ]
-        
-        # starting point
-        self.x = self.path[0][0] * x_scale_rate
-        self.y = self.path[0][1] * y_scale_rate
 
         Enemy.__init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
         self.load_images("enemy")
