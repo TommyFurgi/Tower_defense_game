@@ -9,12 +9,19 @@ from towers.cannon_tower import CannonTower
 from waves.wave_manager import WaveManager
 from source_manager import SourceManager
 from text_alert import TextAlert
-# from editor import Editor
-# from debug import Debug
+from math import sqrt
+# from tools.editor import Editor
+# from tools.debug import Debug
 
 
 class Game():
     def __init__(self, screen):
+        self.x_scale_rate = 1
+        self.y_scale_rate = 1
+
+        self.x_scale_diff = 1
+        self.y_scale_diff = 1
+
         self.fps = 60
         self.fpsClock = pygame.time.Clock()
         self.time_scale = 1
@@ -45,15 +52,15 @@ class Game():
         self.success_sound_end_game = SourceManager.get_sound("success_end_game")
         self.building_sound = SourceManager.get_sound("building")
 
-
+        self.objects_to_scale = {self.game_map, self.menu, self.main_menu}
         # # Editor related
-        # editor = [Editor(screen, "environment/path"),
+        # self.editor = [Editor(screen, "environment/path"),
         #           Editor(screen, "environment/others")]
-        # edit_mode = False
+        # self.edit_mode = False
 
         # # Debug related
-        # debug = Debug(screen)
-        # debug_mode = False
+        # self.debug = Debug(screen)
+        # self.debug_mode = True
     
 
     # Loads rectangles from file and adds them to group
@@ -108,11 +115,13 @@ class Game():
             if self.drag_object_conflict():
                 color = (255, 0, 0, 100)
             
-            surface = pygame.Surface((160, 160), pygame.SRCALPHA, 32)
-            pygame.draw.circle(surface, color, (80, 80), 80, 0)
-            self.screen.blit(surface, (mouse_x - 80, mouse_y - 80))
+            radius_rate = sqrt((self.x_scale_rate**2 + self.y_scale_rate**2)/2)
 
-            self.screen.blit(self.drag_object.image, (mouse_x - 80, mouse_y - 120))
+            surface = pygame.Surface((160 * self.x_scale_rate, 160 * self.y_scale_rate), pygame.SRCALPHA, 32)
+            pygame.draw.circle(surface, color, (80 * self.x_scale_rate, 80 * self.y_scale_rate), 80 * radius_rate, 0)
+            self.screen.blit(surface, (mouse_x - 80 * self.x_scale_rate, mouse_y - 80 * self.y_scale_rate))
+
+            self.screen.blit(self.drag_object.image, (mouse_x - 80 * self.x_scale_rate, mouse_y - 120 * self.y_scale_rate))
 
         if self.show_main_menu:
             self.main_menu.draw_main_menu(self.screen, self.game_running, self.player_won, self.points)
@@ -121,14 +130,14 @@ class Game():
     def spawn_enemies(self):
         if self.current_wave.has_next_enemy():
             
-            new_enemy = self.current_wave.get_next_enemy()
+            new_enemy = self.current_wave.get_next_enemy(self.x_scale_rate, self.y_scale_rate, self.x_scale_diff, self.y_scale_diff)
 
             if new_enemy:
                 self.enemies.add(new_enemy)
                 
         elif len(self.enemies) == 0 and self.end_game == False: # All enemies were killed
             self.game_pause = True
-            self.text_alerts.add(TextAlert("Wave " + str(self.wave) + " completed!", 2000, (0, 255, 0)))
+            self.text_alerts.add(TextAlert("Wave " + str(self.wave) + " completed!", 2000, (0, 255, 0), self.x_scale_rate, self.y_scale_rate))
 
             if self.wave_manager.has_next_wave(): # There is a next wave
                 self.success_sound.play()
@@ -145,7 +154,7 @@ class Game():
 
     def update_game(self):
         self.towers.update(self.game_pause, self.enemies, self.screen, self.delta_time)
-        self.enemies.update(self.game_pause, self.enemies, self.delta_time)
+        self.enemies.update(self.game_pause, self.enemies)
         
         if not self.game_pause:
             self.check_all_enemies()
@@ -185,7 +194,7 @@ class Game():
                 self.end_game = True
                 self.show_main_menu = True
                 self.main_menu.show_info = False   
-                self.text_alerts.add(TextAlert("Game over!", 2000, (255, 0, 0)))
+                self.text_alerts.add(TextAlert("Game over!", 2000, (255, 0, 0), self.x_scale_rate, self.y_scale_rate))
 
 
     def handle_restart_game(self): 
@@ -220,6 +229,62 @@ class Game():
                 
         for alert in alerts_to_delete:
             self.text_alerts.remove(alert)
+
+
+    def scale_game(self, new_w, new_h):
+        new_width = max(800, min(2400, new_w))
+        new_height = max(450, min(1800, new_h))
+
+        self.screen = pygame.display.set_mode((new_width, new_height), pygame.locals.RESIZABLE | pygame.locals.DOUBLEBUF, 16)
+        
+        self.x_scale_rate = new_width / 1600
+        self.y_scale_rate = new_height / 900
+        self.x_scale_diff = new_width/self.width
+        self.y_scale_diff = new_height/self.height
+
+        self.width, self.height = new_width, new_height
+
+        for scale_object in self.objects_to_scale:
+            scale_object.scale_parameters(self.x_scale_rate, self.y_scale_rate)
+
+        for scale_object in self.text_alerts:
+            scale_object.scale_parameters(self.x_scale_rate, self.y_scale_rate)
+
+        scaled_group_path = pygame.sprite.Group()
+        for scale_object in self.path_collisions:
+            # Oblicz nowe wymiary i pozycje
+            new_width = scale_object.rect.width * self.x_scale_diff
+            new_height = scale_object.rect.height * self.y_scale_diff
+            new_x = scale_object.rect.x * self.x_scale_diff
+            new_y = scale_object.rect.y * self.y_scale_diff
+            
+            scaled_sprite = pygame.sprite.Sprite()
+            scaled_sprite.rect = pygame.Rect(new_x, new_y, new_width, new_height)
+            scaled_group_path.add(scaled_sprite)
+
+        self.path_collisions = scaled_group_path
+    
+            
+        scaled_group_other = pygame.sprite.Group()
+        for scale_object in self.other_obstacles_collisions:
+            # Oblicz nowe wymiary i pozycje
+            new_width = scale_object.rect.width * self.x_scale_diff
+            new_height = scale_object.rect.height * self.y_scale_diff
+            new_x = scale_object.rect.x * self.x_scale_diff
+            new_y = scale_object.rect.y * self.y_scale_diff
+            
+            scaled_sprite = pygame.sprite.Sprite()
+            scaled_sprite.rect = pygame.Rect(new_x, new_y, new_width, new_height)
+            scaled_group_other.add(scaled_sprite)
+
+        self.other_obstacles_collisions = scaled_group_other
+
+        for scale_object in self.enemies:
+            scale_object.scale_parameters(self.x_scale_rate, self.y_scale_rate, self.x_scale_diff, self.y_scale_diff)
+
+        for scale_object in self.towers:
+            scale_object.scale_parameters(self.x_scale_rate, self.y_scale_rate)
+
 
     def run(self):
         selected_tower = None
@@ -259,6 +324,8 @@ class Game():
                                     self.player_won = None
                                     selected_tower = None
                                     drag_object_name = None
+                                case "exit_game":
+                                    running = False
                                 case _:
                                     pass 
                     
@@ -266,19 +333,24 @@ class Game():
                         if event.key == pygame.K_ESCAPE and self.game_running:
                             self.show_main_menu = False
 
+                    elif event.type == pygame.VIDEORESIZE:
+                        self.scale_game(event.w,  event.h)
+                        self.drag_object = None   
+                        selected_tower = None
+
             else:    
 
-            # if debug_mode:
-            #     debug.draw_path_collisions_rect(path_collisions)
-            #     debug.draw_others_rect(others)
-            #     debug.draw_enemy_rect(enemies)
-            #     if drag_object:
-            #         debug.draw_drag_object_rect(drag_object)
+                # if self.debug_mode:
+                #     self.debug.draw_paths_rect(self.path_collisions)
+                #     self.debug.draw_others_rect(self.other_obstacles_collisions)
+                    # self.debug.draw_enemy_rect(self.enemies)
+                    # if self.drag_object:
+                    #     self.debug.draw_drag_object_rect(self.drag_object)
 
-            # if edit_mode:
-            #     editor[1].edit()
-            #     pygame.display.flip() # Required by editor
-            #     continue
+                # if self.edit_mode:
+                #     self.editor[1].edit()
+                #     pygame.display.flip() # Required by editor
+                #     continue
             
                 self.update_game()
 
@@ -366,29 +438,27 @@ class Game():
                                         self.drag_object = None
                                         drag_object_name = None
                                         new_tower_cost = 0
-                                        self.text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0)))
+                                        self.text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0), self.x_scale_rate, self.y_scale_rate))
                                         continue
-
+                                    
                                     match drag_object_name:
-                                        case "archer":
-                                            tower = ArcherTower(clicked_position[0]-3, clicked_position[1]-42)
-                                            self.money -= new_tower_cost
+                                        case "archer_tower":
+                                            tower = ArcherTower(clicked_position[0]-3 * self.y_scale_rate, clicked_position[1]-42 * self.y_scale_rate, self.x_scale_rate, self.y_scale_rate)
 
-                                        case "magic":
-                                            tower = MagicTower(clicked_position[0]-3, clicked_position[1]-42)
-                                            self.money -= new_tower_cost
+                                        case "magic_tower":
+                                            tower = MagicTower(clicked_position[0]-3 * self.y_scale_rate, clicked_position[1]-42 * self.y_scale_rate, self.x_scale_rate, self.y_scale_rate)
                                             
-                                        case "cannon":
-                                            tower = CannonTower(clicked_position[0]-3, clicked_position[1]-42)
-                                            self.money -= new_tower_cost
-
+                                        case "cannon_tower":
+                                            tower = CannonTower(clicked_position[0]-3 * self.x_scale_rate, clicked_position[1]-42 * self.y_scale_rate, self.x_scale_rate, self.y_scale_rate)
+                                            
+                                    self.money -= new_tower_cost
                                     self.building_sound.play()
                                     self.towers.add(tower)
                                     self.drag_object = None
                                     
                                 else:
                                     
-                                    self.text_alerts.add(TextAlert("Can't place a tower here!", 2000, (255, 0, 0)))
+                                    self.text_alerts.add(TextAlert("Can't place a tower here!", 2000, (255, 0, 0), self.x_scale_rate, self.y_scale_rate))
 
 
                         elif event.button == 3:
@@ -403,6 +473,11 @@ class Game():
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             self.show_main_menu = True
+
+                    elif event.type == pygame.VIDEORESIZE:
+                        self.scale_game(event.w,  event.h)      
+                        self.drag_object = None
+                        selected_tower = None                  
 
             pygame.display.flip()
    

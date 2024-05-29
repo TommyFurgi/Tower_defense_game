@@ -3,21 +3,22 @@ from towers.tower import Tower
 from effects.slow_down_effect import SlowDownEffect
 from source_manager import SourceManager
 from towers.target import Target
+from math import sqrt
 
 
 class MagicTower(Tower):
-    def __init__(self, x, y):
-        Tower.__init__(self, x, y)
+    def __init__(self, x, y, x_scale_rate, y_scale_rate):
+        Tower.__init__(self, x, y, x_scale_rate, y_scale_rate)
 
-        self.image = SourceManager.get_image("magic_tower").convert_alpha()
-
-        self.image = pygame.transform.scale(self.image, (150, 150))
+        self.tower_img = SourceManager.get_image("magic_tower").convert_alpha()
+        self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
-        self.rect = pygame.Rect(x, y, 50, 50) 
+        self.rect = pygame.Rect(x, y, 50 * x_scale_rate, 50 * y_scale_rate) 
         self.rect.center = (x, y) 
         
         self.damage = 75
-        self.radius = 120
+        self.radius_start = 120
+        self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)
         self.cooldown = 1000
         self.price = 300
         

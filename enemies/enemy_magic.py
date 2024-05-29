@@ -7,15 +7,7 @@ from effects.effect_type import EffectType
 
 
 class EnemyMagic(Enemy):
-    def __init__(self):
-        Enemy.__init__(self)
-        self.load_images("enemy")
-
-        # starting point
-        self.x = 1349
-        self.y = 755
-        self.rect = pygame.Rect(self.x, self.y, 64, 64) # Required in order for collisions to work
-        
+    def __init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
         self.path = [
             (1349, 755), (1305, 755), (1268, 755), (1238, 754), (1202, 756),
             (1167, 756), (1121, 757), (1077, 758), (1038, 757), (999, 756),
@@ -28,6 +20,13 @@ class EnemyMagic(Enemy):
             (1052, 193), (1102, 193), (1158, 194), (1209, 196), (1253, 194),
             (1288, 193), (1324, 190), (1353, 187), (1381, 185)
         ]
+
+        # starting point
+        self.x = 1349 * x_scale_rate
+        self.y = 755 * y_scale_rate
+
+        Enemy.__init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
+        self.load_images("enemy")
 
         self.speed = 1.5
         self.max_speed = 1.5
@@ -59,15 +58,34 @@ class EnemyMagic(Enemy):
 
                 match i:
                     case 4:
-                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
+                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
                     case 5:
-                        self.imgs_left.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
+                        self.imgs_left.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
                     case 6:
-                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
+                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
                     case 7:
-                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
+                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
+
+                self.original_sized_images[i].append(pygame_surface)
 
         self.direction = Direction.RIGHT
         self.img = self.imgs_right[0]
 
         self.flipped = False
+
+
+    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+        super().scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
+
+        for i in range(4):
+            for j, img in enumerate(self.original_sized_images[i]):
+                match i:
+                    case 0:
+                        self.imgs_up[j] = pygame.transform.scale(img, (128 * x_scale_rate, 128 * y_scale_rate)).convert_alpha()
+                    case 1:
+                        self.imgs_left[j] = pygame.transform.scale(img, (128 * x_scale_rate, 128 * y_scale_rate)).convert_alpha()
+                    case 2:
+                        self.imgs_down[j] = pygame.transform.scale(img, (128 * x_scale_rate, 128 * y_scale_rate)).convert_alpha()
+                    case 3:
+                        self.imgs_right[j] = pygame.transform.scale(img, (128 * x_scale_rate, 128 * y_scale_rate)).convert_alpha()
+    
