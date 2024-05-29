@@ -13,6 +13,10 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.x_scale_diff = x_scale_diff
         self.y_scale_diff = y_scale_diff
 
+        # starting point
+        self.x = self.path[0][0] * x_scale_rate
+        self.y = self.path[0][1] * y_scale_rate
+
         self.reached_last_point = False
         self.rect = pygame.Rect(self.x, self.y, 64 * x_scale_rate, 64 * y_scale_rate) # Required in order for collisions to work
         self.original_sized_images = [[] for _ in range(4)]
