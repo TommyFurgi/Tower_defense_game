@@ -31,7 +31,8 @@ class Main_menu():
         self.play_rect = pygame.Rect(0, 0, 0, 0)
 
         self.show_info = False
-
+        self.elipse_width = 220 * self.x_scale_rate
+        self.elipse_height = 70 * self.y_scale_rate
 
     # Getter
     @property
@@ -75,53 +76,53 @@ class Main_menu():
     def draw_start_menu(self, screen, game_running):
         screen.blit(self.knight_transformed, (1050 * self.x_scale_rate, 300 * self.y_scale_rate))
 
-        text = self.font_title.render("Witaj rycerzu!", True, (114, 179, 73))
+        text = self.font_title.render("Hello Knight!", True, (114, 179, 73))
         screen.blit(text, ((self.width/2 - 450) * self.x_scale_rate, (self.height/2 - 170) * self.y_scale_rate))
 
         if game_running:
-            self.reasume_rect = pygame.Rect((self.width/2 - 300) * self.x_scale_rate, (self.height/2 + 50)  * self.y_scale_rate, 220 * self.x_scale_rate, 70 * self.y_scale_rate)
+            self.reasume_rect = pygame.Rect((self.width/2 - 300) * self.x_scale_rate, (self.height/2 + 30)  * self.y_scale_rate, self.elipse_width, self.elipse_height)
             pygame.draw.ellipse(screen, self.button_color, self.reasume_rect)
 
-            text = self.font_buttons.render("Kontynuuj", True, (255, 255, 255))
-            screen.blit(text, ((self.width/2 - 300 + 60) * self.x_scale_rate, (self.height/2 + 50 + 25) * self.y_scale_rate))
+            text = self.font_buttons.render("Resume", True, (255, 255, 255))
+            screen.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + (self.width/2 - 300) * self.x_scale_rate, self.elipse_height // 2 - text.get_height() // 2 + (self.height/2 + 30) * self.y_scale_rate))
 
     
-        self.new_game_rect = pygame.Rect((self.width/2 - 300) * self.x_scale_rate, (self.height/2 + 150) * self.y_scale_rate, 220 * self.x_scale_rate, 70 * self.y_scale_rate)
+        self.new_game_rect = pygame.Rect((self.width/2 - 300) * self.x_scale_rate, (self.height/2 + 130) * self.y_scale_rate, self.elipse_width, self.elipse_height)
         pygame.draw.ellipse(screen, self.button_color, self.new_game_rect)
 
-        text = self.font_buttons.render("Nowa gra", True, (255, 255, 255))
-        screen.blit(text, ((self.width/2 - 300 + 65) * self.x_scale_rate, (self.height/2 + 150 + 25) * self.y_scale_rate))
+        text = self.font_buttons.render("New game", True, (255, 255, 255))
+        screen.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + (self.width/2 - 300) * self.x_scale_rate, self.elipse_height // 2 - text.get_height() // 2 + (self.height/2 + 130) * self.y_scale_rate))
 
-        self.exit_rect = pygame.Rect((self.width/2 - 300) * self.x_scale_rate, (self.height/2 + 250) * self.y_scale_rate, 220 * self.x_scale_rate, 70 * self.y_scale_rate)
+        self.exit_rect = pygame.Rect((self.width/2 - 300) * self.x_scale_rate, (self.height/2 + 230) * self.y_scale_rate, self.elipse_width, self.elipse_height)
         pygame.draw.ellipse(screen, self.button_color, self.exit_rect)
 
-        text = self.font_buttons.render("Wyjdź z gry", True, (255, 255, 255))
-        screen.blit(text, ((self.width/2 - 300 + 60) * self.x_scale_rate, (self.height/2 + 250 + 25) * self.y_scale_rate))
+        text = self.font_buttons.render("Exit", True, (255, 255, 255))
+        screen.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + (self.width/2 - 300) * self.x_scale_rate, self.elipse_height // 2 - text.get_height() // 2 + (self.height/2 + 230) * self.y_scale_rate))
 
 
     def draw_end_menu(self, screen, player_won, score):
         if player_won:
-            main_text = "Wygrałeś!!!"
+            main_text = "You won!!!"
         else:
-            main_text = "Przegrałeś"
+            main_text = "You lost"
 
         text = self.font_title.render(main_text, True, (114, 179, 73))
-        screen.blit(text, ((self.width/2 - 220) * self.x_scale_rate, (self.height/2 - 200) * self.y_scale_rate))
+        screen.blit(text, (self.width/2 * self.x_scale_rate - text.get_width()//2, (self.height/2 - 200) * self.y_scale_rate))
 
-        text = self.font_score.render("Twój wynik to: " + str(score), True, (114, 179, 73))
-        screen.blit(text, ((self.width/2 - 250) * self.x_scale_rate, (self.height/2 - 70) * self.y_scale_rate))
+        text = self.font_score.render("Your result: " + str(score), True, (114, 179, 73))
+        screen.blit(text, (self.width/2* self.x_scale_rate - text.get_width()//2, (self.height/2 - 70) * self.y_scale_rate))
 
-        self.return_to_menu_rect = pygame.Rect((self.width/2 - 110 - 220) * self.x_scale_rate, (self.height/2 + 100) * self.y_scale_rate, 220 * self.x_scale_rate, 70 * self.y_scale_rate)
+        self.return_to_menu_rect = pygame.Rect((self.width/2 - 330) * self.x_scale_rate, (self.height/2 + 100) * self.y_scale_rate, self.elipse_width, self.elipse_height)
         pygame.draw.ellipse(screen, self.button_color, self.return_to_menu_rect)
 
-        text = self.font_buttons.render("Powrót do menu", True, (255, 255, 255))
-        screen.blit(text, ((self.width/2 - 110 - 220 + 40) * self.x_scale_rate, (self.height/2 + 100 + 30) * self.y_scale_rate))
+        text = self.font_buttons.render("Back to menu", True, (255, 255, 255))
+        screen.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + (self.width/2 - 110) * self.x_scale_rate - self.elipse_width, self.elipse_height // 2 - text.get_height() // 2 + (self.height/2 + 100) * self.y_scale_rate))
 
-        self.new_game_rect = pygame.Rect((self.width/2 + 110) * self.x_scale_rate, (self.height/2 + 100) * self.y_scale_rate, 220 * self.x_scale_rate, 70 * self.y_scale_rate)
+        self.new_game_rect = pygame.Rect((self.width/2 + 110) * self.x_scale_rate, (self.height/2 + 100) * self.y_scale_rate, self.elipse_width, self.elipse_height)
         pygame.draw.ellipse(screen, self.button_color, self.new_game_rect)
 
-        text = self.font_buttons.render("Zagraj ponowenie", True, (255, 255, 255))
-        screen.blit(text, ((self.width/2 + 110 + 40) * self.x_scale_rate, (self.height/2 + 100 + 30) * self.y_scale_rate))
+        text = self.font_buttons.render("Play again", True, (255, 255, 255))
+        screen.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + (self.width/2 + 110) * self.x_scale_rate, self.elipse_height // 2 - text.get_height() // 2 + (self.height/2 + 100) * self.y_scale_rate))
         
 
     def draw_info_menu(self, screen):
@@ -171,3 +172,6 @@ class Main_menu():
         self.font_buttons = pygame.font.Font(None, int(24 * x_scale_rate)) 
         self.font_title = pygame.font.Font(None, int(128 * x_scale_rate))
         self.font_score = pygame.font.Font(None, int(80 * x_scale_rate))
+
+        self.elipse_width = 220 * self.x_scale_rate
+        self.elipse_height = 70 * self.y_scale_rate
