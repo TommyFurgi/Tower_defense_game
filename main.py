@@ -11,9 +11,7 @@ if __name__ == "__main__":
     width, height = 1600, 900
     screen = pygame.display.set_mode((width, height), pygame.locals.RESIZABLE | pygame.locals.DOUBLEBUF, 16)
 
-    SourceManager.load_images("./assets/images")
-    SourceManager.load_sounds("./assets/sounds")
-    SourceManager.load_rectangles("./assets/environment")
+    SourceManager.load_all("./assets/images", "./assets/sounds", "./assets/environment", "paths.json")
 
     cursor_image = SourceManager.get_image("cursor").convert_alpha()
     cursor_surface = pygame.Surface(cursor_image.get_size(), pygame.SRCALPHA)

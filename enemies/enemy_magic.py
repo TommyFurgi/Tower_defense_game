@@ -8,18 +8,7 @@ from effects.effect_type import EffectType
 
 class EnemyMagic(Enemy):
     def __init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
-        self.path = [
-            (1349, 755), (1305, 755), (1268, 755), (1238, 754), (1202, 756),
-            (1167, 756), (1121, 757), (1077, 758), (1038, 757), (999, 756),
-            (972, 758), (940, 759), (888, 759), (845, 758), (802, 750),
-            (773, 734), (742, 719), (722, 701), (704, 663), (697, 627),
-            (685, 581), (666, 544), (645, 505), (594, 477), (549, 469),
-            (511, 456), (494, 426), (479, 401), (471, 345), (467, 293),
-            (494, 232), (555, 207), (606, 196), (685, 192), (736, 192),
-            (798, 187), (872, 195), (912, 197), (963, 195), (1003, 195),
-            (1052, 193), (1102, 193), (1158, 194), (1209, 196), (1253, 194),
-            (1288, 193), (1324, 190), (1353, 187), (1381, 185)
-        ]
+        self.path = SourceManager.get_path("alternative")
 
         Enemy.__init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
         self.load_images("enemy")
@@ -62,7 +51,7 @@ class EnemyMagic(Enemy):
                     case 7:
                         self.imgs_right.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
 
-                self.original_sized_images[i].append(pygame_surface)
+                self.original_sized_images[i-4].append(pygame_surface)
 
         self.direction = Direction.RIGHT
         self.img = self.imgs_right[0]
