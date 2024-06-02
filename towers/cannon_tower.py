@@ -42,6 +42,7 @@ class CannonTower(Tower):
                 self.shot_sound.play()
                 self.cooldown_timer = self.cooldown
                 enemy_x, enemy_y = enemy.get_position()
+                
                 self.bullets.add(Bullet(25, self.x, self.y-70 * self.y_scale_rate, enemy_x, enemy_y - 60 * self.y_scale_rate, enemy, self.x_scale_rate, self.y_scale_rate))
                 
         else:
