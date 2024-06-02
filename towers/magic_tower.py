@@ -13,7 +13,7 @@ class MagicTower(Tower):
         self.tower_img = SourceManager.get_image("magic_tower").convert_alpha()
         self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
-        self.damage = 75
+        self.damage = 20
         self.radius_start = 120
         self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)
         self.cooldown = 1000

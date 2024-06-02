@@ -8,6 +8,9 @@ if __name__ == "__main__":
     pygame.init()
     pygame.display.set_caption("Tower defense")
 
+    #infoObject = pygame.display.Info()
+    #width, height = infoObject.current_w, infoObject.current_h
+    
     width, height = 1600, 900
     screen = pygame.display.set_mode((width, height), pygame.locals.RESIZABLE | pygame.locals.DOUBLEBUF, 16)
 

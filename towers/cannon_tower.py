@@ -13,7 +13,7 @@ class CannonTower(Tower):
         self.tower_img = SourceManager.get_image("cannon_tower").convert_alpha()
         self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
-        self.damage = 150
+        self.damage = 70
         self.radius_start = 130
         self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)        
         self.cooldown = 1700
@@ -42,7 +42,8 @@ class CannonTower(Tower):
                 self.shot_sound.play()
                 self.cooldown_timer = self.cooldown
                 enemy_x, enemy_y = enemy.get_position()
-                self.bullets.add(Bullet(25, self.x, self.y-70 * self.y_scale_rate, enemy_x, enemy_y - 60 * self.y_scale_rate, enemy, self.x_scale_rate, self.scale_rate))
+                
+                self.bullets.add(Bullet(25, self.x, self.y-70 * self.y_scale_rate, enemy_x, enemy_y - 60 * self.y_scale_rate, enemy, self.x_scale_rate, self.y_scale_rate))
                 
         else:
             self.cooldown_timer -= delta_time
