@@ -35,7 +35,7 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.sell_sound = SourceManager.get_sound("selling")
         self.upgrade_sound = SourceManager.get_sound("upgrade")
         
-        self.tower_menu = TowerMenu(self.x, self.y, self.x_scale_rate, self.y_scale_rate)
+        self.tower_menu = TowerMenu(self)
         
 
     def draw(self, screen, delta_time):
@@ -45,12 +45,8 @@ class Tower(pygame.sprite.Sprite, ABC):
     def draw_on_top(self, screen, delta_time):
         if self.selected:
             
-            tower_parameters = {"level" : self.level, "damage" : self.damage, "radius" : self.radius, "cooldown" : self.cooldown,
-                                "price" : self.price, "damage_dealt" : self.damage_dealt, "tower_target" : self.tower_target,
-                                "radius" : self.radius}
-            
             # Drawing tower menu
-            self.tower_menu.draw(screen, tower_parameters)
+            self.tower_menu.draw(screen)
                         
             # Drawing tower on top so it isn't under the tower menu
             self.draw(screen, delta_time)
@@ -127,23 +123,22 @@ class Tower(pygame.sprite.Sprite, ABC):
     def upgrade_tower(self, mouse_pos, money, text_alerts):
         if self.tower_menu.upgrade_pressed(mouse_pos):
             
-            self.upgrade_sound.play()
+            if self.level <= 3:
             
-            if self.level <= 3 and money - self.price < 0:
-                text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0)))
-                return -1
-            else:
-                self.level += 1
-                self.damage *= 1.2
-                self.radius *= 1.1
-                self.radius_start *= 1.1
-                self.cooldown *= 0.9
+                if money - self.price < 0:
+                    text_alerts.add(TextAlert("Not enough money!", 1000, (255, 0, 0), self.x_scale_rate, self.y_scale_rate))
+                    return -1
+                else:
+                    self.level += 1
+                    self.damage *= 1.2
+                    self.radius *= 1.1
+                    self.radius_start *= 1.1
+                    self.cooldown *= 0.9
+
+                    self.upgrade_sound.play()
+
+                    return self.price
                 
-                self.tower_menu.set_radius(self.radius)
-
-                self.upgrade_sound.play()
-
-                return self.price
         return -1
     
     def sell_tower(self, mouse_pos):
@@ -179,7 +174,9 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.x = self.start_x * x_scale_rate
         self.y = self.start_y * y_scale_rate
         
-        self.tower_menu.scale_parameters(self.x, self.y, x_scale_rate, y_scale_rate)
-        
         self.rect = pygame.Rect(self.x, self.y, 50 * x_scale_rate, 50 * y_scale_rate) 
         self.rect.center = (self.x, self.y) 
+        
+        self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
+        
+        self.tower_menu.scale_parameters()

@@ -364,7 +364,7 @@ class Game():
                             # print(clicked_position)
 
                             if not self.drag_object:
-                                
+    
                                 if selected_tower:
                                     
                                     # Buying a tower
