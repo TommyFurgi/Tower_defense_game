@@ -19,6 +19,8 @@ class CannonTower(Tower):
         self.cooldown = 1700
         self.price = 500
         
+        self.tower_menu.set_radius(self.radius)
+        
         self.cooldown_timer = self.cooldown
         
         self.blast_radius = 70

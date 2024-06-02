@@ -367,21 +367,31 @@ class Game():
                                 
                                 if selected_tower:
                                     
-                                    target_mode_arrow_clicked = selected_tower.manage_tower_target_mode(clicked_position)
-                                    menu_page_arrow_clicked = selected_tower.manage_tower_menu_page(clicked_position)
+                                    # Buying a tower
+                                    buy_value = selected_tower.upgrade_tower(clicked_position, self.money, self.text_alerts)
                                     
-                                    value = selected_tower.manage_tower_action(clicked_position, self.money, self.text_alerts)
+                                    if buy_value >= 0:
+                                        
+                                        self.money -= buy_value
+                                            
+                                    # Selling a tower
+                                    sell_value = selected_tower.sell_tower(clicked_position)
+                                       
+                                    if sell_value >= 0:
+                                        
+                                        self.money += sell_value
+                                        self.towers.remove(selected_tower)
+                                        
+                                    # Interacting with tower menu
+                                    target_mode_arrow_clicked = selected_tower.change_tower_target_mode(clicked_position)
+                                    menu_page_arrow_clicked = selected_tower.tower_menu.manage_tower_menu_page(clicked_position)
                                     
-                                    self.money += value
-                                    if value >= 0: 
-                                        if value > 0: # tower sold
-                                            self.towers.remove(selected_tower)
-
-                                        if not target_mode_arrow_clicked and not menu_page_arrow_clicked:
+                                    
+                                    if buy_value < 0 and sell_value < 0 and not target_mode_arrow_clicked and not menu_page_arrow_clicked:
                                             selected_tower.selected = False
                                             selected_tower = None
-                                        
-                                        
+                                            
+                                            
                                 if self.menu.rect.collidepoint(clicked_position):
                                     self.drag_object, drag_object_name, new_tower_cost = self.menu.handle_click(clicked_position, self.game_pause)
                                     

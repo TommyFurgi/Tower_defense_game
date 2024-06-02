@@ -19,6 +19,8 @@ class MagicTower(Tower):
         self.cooldown = 1000
         self.price = 300
         
+        self.tower_menu.set_radius(self.radius)
+        
         self.cooldown_timer = self.cooldown
 
         self.damage_flash_duration = 200

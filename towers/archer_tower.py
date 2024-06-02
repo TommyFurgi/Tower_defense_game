@@ -20,6 +20,8 @@ class ArcherTower(Tower):
         self.cooldown = 700
         self.price = 400
         
+        self.tower_menu.set_radius(self.radius)
+        
         self.cooldown_timer = self.cooldown
 
         self.bullets = pygame.sprite.Group()
