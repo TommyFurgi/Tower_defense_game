@@ -1,12 +1,13 @@
 {
 	"wave_0": {
-		"basic": 3
-	},
-	"wave_1": {
 		"basic": 4
 	},
+	"wave_1": {
+		"basic": 4,
+		"magic": 2
+	},
 	"wave_2": {
-		"basic": 5
+		"basic": 12
 	},
 	"wave_3": {
 		"basic": 6,

@@ -47,7 +47,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         pygame.draw.rect(screen, (0, 255, 0), (self.x - 42 * self.x_scale_rate, self.y - 130 * self.y_scale_rate, health_bar * self.x_scale_rate, 10 * self.y_scale_rate), 0)
 
         # Wyświetlanie ilości punktów życia na pasku
-        text = self.hp_font.render(f"{self.health}/{self.max_health}", True, (0, 0, 0))
+        text = self.hp_font.render(f"{int(self.health)}/{self.max_health}", True, (0, 0, 0))
         text_rect = text.get_rect(center=(self.x, self.y - 125 * self.y_scale_rate))
         screen.blit(text, text_rect)
 
