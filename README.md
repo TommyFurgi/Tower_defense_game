@@ -47,11 +47,12 @@ The `Tower Defense Game` offers a range of mechanics and features to provide pla
 
 6. **Fully Responsive Gameplay:** The Tower Defense Game is designed to be fully responsive, ensuring seamless gameplay across different screen sizes and devices. Whether playing on a desktop computer, laptop, tablet, or mobile device. The game's user interface and controls are optimized to adapt to various screen resolutions and aspect ratios, providing a consistent and immersive gaming experience across all platforms.
 
-![Gameplay](assets_readme/gameplay.mp4)
+## Gameplay
+
 
 ## Authors
 
-[Jakub Frączek](https://github.com/JakubFr4czek)
+[Jakub Frączek](https://github.com/JakubFr4czek)  
 [Tomasz Furgała](https://github.com/TommyFurgi)
 
 ## Assets Sources
@@ -59,6 +60,6 @@ The `Tower Defense Game` offers a range of mechanics and features to provide pla
 - [Background music](https://soundcloud.com/cedricsourd/fresh-roots)
 - [Map](https://the-spartans-1.gitbook.io/the-spartans/spartans-game/game-play/map-system)
 - [Sounds effects](https://mixkit.co/free-sound-effects/)
-- [Sound effects](https://pixabay.com/sound-effects/)
+- [Sounds effects](https://pixabay.com/sound-effects/)
 - [Images](https://github.com/jesseakt/PixelDefense/tree/master/src/data/img)
 - [Images](https://github.com/Casmo/tower-defense/tree/master/assets)
