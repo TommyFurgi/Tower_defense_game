@@ -29,7 +29,11 @@ class Tower(pygame.sprite.Sprite, ABC):
         self.tower_target = Target.NOT_SET
         self.target_modes = []
         self.current_target_mode = 0
-
+        
+        self.applied_effect = None
+        self.effect_strength = 0
+        self.effect_duration = 0
+        
         self.time_from_last_shot = pygame.time.get_ticks()
         
         self.sell_sound = SourceManager.get_sound("selling")
@@ -134,6 +138,8 @@ class Tower(pygame.sprite.Sprite, ABC):
                     self.radius *= 1.1
                     self.radius_start *= 1.1
                     self.cooldown *= 0.9
+                    self.effect_strength *= 1.2
+                    self.effect_duration *= 1.1
 
                     self.upgrade_sound.play()
 

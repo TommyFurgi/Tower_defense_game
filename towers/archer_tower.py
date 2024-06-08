@@ -1,6 +1,7 @@
 import pygame
 from towers.tower import Tower
 from towers.bullet import Bullet
+from effects.effect_type import EffectType
 from effects.poison_effect import PoisonEffect
 from source_manager import SourceManager
 from towers.target import Target
@@ -19,6 +20,10 @@ class ArcherTower(Tower):
         self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)
         self.cooldown = 700
         self.price = 400   
+        
+        self.applied_effect = EffectType.POISON
+        self.effect_strength = 10
+        self.effect_duration = 3
         
         self.cooldown_timer = self.cooldown
 
@@ -55,7 +60,7 @@ class ArcherTower(Tower):
         for bullet in self.bullets:
             enemy_hitted = bullet.hit()
             if enemy_hitted:
-                if(enemy_hitted.add_effect(PoisonEffect(10, 3))): # Returns true if the effect was added, false if enemy is resistant to the effect
+                if(enemy_hitted.add_effect(PoisonEffect(self.effect_strength, self.effect_duration))): # Returns true if the effect was added, false if enemy is resistant to the effect
                     self.damage_dealt += 3 * 10
                 actual_damage = enemy_hitted.lose_hp(self.damage)
                 self.damage_dealt += actual_damage

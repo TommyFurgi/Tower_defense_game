@@ -1,5 +1,6 @@
 import pygame
 from towers.tower import Tower
+from effects.effect_type import EffectType
 from effects.slow_down_effect import SlowDownEffect
 from source_manager import SourceManager
 from towers.target import Target
@@ -18,6 +19,10 @@ class MagicTower(Tower):
         self.radius = self.radius_start * sqrt((x_scale_rate**2 + y_scale_rate**2)/2)
         self.cooldown = 1000
         self.price = 300
+        
+        self.applied_effect = EffectType.SLOWDOWN
+        self.effect_strength = 0.85
+        self.effect_duration = 3
         
         self.cooldown_timer = self.cooldown
 
@@ -47,7 +52,7 @@ class MagicTower(Tower):
                 for enemy in enemies_collision:
                     actual_damage = enemy.lose_hp(self.damage)
                     self.damage_dealt += actual_damage
-                    enemy.add_effect(SlowDownEffect(0.85, 3))
+                    enemy.add_effect(SlowDownEffect(self.effect_strength, self.effect_duration))
         else:
             self.cooldown_timer -= delta_time
         

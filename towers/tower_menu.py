@@ -1,5 +1,6 @@
 import pygame
 from towers.position import Position
+from effects.effect_type import EffectType
 from math import sqrt
 
 class TowerMenu():
@@ -86,6 +87,7 @@ class TowerMenu():
         # Drawing the ellipse
         pygame.draw.ellipse(cooldown_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
         
+        
         # Drawing cooldown info
         cooldown_text = self.font.render("Cooldown: " + str(int(self.tower.cooldown)), True, self.text_color)
         cooldown_surface.blit(cooldown_text, (self.elipse_width // 2 - cooldown_text.get_width() // 2, self.elipse_height // 2 - cooldown_text.get_height() // 2))
@@ -103,9 +105,24 @@ class TowerMenu():
         
         pygame.draw.ellipse(damage_surface, self.elipse_color, pygame.Rect(0, 0, self.elipse_width, self.elipse_height))
 
-        damage_text = self.font.render("Damage: " + str(int(self.tower.damage)), True, self.text_color)
-        damage_surface.blit(damage_text, (self.elipse_width // 2 - damage_text.get_width() // 2,
-                                          self.elipse_height // 2 - damage_text.get_height() // 2))
+
+        effect_names = {1 : "Poison", 2 : "Slow", 3 : "Boost"}
+        offset = 0
+
+        if self.tower.applied_effect:
+
+            damage_text = self.font.render(effect_names[self.tower.applied_effect.value]
+                                           + ": " + str(round(self.tower.effect_strength, 2)) + " / " + str(round(self.tower.effect_duration, 2)), True, self.text_color)
+            damage_surface.blit(damage_text, (self.elipse_width // 2 - damage_text.get_width() // 2,
+                                            self.elipse_height // 2 - damage_text.get_height() // 2 + 10))
+            
+            offset = -10
+            
+            
+            
+        damage_info_text = self.font.render("Damage: " + str(int(self.tower.damage)), True, self.text_color)
+        damage_surface.blit(damage_info_text, (self.elipse_width // 2 - damage_info_text.get_width() // 2,
+                                                         self.elipse_height // 2 - damage_info_text.get_height() // 2 + offset))
         
         # Blitting the ellipse on the tower_menu_surface
         tower_menu_surface.blit(damage_surface, (damage_rect.x, damage_rect.y))
