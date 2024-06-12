@@ -1,7 +1,6 @@
 import pygame
 from source_manager import SourceManager
 
-
 class Menu():
     def __init__(self, screen):
         self.screen = screen
@@ -10,7 +9,7 @@ class Menu():
         
         self.window_width, self.height = screen.get_size()
         self.width = 0.15 * self.window_width
-        self.left_border = self.window_width - self.width # 1360
+        self.left_border = self.window_width - self.width 
         
         self.scale_rate = 3.75
         
@@ -81,11 +80,9 @@ class Menu():
         self.scroll_up_rect = self.screen.blit(self.scroll_up_transformed, (1465 * self.x_scale_rate, 245 * self.y_scale_rate))
         self.scroll_down_rect = self.screen.blit(self.scroll_down_transformed, (1465 * self.x_scale_rate, 765 * self.y_scale_rate))
         
-        
         self.draw_towers_shop()
 
     def draw_towers_shop(self):
-        
         if self.displayed_towers[self.displayed_towers_position]:
             
             tower_img, _, tower_price, = self.displayed_towers[self.displayed_towers_position]
@@ -129,7 +126,6 @@ class Menu():
         self.screen.blit(self.wave_transformed, ((self.left_border + self.width * 0.2 - 10 * self.scale_rate) * self.x_scale_rate,  self.height * 0.11 * self.y_scale_rate))
         self.screen.blit(wave, ((self.left_border + self.width * 0.3) * self.x_scale_rate, self.height * 0.11 * self.y_scale_rate))        
 
-
     def handle_click(self, clicked_position, game_paused):
         if (self.first_tower_rect.collidepoint(clicked_position)):
             return self.displayed_towers[self.displayed_towers_position]
@@ -158,7 +154,6 @@ class Menu():
                 self.displayed_towers_position += 1
 
         return None, None, 0
-
         
     def scale_parameters(self, x_scale_rate, y_scale_rate):
         self.x_scale_rate = x_scale_rate

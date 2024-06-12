@@ -10,9 +10,6 @@ from waves.wave_manager import WaveManager
 from source_manager import SourceManager
 from text_alert import TextAlert
 from math import sqrt
-# from tools.editor import Editor
-# from tools.debug import Debug
-
 
 class Game():
     def __init__(self, screen):
@@ -53,15 +50,6 @@ class Game():
         self.building_sound = SourceManager.get_sound("building")
 
         self.objects_to_scale = {self.game_map, self.menu, self.main_menu}
-        # # Editor related
-        # self.editor = [Editor(screen, "environment/path"),
-        #           Editor(screen, "environment/others")]
-        # self.edit_mode = False
-
-        # # Debug related
-        # self.debug = Debug(screen)
-        # self.debug_mode = True
-    
 
     # Loads rectangles from file and adds them to group
     def load_rects(self, name, group):
@@ -75,19 +63,16 @@ class Game():
 
 
     def drag_object_conflict(self):
-
         return (pygame.sprite.spritecollide(self.drag_object, self.towers, False) or 
                 pygame.sprite.spritecollide(self.drag_object, self.path_collisions, False) or
                 pygame.sprite.spritecollide(self.drag_object, self.other_obstacles_collisions, False))  
 
 
     def draw_enemies_and_towers(self):
-        
         sprites = self.enemies.sprites() + self.towers.sprites()
         
         for sprite in sorted(sprites, key=lambda s: s.y):
             sprite.draw(self.screen, self.delta_time)
-
 
     # Images and effects that have to appear on top of everything else
     def draw_on_top(self):
@@ -96,14 +81,12 @@ class Game():
         for sprite in sprites:
             sprite.draw_on_top(self.screen, self.delta_time)
 
-
     def update_screen(self):
         self.game_map.draw_background()
         self.draw_enemies_and_towers()
         self.draw_on_top()
         self.menu.draw_all_menu(self.points, self.money, self.hearts, self.wave, self.game_pause)
         self.draw_text_alerts()
-        
     
         if self.drag_object:
             
@@ -160,7 +143,6 @@ class Game():
             self.check_all_enemies()
             self.spawn_enemies()
 
-
     def check_all_enemies(self):
         enemies_on_end =[]
         killed_enemies = []
@@ -173,7 +155,6 @@ class Game():
 
             if monster.to_delete():
                 enemies_on_end.append(monster)
-
 
         for monster_to_delete, reward in killed_enemies:
             self.enemies.remove(monster_to_delete)
@@ -195,7 +176,6 @@ class Game():
                 self.show_main_menu = True
                 self.main_menu.show_info = False   
                 self.text_alerts.add(TextAlert("Game over!", 2000, (255, 0, 0), self.x_scale_rate, self.y_scale_rate))
-
 
     def handle_restart_game(self): 
         self.money = 1000
@@ -230,7 +210,6 @@ class Game():
         for alert in alerts_to_delete:
             self.text_alerts.remove(alert)
 
-
     def scale_game(self, new_w, new_h):
         new_width = max(800, min(2400, new_w))
         new_height = max(450, min(1800, new_h))
@@ -252,7 +231,7 @@ class Game():
 
         scaled_group_path = pygame.sprite.Group()
         for scale_object in self.path_collisions:
-            # Oblicz nowe wymiary i pozycje
+            # Calculate new positions 
             new_width = scale_object.rect.width * self.x_scale_diff
             new_height = scale_object.rect.height * self.y_scale_diff
             new_x = scale_object.rect.x * self.x_scale_diff
@@ -263,11 +242,10 @@ class Game():
             scaled_group_path.add(scaled_sprite)
 
         self.path_collisions = scaled_group_path
-    
-            
+       
         scaled_group_other = pygame.sprite.Group()
         for scale_object in self.other_obstacles_collisions:
-            # Oblicz nowe wymiary i pozycje
+            # Calculate new positions 
             new_width = scale_object.rect.width * self.x_scale_diff
             new_height = scale_object.rect.height * self.y_scale_diff
             new_x = scale_object.rect.x * self.x_scale_diff
@@ -284,7 +262,6 @@ class Game():
 
         for scale_object in self.towers:
             scale_object.scale_parameters(self.x_scale_rate, self.y_scale_rate)
-
 
     def run(self):
         selected_tower = None
@@ -338,20 +315,7 @@ class Game():
                         self.drag_object = None   
                         selected_tower = None
 
-            else:    
-
-                # if self.debug_mode:
-                #     self.debug.draw_paths_rect(self.path_collisions)
-                #     self.debug.draw_others_rect(self.other_obstacles_collisions)
-                    # self.debug.draw_enemy_rect(self.enemies)
-                    # if self.drag_object:
-                    #     self.debug.draw_drag_object_rect(self.drag_object)
-
-                # if self.edit_mode:
-                #     self.editor[1].edit()
-                #     pygame.display.flip() # Required by editor
-                #     continue
-            
+            else:                
                 self.update_game()
 
                 for event in pygame.event.get():

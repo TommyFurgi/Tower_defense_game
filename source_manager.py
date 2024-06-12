@@ -16,7 +16,6 @@ class SourceManager():
         cls.load_rectangles(environment_folder)
         cls.load_paths(environment_folder, paths_file)
 
-
     @classmethod
     def load_images(cls, assets_folder):
         for root, _, files in os.walk(assets_folder):
@@ -25,16 +24,21 @@ class SourceManager():
                     name = os.path.splitext(filename)[0]
                     path = os.path.join(root, filename)
                     if name not in cls._images:
-                        if 'enemies' in path:
-                            cls._images[name] = Image.open(path)
-                        else:
-                            cls._images[name] = pygame.image.load(path)
-
+                        try:
+                            if 'enemies' in path:
+                                cls._images[name] = Image.open(path)
+                            else:
+                                cls._images[name] = pygame.image.load(path)
+                        except Exception as e:
+                            print(f"Error loading image '{filename}': {e}")
 
     @classmethod
     def get_image(cls, name):
-        return cls._images.get(name)
-    
+        if name in cls._images:
+            return cls._images[name]
+        else:
+            print(f"Image '{name}' not found.")
+            return None
 
     @classmethod
     def load_sounds(cls, sounds_folder):
@@ -44,22 +48,27 @@ class SourceManager():
                     name = os.path.splitext(filename)[0]
                     path = os.path.join(root, filename)
                     if name not in cls._sounds:
-                        cls._sounds[name] = pygame.mixer.Sound(path)
-
+                        try:
+                            cls._sounds[name] = pygame.mixer.Sound(path)
+                        except Exception as e:
+                            print(f"Error loading sound '{filename}': {e}")
 
     @classmethod
     def get_sound(cls, name):
-        return cls._sounds.get(name)
-    
+        if name in cls._sounds:
+            return cls._sounds[name]
+        else:
+            print(f"Sound '{name}' not found.")
+            return None
 
     @classmethod
     def set_sounds_volume(cls, volume):
         if not 0.0 <= volume <= 1.0:
+            print("Volume must be between 0.0 and 1.0")
             return
         
         for sound in cls._sounds.values():
             sound.set_volume(volume)
-    
 
     @classmethod
     def load_rectangles(cls, rectangles_folder):
@@ -74,16 +83,19 @@ class SourceManager():
                             for line in file:
                                 rect_x, rect_y, rect_width, rect_height = map(int, line.strip().split())
                                 rectangles.append((rect_x, rect_y, rect_width, rect_height))
+                        cls._rectangles[name] = rectangles
                     except FileNotFoundError:
                         print(f"File '{filename}' not found. No rectangles loaded.")
-
-                    cls._rectangles[name] = rectangles
-        
+                    except ValueError as e:
+                        print(f"Error processing file '{filename}': {e}")
 
     @classmethod
     def get_rectangles(cls, name):
-        return cls._rectangles.get(name)
-    
+        if name in cls._rectangles:
+            return cls._rectangles[name]
+        else:
+            print(f"Rectangles for '{name}' not found.")
+            return None
 
     @classmethod
     def load_paths(cls, root_folder, paths_file):
@@ -99,7 +111,10 @@ class SourceManager():
                 except json.JSONDecodeError:
                     print(f"Error decoding JSON from file '{paths_file}'.")
 
-
     @classmethod
     def get_path(cls, name='default'):
-        return cls._paths.get(name)
+        if name in cls._paths:
+            return cls._paths.get(name)
+        else:
+            print(f"Path '{name}' not found.")
+            return None

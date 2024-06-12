@@ -39,14 +39,12 @@ class Main_menu():
     def show_info(self):
         return self._show_info
     
-
     # Setter
     @show_info.setter
     def show_info(self, value):
         if not isinstance(value, bool):
             raise ValueError("Wartość show_info musi być typu bool")
         self._show_info = value
-
 
     def draw_main_menu(self, screen, game_running, player_won, points):
         self.draw_back_tamplate((19, 9, 56, 255), 30 * self.x_scale_rate, screen)
@@ -59,7 +57,6 @@ class Main_menu():
             self.draw_end_menu(screen, player_won, points)
         else:
             self.draw_start_menu(screen, game_running)
-
 
     def draw_back_tamplate(self, color, radius, screen):
         background = pygame.Surface(((self.width - 400) * self.x_scale_rate, (self.height - 200) * self.y_scale_rate), pygame.SRCALPHA)
@@ -99,7 +96,6 @@ class Main_menu():
         text = self.font_buttons.render("Exit", True, (255, 255, 255))
         screen.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + (self.width/2 - 300) * self.x_scale_rate, self.elipse_height // 2 - text.get_height() // 2 + (self.height/2 + 230) * self.y_scale_rate))
 
-
     def draw_end_menu(self, screen, player_won, score):
         if player_won:
             main_text = "You won!!!"
@@ -124,12 +120,10 @@ class Main_menu():
         text = self.font_buttons.render("Play again", True, (255, 255, 255))
         screen.blit(text, (self.elipse_width // 2 - text.get_width() // 2 + (self.width/2 + 110) * self.x_scale_rate, self.elipse_height // 2 - text.get_height() // 2 + (self.height/2 + 100) * self.y_scale_rate))
         
-
     def draw_info_menu(self, screen):
         self.back_rect = screen.blit(self.back_transformed, (220 * self.x_scale_rate, 440 * self.y_scale_rate))
         screen.blit(self.instruction_transformed, (320 * self.x_scale_rate, 115 * self.y_scale_rate))
         
-
     def handle_click_action(self, clicked_position, end_game, game_runnig):
         if (self.music_rect.collidepoint(clicked_position)):
             return "music"

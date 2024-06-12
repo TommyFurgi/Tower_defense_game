@@ -3,7 +3,6 @@ import sys
 from game import Game
 from source_manager import SourceManager
 
-
 if __name__ == "__main__":
     pygame.init()
     pygame.display.set_caption("Tower defense")
