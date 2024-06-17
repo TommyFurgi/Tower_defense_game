@@ -6,14 +6,19 @@ WAVE_FILENAME = "waves/waves.json"
 
 
 class WaveManager():
+    """
+    WaveManager loads waves from JSON and creates EnemyWave object
+    for each wave from "waves.json" file.
+    """
     def __init__(self):
         self.waves_loaded = self.load_waves()
         
         self.waves = [wave for wave in self.waves_loaded]
         self.current_wave = 0
     
-    # loads waves data from json
+    
     def load_waves(self):
+        """Loads waves data from json."""
         waves_read = []
 
         with open(WAVE_FILENAME, 'r') as f:
@@ -21,9 +26,9 @@ class WaveManager():
         
         return waves_read
     
-
-    # returns wave object containing information about enemies
+    
     def get_next_wave(self):
+        """Returns wave object containing information about enemies."""
         if not self.has_next_wave():
             raise Exception("No more waves!")
 
@@ -38,4 +43,5 @@ class WaveManager():
 
 
     def has_next_wave(self):
+        """Checks if there is one more wave."""
         return self.current_wave < len(self.waves)

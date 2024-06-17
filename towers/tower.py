@@ -7,6 +7,10 @@ from text_alert import TextAlert
 
 
 class Tower(pygame.sprite.Sprite, ABC): 
+    """
+    Abstract class representing tower. Implements functionality
+    to draw, access menu, change target, upgrade and sell.
+    """
     def __init__(self, x, y, x_scale_rate, y_scale_rate): 
         pygame.sprite.Sprite.__init__(self)
         self.x_scale_rate = x_scale_rate
@@ -43,10 +47,12 @@ class Tower(pygame.sprite.Sprite, ABC):
         
 
     def draw(self, screen, delta_time):
+        """Draws a tower on a screen."""
         screen.blit(self.tower_img_transformed, (self.x - self.tower_img_transformed.get_width() // 2, self.y - self.tower_img_transformed.get_height() // 2))  
 
 
     def draw_on_top(self, screen, delta_time):
+        """Draws tower menu and then tower itself on top."""
         if self.selected:
             
             # Drawing tower menu
@@ -56,12 +62,12 @@ class Tower(pygame.sprite.Sprite, ABC):
             self.draw(screen, delta_time)
 
 
-    def set_tower_target(self, target):
-        self.tower_target = target
-        
-
     def get_tower_target(self, enemies):
-
+        """
+        Checks which enemies are in tower's range and
+        then chooses which enemy to attack, based on 
+        self.tower_target.
+        """
         enemies_collision = pygame.sprite.spritecollide(self, enemies, False, pygame.sprite.collide_circle)
 
         if enemies_collision:
@@ -116,6 +122,7 @@ class Tower(pygame.sprite.Sprite, ABC):
     
     
     def select_tower(self, X, Y):
+        """Checks if tower was clicked."""
         if abs(X-self.x) < self.tower_img_transformed.get_width()//2:
             if abs(Y-self.y) < self.tower_img_transformed.get_height()//2:
                 self.selected = True
@@ -125,6 +132,10 @@ class Tower(pygame.sprite.Sprite, ABC):
 
     
     def upgrade_tower(self, mouse_pos, money, text_alerts):
+        """
+        Checks if upgrade button was pressed and player has enough
+        money and if so upgrades tower parameter.
+        """
         if self.tower_menu.upgrade_pressed(mouse_pos):
             
             if self.level <= 3:
@@ -148,6 +159,10 @@ class Tower(pygame.sprite.Sprite, ABC):
         return -1
     
     def sell_tower(self, mouse_pos):
+        """
+        Checks if sell button was pressed and then
+        returns sell price.
+        """
         if self.tower_menu.sell_pressed(mouse_pos):
             
             self.sell_sound.play()
@@ -157,6 +172,10 @@ class Tower(pygame.sprite.Sprite, ABC):
         return -1
         
     def change_tower_target_mode(self, clicked_position):
+        """
+        Checks if arrows responsible for changing mode were pressed
+        and if so updates tower mode based on which arrow was pressed.
+        """
         if self.tower_menu.taget_mode_right_arrow_pressed(clicked_position):
             self.current_target_mode = (self.current_target_mode + 1) % len(self.target_modes)
             self.tower_target = self.target_modes[self.current_target_mode]
@@ -174,6 +193,10 @@ class Tower(pygame.sprite.Sprite, ABC):
         return False
 
     def scale_parameters(self, x_scale_rate, y_scale_rate):
+        """
+        Scales necessary parameters. Triggered when users
+        resizes game window.
+        """
         self.x_scale_rate = x_scale_rate
         self.y_scale_rate = y_scale_rate
 
