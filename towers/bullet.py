@@ -3,6 +3,11 @@ from source_manager import SourceManager
 
 
 class Bullet(pygame.sprite.Sprite):
+    """
+    Bullet is making its way from start to destination is n steps.
+    It also seeks one specified enemy and implements a self.hit method
+    to check if the enemy was reached.
+    """
     def __init__(self, bullet_size, x_start, y_start, x_destination, y_destination, enemy, x_scale_rate, y_scale_rate): 
         pygame.sprite.Sprite.__init__(self)
 
@@ -28,10 +33,15 @@ class Bullet(pygame.sprite.Sprite):
     
 
     def draw(self, screen):
+        """Draws a bullet on a screen"""
         screen.blit(self.bullet_transformed, (self.x-self.bullet_transformed.get_width()//2, self.y-self.bullet_transformed.get_height()//2))
 
 
     def update(self, game_pause, screen):
+        """
+        Function called every frame, responsible for changing
+        bullet's position (Moving it forward).
+        """
         if not game_pause:
             self.x, self.y = ((self.x + self.dirn[0]), (self.y + self.dirn[1]))
 
@@ -39,6 +49,7 @@ class Bullet(pygame.sprite.Sprite):
 
 
     def hit(self):
+        """Function checks if enemy was hit."""
         if self.dirn[0] >= 0: # moving right
             if self.dirn[1] >= 0: # moving down
                 if self.x >= self.destination_x and self.y >= self.destination_y:
@@ -56,7 +67,12 @@ class Bullet(pygame.sprite.Sprite):
         
         return None
     
+    
     def scale_parameters(self, x_scale_rate, y_scale_rate):
+        """
+        Scales necessary parameters. Triggered when users
+        resizes game window.
+        """
         self.x_scale_rate = x_scale_rate
         self.y_scale_rate = y_scale_rate
         

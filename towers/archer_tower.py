@@ -9,6 +9,10 @@ from math import sqrt
 
 
 class ArcherTower(Tower):
+    """
+    A variant of a Tower that shoots small bullets
+    and applies Poison effect. 
+    """
     def __init__(self, x, y, x_scale_rate, y_scale_rate):        
         Tower.__init__(self, x, y, x_scale_rate, y_scale_rate)
 
@@ -28,14 +32,17 @@ class ArcherTower(Tower):
         self.cooldown_timer = self.cooldown
 
         self.bullets = pygame.sprite.Group()
-        self.set_tower_target(Target.FIRST)
+        self.tower_target = Target.FIRST
 
         self.target_modes = [Target.FIRST, Target.LAST, Target.LEAST_HEALTH, Target.MOST_HEALTH]
         self.shot_sound = SourceManager.get_sound("arrow_shot")
 
 
     def find_targets(self, enemies, delta_time):
-        
+        """
+        This function finds enemies which are in range of a tower
+        then sends a bullet to them
+        """
         if self.cooldown_timer <= 0:
             
             enemy = self.get_tower_target(enemies)
@@ -48,8 +55,14 @@ class ArcherTower(Tower):
             
         else:
             self.cooldown_timer -= delta_time
-
+ 
+ 
     def update(self, game_pasue, enemies, screen, delta_time):
+        """
+        Function called every frame, triggers find_targets, then checks
+        if each bullet hit it's target and eventually deals a damage to
+        an enemy and applies PoisonEffect to them.  
+        """        
         if not game_pasue:
             self.find_targets(enemies, delta_time)
 
@@ -70,7 +83,12 @@ class ArcherTower(Tower):
         for bullet in bullets_to_remove:
             self.bullets.remove(bullet)
 
+
     def scale_parameters(self, x_scale_rate, y_scale_rate):
+        """
+        Scales necessary parameters. Triggered when users
+        resizes game window.
+        """
         super().scale_parameters(x_scale_rate, y_scale_rate)
 
         for bullet in self.bullets:

@@ -1,7 +1,10 @@
 from enum import Enum
 
 class Position(Enum):
-
+    """
+    Used to determin ellipse position inside tower menu.
+    """
+    
     TOP_RIGHT = 1
     BOTTOM_RIGHT = 2
     BOTTOM = 3

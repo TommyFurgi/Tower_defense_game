@@ -8,6 +8,10 @@ from math import sqrt
 
 
 class MagicTower(Tower):
+    """
+    A variant of a Tower that deals area damage
+    and applies SlowDown Effect. 
+    """
     def __init__(self, x, y, x_scale_rate, y_scale_rate):
         Tower.__init__(self, x, y, x_scale_rate, y_scale_rate)
 
@@ -30,15 +34,18 @@ class MagicTower(Tower):
         self.damage_flash_timer = 0
         self.damage_color = (224, 237, 111, 100)
 
-        self.set_tower_target(Target.ALL)
+        self.tower_target = Target.ALL
 
         self.target_modes = [Target.ALL]
         self.shot_sound = SourceManager.get_sound("magic_shot")
 
 
-
     def find_targets(self, enemies, delta_time):
-        
+        """
+        Function called every frame, triggers find_targets, then checks
+        if each bullet hit it's target and eventually deals a damage to
+        an enemy and applies SlowDownEffect.  
+        """ 
         if self.cooldown_timer <= 0:
                 
             enemies_collision = self.get_tower_target(enemies)
@@ -58,15 +65,23 @@ class MagicTower(Tower):
         
 
     def draw(self, screen, delta_time):
+        """
+        Draws tower on a screen and also triggers draw_damage_circle
+        which draws circle representing tower dealing damage.
+        """
         super().draw(screen, delta_time)
         
         if self.damage_flash_timer > 0:
-            self.draw_demage_circle(screen)
+            self.draw_damage_circle(screen)
             self.damage_flash_timer -= delta_time
             
 
     
-    def draw_demage_circle(self, screen):
+    def draw_damage_circle(self, screen):
+        """
+        Draws a circle, with self.radis as radius, which represents
+        damage animation.
+        """
         scale_rate = 1.2
 
         surface = pygame.Surface((self.radius * 2 * scale_rate, self.radius * 2 * scale_rate), pygame.SRCALPHA, 32)
@@ -76,6 +91,7 @@ class MagicTower(Tower):
         
 
     def update(self, game_pasue, enemies, screen, delta_time):
+        """Function called every frame, triggers self.find_targets"""
         if not game_pasue:
             self.find_targets(enemies, delta_time)
         
