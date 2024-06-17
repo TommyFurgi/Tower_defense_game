@@ -3,9 +3,21 @@ from directions import Direction
 from abc import ABC
 from effects.effect_type import EffectType
 
-
 class Enemy(pygame.sprite.Sprite, ABC):
+    '''
+    An abstract base class for enemies, responsible for managing enemy behavior, including movement, 
+    effects, and rendering. Inherits from `pygame.sprite.Sprite` and `ABC` (Abstract Base Class).
+    ''' 
     def __init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+        '''
+        Initializes the Enemy instance with scaling factors and prepares its starting parameters.
+        
+        Args:
+            x_scale_rate (float): The scaling factor for the x-axis.
+            y_scale_rate (float): The scaling factor for the y-axis.
+            x_scale_diff (float): The scaling difference for the x-axis.
+            y_scale_diff (float): The scaling difference for the y-axis.
+        '''
         pygame.sprite.Sprite.__init__(self)
         self.x_scale_rate = x_scale_rate
         self.y_scale_rate = y_scale_rate
@@ -31,14 +43,19 @@ class Enemy(pygame.sprite.Sprite, ABC):
 
         self.damage_flash_color = (255, 255, 255)
         self.damage_flash_duration = 100 # ms
-        self.damage_flash_timer = 0
+        self.damage_flash_timer = 0 # ms
         
         self.colors = set()       
         
         self.hp_font = pygame.font.Font(None, int(20 * self.x_scale_rate)) 
 
-
     def draw_health_bar(self, screen):
+        '''
+        Draws the health bar of the enemy above its current position on the screen.
+        
+        Args:
+            screen (pygame.Surface): The surface on which the health bar will be drawn.
+        '''
         length = 80
         move_by = length / self.max_health
         health_bar = round(move_by * self.health)
@@ -51,17 +68,29 @@ class Enemy(pygame.sprite.Sprite, ABC):
         text_rect = text.get_rect(center=(self.x, self.y - 125 * self.y_scale_rate))
         screen.blit(text, text_rect)
 
-
     def add_color(self, color):
+        '''
+        Adds a color to the enemy, used to visually represent the effects applied to it.
+        
+        Args:
+            color (tuple): The color to add, typically used for effects.
+        '''
         self.colors.add(color)
     
-
     def remove_color(self, color):
+        '''
+        Removes a color from the enemy.
+        
+        Args:
+            color (tuple): The color to remove.
+        '''
         if color in self.colors:
             self.colors.remove(color)
 
-
     def enemy_animation(self):
+        '''
+        Sets the image for the enemy based on its current direction, to be used for rendering.
+        '''
         match self.direction:
             case Direction.UP:
                 self.img = self.imgs_up[self.animation_count//10]
@@ -72,8 +101,10 @@ class Enemy(pygame.sprite.Sprite, ABC):
             case Direction.LEFT:
                 self.img = self.imgs_left[self.animation_count//10] 
 
-
     def draw(self, screen, delta_time):
+        '''
+        Sets the image for the enemy based on its current direction, to be used for rendering.
+        '''
         self.enemy_animation()
     
         if self.damage_flash_timer > 0:
@@ -95,9 +126,10 @@ class Enemy(pygame.sprite.Sprite, ABC):
         
         self.draw_health_bar(screen)
 
-
-
     def move(self):
+        '''
+        Moves the enemy along its path towards the next waypoint. Updates the enemy's position and sets the direction.
+        '''
         self.animation_count += 1
         if self.animation_count >= len(self.imgs_up) * 10:
             self.animation_count = 0
@@ -140,13 +172,18 @@ class Enemy(pygame.sprite.Sprite, ABC):
             else:
                 if self.x <= x2 * self.x_scale_rate and self.y <= y2 * self.y_scale_rate:
                     self.path_pos += 1
-    
             
         # Setting direction
         self.direction = Direction.set_direction(dirn)
 
-
     def update(self, game_pause, enemies):
+        '''
+        Updates the enemy's state based on the game's pause status.
+        
+        Args:
+            game_pause (bool): Flag indicating whether the game is paused.
+            enemies (set): List of all enemies in the game.
+        '''
         if not game_pause:
             self.move()
             self.remove_inactive_effects()
@@ -154,7 +191,16 @@ class Enemy(pygame.sprite.Sprite, ABC):
             
     # Damage
     def lose_hp(self, hp_lost, color = (255, 255, 255)):
+        '''
+        Reduces the enemy's health points based on the damage received.
         
+        Args:
+            hp_lost (float): Amount of health points to deduct.
+            color (tuple, optional): Color to flash when taking damage. Defaults to (255, 255, 255).
+        
+        Returns:
+            float: Actual amount of health points deducted.
+        '''
         if self.health < hp_lost:
             actual_damage = self.health
             self.health = 0
@@ -168,45 +214,89 @@ class Enemy(pygame.sprite.Sprite, ABC):
             
         return actual_damage
         
-
     def to_delete(self):
+        '''
+        Determines whether the enemy has reached the last point in its path.
+        
+        Returns:
+            bool: True if the enemy has reached the last point, False otherwise.
+        '''
         return self.reached_last_point
     
-
     def is_killed(self):
+        '''
+        Checks if the enemy is killed (health is zero or below).
+        
+        Returns:
+            tuple: A tuple where the first element is a boolean indicating if the enemy is killed,
+                   and the second element is the reward (currently None).
+        '''
         if self.health <= 0:
             return True, self.reward
         
         return False, None
     
-
     def get_position(self):
+        '''
+        Retrieves the current position of the enemy.
+        
+        Returns:
+            tuple: Current x and y coordinates of the enemy.
+        '''
         return self.x, self.y
         
-
     def pause_effects(self):
+        '''
+        Pauses all active effects on the enemy.
+        '''
         for effect in EffectType:
             if self.effects[effect]:
                 self.effects[effect].pause_effect()
 
     def unpause_effects(self):
+        '''
+        Unpauses all active effects on the enemy.
+        '''
         for effect in EffectType:
             if self.effects[effect]:
                 self.effects[effect].pause_effect()
 
-
     def prepare_effects_dict(self):
+        '''
+        Initializes the effects dictionary with None values for each effect type.
+        '''
         for effect in EffectType:
             self.effects[effect] = None
 
     def prepare_effects_resistance_dict(self):
+        '''
+        Initializes the effects resistance dictionary with False values for each effect type.
+        '''
         for effect in EffectType:
             self.effects_resistance[effect] = False
 
     def is_resistant(self, effect_type):
+        '''
+        Checks if the enemy is resistant to a specific type of effect.
+        
+        Args:
+            effect_type (EffectType): The type of effect to check resistance against.
+        
+        Returns:
+            bool: True if the enemy is resistant to the effect type, False otherwise.
+        '''
         return self.effects_resistance[effect_type]
     
     def add_effect(self, new_effect):
+        '''
+        Adds a new effect to the enemy if it's not already resistant to it or if the new effect supersedes existing effects.
+        
+        Args:
+            new_effect (Effect): The new effect instance to add.
+        
+        Returns:
+            bool: True if the effect was successfully added, False otherwise.
+        '''
         # Enemy should only have one effect of given type at a time 
         match new_effect.get_effect_type():
 
@@ -240,28 +330,36 @@ class Enemy(pygame.sprite.Sprite, ABC):
     
         return False
     
-
     def remove_effect(self, effect_type):
+        '''
+        Removes an active effect from the enemy.
+        
+        Args:
+            effect_type (EffectType): The type of effect to remove.
+        '''
+        if self.effects[effect_type]:
+            _, color = self.effects[effect_type].get_values()
+            self.remove_color(color)
+            self.effects[effect_type] = None
+
+            if effect_type == EffectType.BOOST or effect_type == EffectType.SLOWDOWN:
+                self.speed = self.max_speed
             
-            if self.effects[effect_type]:
-                _, color = self.effects[effect_type].get_values()
-                self.remove_color(color)
-                self.effects[effect_type] = None
-
-                if effect_type == EffectType.BOOST or effect_type == EffectType.SLOWDOWN:
-                    self.speed = self.max_speed
-                
-                self.effects[effect_type] = None
-
+            self.effects[effect_type] = None
 
     def remove_inactive_effects(self):
+        '''
+        Removes all inactive effects from the enemy.
+        '''
         for effect in EffectType:
             if self.effects[effect]:
                 if not self.effects[effect].is_active():
                     self.remove_effect(effect)
 
-
     def handle_poison_effect(self):
+        '''
+        Updates and handles the poison effect on the enemy.
+        '''
         if self.effects[EffectType.POISON]:
             value, color = self.effects[EffectType.POISON].update()
             
@@ -270,24 +368,36 @@ class Enemy(pygame.sprite.Sprite, ABC):
                 if color not in self.colors:
                     self.add_color(color)
 
-
     def handle_boost_effect(self):
+        '''
+        Applies and handles the boost effect on the enemy.
+        '''
         if self.effects[EffectType.BOOST]:
             value, color = self.effects[EffectType.BOOST].get_values()
 
             self.speed = value * self.max_speed
             self.add_color(color)
 
-
     def handle_slow_down_effect(self):
+        '''
+        Applies and handles the slowdown effect on the enemy.
+        '''
         if self.effects[EffectType.SLOWDOWN]:
             value, color = self.effects[EffectType.SLOWDOWN].get_values()
 
             self.speed = value * self.max_speed
             self.add_color(color)
 
-
     def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+        '''
+        Scales the parameters of the enemy based on given scaling factors and differences.
+        
+        Args:
+            x_scale_rate (float): The scaling factor for the x-axis.
+            y_scale_rate (float): The scaling factor for the y-axis.
+            x_scale_diff (float): The scaling difference for the x-axis.
+            y_scale_diff (float): The scaling difference for the y-axis.
+        '''
         self.x_scale_rate = x_scale_rate
         self.y_scale_rate = y_scale_rate
 

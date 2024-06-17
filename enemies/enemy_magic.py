@@ -5,9 +5,21 @@ import random
 from source_manager import SourceManager
 from effects.effect_type import EffectType
 
-
 class EnemyMagic(Enemy):
+    '''
+    A subclass representing a magical type of enemy in the game.
+    Inherits from the Enemy class and adds specific behavior and attributes.
+    '''
     def __init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+        '''
+        Initializes an instance of EnemyMagic with specific scaling rates and differences.
+
+        Args:
+            x_scale_rate (float): Scaling rate for the x-axis.
+            y_scale_rate (float): Scaling rate for the y-axis.
+            x_scale_diff (float): Scaling difference for the x-axis.
+            y_scale_diff (float): Scaling difference for the y-axis.
+        '''
         self.path = SourceManager.get_path("alternative")
 
         Enemy.__init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
@@ -19,10 +31,15 @@ class EnemyMagic(Enemy):
         self.max_health = 300
         self.reward = 20
 
-        self.effects_resistance[EffectType.SLOWDOWN] = True # Cannot be slowed down
+        self.effects_resistance[EffectType.SLOWDOWN] = True  # Cannot be slowed down
 
-        
     def load_images(self, images_filename):
+        '''
+        Loads and initializes the animation frames for the EnemyMagic based on an image strip.
+
+        Args:
+            images_filename (str): The filename of the image strip containing animation frames.
+        '''
         self.animation_count = random.randint(0, 7) * 10
         self.path_pos = 0
         self.imgs_up = []
@@ -58,8 +75,16 @@ class EnemyMagic(Enemy):
 
         self.flipped = False
 
-
     def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+        '''
+        Scales the parameters of the EnemyMagic instance based on given scaling factors and differences.
+
+        Args:
+            x_scale_rate (float): The scaling factor for the x-axis.
+            y_scale_rate (float): The scaling factor for the y-axis.
+            x_scale_diff (float): The scaling difference for the x-axis.
+            y_scale_diff (float): The scaling difference for the y-axis.
+        '''
         super().scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
 
         for i in range(4):
@@ -73,4 +98,3 @@ class EnemyMagic(Enemy):
                         self.imgs_down[j] = pygame.transform.scale(img, (128 * x_scale_rate, 128 * y_scale_rate)).convert_alpha()
                     case 3:
                         self.imgs_right[j] = pygame.transform.scale(img, (128 * x_scale_rate, 128 * y_scale_rate)).convert_alpha()
-    

@@ -13,6 +13,12 @@ from math import sqrt
 
 class Game():
     def __init__(self, screen):
+        """
+        Initialize the Tower Defense game.
+
+        Args:
+            screen (pygame.Surface): The main Pygame surface object representing the game screen.
+        """
         self.x_scale_rate = 1
         self.y_scale_rate = 1
 
@@ -53,6 +59,13 @@ class Game():
 
     # Loads rectangles from file and adds them to group
     def load_rects(self, name, group):
+        """
+        Load rectangles from a file using SourceManager and add them to a sprite group.
+
+        Args:
+            name (str): The name identifier for the rectangles to load from SourceManager.
+            group (pygame.sprite.Group): The sprite group to which the loaded rectangles will be added.
+        """
         rectangles = SourceManager.get_rectangles(name)
         
         for rectangle in rectangles:
@@ -63,12 +76,21 @@ class Game():
 
 
     def drag_object_conflict(self):
+        """
+        Check for collision conflicts with the currently dragged object.
+
+        Returns:
+            bool: True if there's a collision conflict, False otherwise.
+        """
         return (pygame.sprite.spritecollide(self.drag_object, self.towers, False) or 
                 pygame.sprite.spritecollide(self.drag_object, self.path_collisions, False) or
                 pygame.sprite.spritecollide(self.drag_object, self.other_obstacles_collisions, False))  
 
 
     def draw_enemies_and_towers(self):
+        """
+        Draw enemies and towers on the game screen.
+        """
         sprites = self.enemies.sprites() + self.towers.sprites()
         
         for sprite in sorted(sprites, key=lambda s: s.y):
@@ -76,12 +98,18 @@ class Game():
 
     # Images and effects that have to appear on top of everything else
     def draw_on_top(self):
+        """
+        Draw images and effects that need to appear on top of everything else on the screen.
+        """
         sprites = self.towers.sprites()
         
         for sprite in sprites:
             sprite.draw_on_top(self.screen, self.delta_time)
 
     def update_screen(self):
+        """
+        Update the entire game screen with background, enemies, towers, menus, and text alerts.
+        """
         self.game_map.draw_background()
         self.draw_enemies_and_towers()
         self.draw_on_top()
@@ -111,6 +139,9 @@ class Game():
 
     
     def spawn_enemies(self):
+        """
+        Spawn enemies on the game map according to the current wave configuration.
+        """
         if self.current_wave.has_next_enemy():
             
             new_enemy = self.current_wave.get_next_enemy(self.x_scale_rate, self.y_scale_rate, self.x_scale_diff, self.y_scale_diff)
@@ -136,6 +167,9 @@ class Game():
         
 
     def update_game(self):
+        """
+        Update game logic including tower and enemy updates, collision checks, and game state management.
+        """
         self.towers.update(self.game_pause, self.enemies, self.screen, self.delta_time)
         self.enemies.update(self.game_pause, self.enemies)
         
@@ -144,6 +178,9 @@ class Game():
             self.spawn_enemies()
 
     def check_all_enemies(self):
+        """
+        Check the status of all enemies on the game map, including whether they are killed or have reached the end.
+        """
         enemies_on_end =[]
         killed_enemies = []
 
@@ -177,7 +214,10 @@ class Game():
                 self.main_menu.show_info = False   
                 self.text_alerts.add(TextAlert("Game over!", 2000, (255, 0, 0), self.x_scale_rate, self.y_scale_rate))
 
-    def handle_restart_game(self): 
+    def handle_restart_game(self):
+        """
+        Reset all game parameters and start a new game.
+        """ 
         self.money = 1000
         self.points = 0
         self.hearts = 3
@@ -200,7 +240,9 @@ class Game():
         self.end_game = False
 
     def draw_text_alerts(self):
-        
+        """
+        Draw text alerts on the game screen and manage their lifecycle.
+        """
         alerts_to_delete = []
         
         for text_alert in self.text_alerts:
@@ -211,6 +253,13 @@ class Game():
             self.text_alerts.remove(alert)
 
     def scale_game(self, new_w, new_h):
+        """
+        Scale the entire game to fit a new window size.
+
+        Args:
+            new_w (int): The new width of the game window.
+            new_h (int): The new height of the game window.
+        """
         new_width = max(800, min(2400, new_w))
         new_height = max(450, min(1800, new_h))
 
@@ -264,6 +313,21 @@ class Game():
             scale_object.scale_parameters(self.x_scale_rate, self.y_scale_rate)
 
     def run(self):
+        """
+        Main game loop that handles all game events, updates, and rendering.
+
+        The function manages two main states:
+        - If `self.show_main_menu` is True, it displays the main menu and handles menu interactions.
+        - Otherwise, it updates the game world, including towers, enemies, and UI elements, and handles player actions.
+
+        During the game loop, the function continuously checks for user input, such as mouse clicks and key presses,
+        and updates the game state accordingly. It also scales the game window when resized, handles tower placement,
+        upgrades, and removal, and manages game pause/play functionality. The loop continues running until the player
+        chooses to exit the game.
+
+        Returns:
+            None
+        """
         selected_tower = None
         new_tower_cost = 0
         drag_object_name = None
