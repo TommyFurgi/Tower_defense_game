@@ -8,18 +8,14 @@
 
 ![Project overview](assets/images/overview.jpg)
 
-
-
-https://github.com/TommyFurgi/Tower_defense_game/assets/72702709/c8c3f4e0-2598-406f-9ad2-d85a2680b0af
-
-
-
 ## Authors
 
 - [Jakub Frączek](https://github.com/JakubFr4czek)  
 - [Tomasz Furgała](https://github.com/TommyFurgi)
 
 ## Gameplay
+
+https://github.com/TommyFurgi/Tower_defense_game/assets/72702709/c8c3f4e0-2598-406f-9ad2-d85a2680b0af
 
 ## Mechanics and Features
 
