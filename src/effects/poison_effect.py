@@ -10,8 +10,8 @@ class PoisonEffect(Effect):
         
         self.current_time = pygame.time.get_ticks() + 1500 # Zeby efekt zaczął działać od razu, a nie dopiero po 1,5 sekundy
         
-        self.demage_counter = duration
-        self.demage = value
+        self.damage_counter = duration
+        self.damage = value
         self.color = (36, 77, 28) 
         #self.color = (100, 255, 100)
 
@@ -20,8 +20,8 @@ class PoisonEffect(Effect):
         """Called every frame. Updates effects duration."""
         if (self.current_time - self.unpause_time >= 1500 - self.time_before_pause):
             self.unpause_time = self.current_time
-            self.demage_counter -= 1
-            return self.demage, self.color
+            self.damage_counter -= 1
+            return self.damage, self.color
         
         self.current_time = pygame.time.get_ticks()
         
@@ -35,5 +35,5 @@ class PoisonEffect(Effect):
 
     def is_active(self):
         """Determines if effect is still active."""
-        return self.demage_counter > 0
+        return self.damage_counter > 0
             
