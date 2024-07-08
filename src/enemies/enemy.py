@@ -2,13 +2,14 @@ import pygame, math
 from directions import Direction
 from abc import ABC
 from effects.effect_type import EffectType
+from resource_manager import ResourceManager
 
 class Enemy(pygame.sprite.Sprite, ABC):
     '''
     An abstract base class for enemies, responsible for managing enemy behavior, including movement, 
     effects, and rendering. Inherits from `pygame.sprite.Sprite` and `ABC` (Abstract Base Class).
     ''' 
-    def __init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+    def __init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, path_name):
         '''
         Initializes the Enemy instance with scaling factors and prepares its starting parameters.
         
@@ -25,13 +26,16 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.x_scale_diff = x_scale_diff
         self.y_scale_diff = y_scale_diff
 
+        self.path = ResourceManager.get_path(path_name)
+                
         # starting point
-        self.x = self.path[0][0] * x_scale_rate
-        self.y = self.path[0][1] * y_scale_rate
+        self.x = self.path[0][0] 
+        self.y = self.path[0][1] 
 
         self.reached_last_point = False
-        self.rect = pygame.Rect(self.x, self.y, 64 * x_scale_rate, 64 * y_scale_rate) # Required in order for collisions to work
-        self.original_sized_images = [[] for _ in range(4)]
+        self.rect = pygame.Rect(self.x, self.y, 64, 64) # Required in order for collisions to work
+        self.direction = Direction.RIGHT
+        self.path_pos = 0
 
         self.effects = dict()
         self.prepare_effects_dict()
@@ -46,8 +50,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.damage_flash_timer = 0 # ms
         
         self.colors = set()       
-        
-        self.hp_font = pygame.font.Font(None, int(20 * self.x_scale_rate)) 
+        self.hp_font = pygame.font.Font(None, 20) 
 
     def draw_health_bar(self, screen):
         '''
@@ -231,10 +234,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
             tuple: A tuple where the first element is a boolean indicating if the enemy is killed,
                    and the second element is the reward (currently None).
         '''
-        if self.health <= 0:
-            return True, self.reward
-        
-        return False, None
+        return self.health <= 0, self.reward
     
     def get_position(self):
         '''
@@ -388,7 +388,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
             self.speed = value * self.max_speed
             self.add_color(color)
 
-    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, initialize_enemy = False):
         '''
         Scales the parameters of the enemy based on given scaling factors and differences.
         
@@ -397,6 +397,7 @@ class Enemy(pygame.sprite.Sprite, ABC):
             y_scale_rate (float): The scaling factor for the y-axis.
             x_scale_diff (float): The scaling difference for the x-axis.
             y_scale_diff (float): The scaling difference for the y-axis.
+            initialize_enemy (bool): The flag indicating whether the function is called during initialization
         '''
         self.x_scale_rate = x_scale_rate
         self.y_scale_rate = y_scale_rate
@@ -404,8 +405,12 @@ class Enemy(pygame.sprite.Sprite, ABC):
         self.x_scale_diff = x_scale_diff
         self.y_scale_diff = y_scale_diff
 
-        self.x *= x_scale_diff
-        self.y *= y_scale_diff
+        if initialize_enemy:
+            self.x *= x_scale_rate
+            self.y *= y_scale_rate
+        else:
+            self.x *= x_scale_diff
+            self.y *= y_scale_diff
 
         self.rect = pygame.Rect(self.x, self.y, 64 * x_scale_rate, 64 * y_scale_rate)
         self.hp_font = pygame.font.Font(None, int(20 * x_scale_rate)) 

@@ -1,7 +1,7 @@
 import pygame
 from towers.tower import Tower
 from towers.bullet import Bullet
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 from towers.target import Target
 from math import sqrt
 
@@ -14,7 +14,7 @@ class CannonTower(Tower):
     def __init__(self, x, y, x_scale_rate, y_scale_rate):
         Tower.__init__(self, x, y, x_scale_rate, y_scale_rate)
 
-        self.tower_img = SourceManager.get_image("cannon_tower").convert_alpha()
+        self.tower_img = ResourceManager.get_image("cannon_tower").convert_alpha()
         self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
         self.damage = 70
@@ -32,7 +32,7 @@ class CannonTower(Tower):
         self.tower_target = Target.FIRST
 
         self.target_modes = [Target.FIRST, Target.LAST, Target.LEAST_HEALTH, Target.MOST_HEALTH]
-        self.shot_sound = SourceManager.get_sound("cannon_shot")
+        self.shot_sound = ResourceManager.get_sound("cannon_shot")
 
 
         

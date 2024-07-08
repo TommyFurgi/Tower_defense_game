@@ -17,8 +17,6 @@ class BoostEffect(Effect):
         
     def is_active(self):
         """Determines if effect is still active."""
-        if (pygame.time.get_ticks() - self.unpause_time <= self.duration * 1000 - self.time_before_pause):
-            return True
-        return False
+        return pygame.time.get_ticks() - self.unpause_time <= self.duration * 1000 - self.time_before_pause
         
         

@@ -3,7 +3,7 @@ import os
 import json
 from PIL import Image
 
-class SourceManager():
+class ResourceManager():
     """
     A class to manage loading and accessing game assets such as images, sounds,
     rectangles, and paths.
@@ -45,11 +45,72 @@ class SourceManager():
                     if name not in cls._images:
                         try:
                             if 'enemies' in path:
-                                cls._images[name] = Image.open(path)
+                                animation_strip = Image.open(path)
+                                cls.cut_strip(animation_strip, name)
                             else:
                                 cls._images[name] = pygame.image.load(path)
                         except Exception as e:
                             print(f"Error loading image '{filename}': {e}")
+
+    @classmethod
+    def cut_strip(cls, animation_strip, name):
+        """
+        Extracts and processes frames from the given sprite sheet for the specified animation category.
+
+        Args:
+        animation_strip (PIL.Image): The sprite sheet to process.
+        name (str): The type of animation to extract ('enemy', 'boss', etc.).
+        """
+        imgs = [[] for _ in range(4)]
+
+        match name:
+            case "enemy":
+                frame_width = 64
+                frame_height = 64
+
+                for i in range(4):
+                    for j in range(1,9):
+                        frame = animation_strip.crop((frame_width * j, frame_height * i, frame_width * (j + 1), frame_height * (i+1)))
+
+                        data = frame.tobytes()
+                        pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA").convert_alpha()
+
+                        imgs[i].append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
+
+                cls._images["basic"] = imgs
+                imgs = [[] for _ in range(4)]
+
+                for i in range(4,8):
+                    for j in range(1,9):
+                        frame = animation_strip.crop((frame_width * j, frame_height * i, frame_width * (j + 1), frame_height * (i+1)))
+
+                        data = frame.tobytes()
+                        pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA").convert_alpha()
+
+                        imgs[i-4].append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
+                
+                cls._images["magic"] = imgs
+
+            case "boss":
+                frame_width = 120
+                frame_height = 120
+                
+                for i in range(1,4):
+                    for j in range(1,4):
+                        frame = animation_strip.crop((frame_width * j, frame_height * i + 40, frame_width * (j + 1), frame_height * (i+1) + 40))
+                        data = frame.tobytes()
+                        pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA").convert_alpha()
+
+                        imgs[i].append(pygame.transform.scale(pygame_surface, (128, 128)).convert_alpha())
+                        if i == 1:
+                            pygame_surface_flipped = pygame.transform.flip(pygame_surface, True, False)
+                            imgs[0].append(pygame.transform.scale(pygame_surface_flipped, (128, 128)).convert_alpha())
+           
+                cls._images[name] = imgs
+
+            case default:
+                cls._images[name] = animation_strip
+
 
     @classmethod
     def get_image(cls, name):
@@ -180,7 +241,7 @@ class SourceManager():
                 except FileNotFoundError:
                     print(f"File '{paths_file}' not found. No paths loaded.")
                 except json.JSONDecodeError:
-                    print(f"Error decoding JSON from file '{paths_file}'.")
+                    print(f"Error decoding JSON from file '{paths_file}'.")                
 
     @classmethod
     def get_path(cls, name='default'):

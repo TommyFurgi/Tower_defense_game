@@ -1,7 +1,7 @@
 import pygame
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 
-class Menu():
+class Shop():
     def __init__(self, screen):
         '''
         Initialize the Menu object.
@@ -23,28 +23,28 @@ class Menu():
         self.background_color = (214, 189, 120)
         self.rect = pygame.draw.rect(self.screen, self.background_color, (self.left_border, 0, self.window_width, self.height))
         
-        self.points = SourceManager.get_image("points").convert_alpha()
+        self.points = ResourceManager.get_image("points").convert_alpha()
         self.points_transformed = pygame.transform.scale(self.points, (10* self.scale_rate, 10 * self.scale_rate))
 
-        self.money = SourceManager.get_image("resources").convert_alpha()
+        self.money = ResourceManager.get_image("resources").convert_alpha()
         self.money_transformed = pygame.transform.scale(self.money, (10 * self.scale_rate, 10 * self.scale_rate))
 
-        self.wave = SourceManager.get_image("wave").convert_alpha()
+        self.wave = ResourceManager.get_image("wave").convert_alpha()
         self.wave_transformed = pygame.transform.scale(self.wave, (10 * self.scale_rate, 10 * self.scale_rate))
 
-        self.hearth = SourceManager.get_image("lives").convert_alpha()
+        self.hearth = ResourceManager.get_image("lives").convert_alpha()
         self.hearth_transformed = pygame.transform.scale(self.hearth, (20 * self.scale_rate, 20 * self.scale_rate))
         
-        self.play_button = SourceManager.get_image("play_button").convert_alpha()
+        self.play_button = ResourceManager.get_image("play_button").convert_alpha()
         self.play_transformed = pygame.transform.scale((self.play_button), (60, 60))
 
-        self.stop = SourceManager.get_image("stop_button").convert_alpha()
+        self.stop = ResourceManager.get_image("stop_button").convert_alpha()
         self.stop_transformed = pygame.transform.scale(self.stop, (60, 60))
         
-        self.speed_up = SourceManager.get_image("speed_up_button").convert_alpha()
+        self.speed_up = ResourceManager.get_image("speed_up_button").convert_alpha()
         self.speed_up_transformed = pygame.transform.scale(self.speed_up, (60, 60))
 
-        self.music = SourceManager.get_image("music").convert_alpha()
+        self.music = ResourceManager.get_image("music").convert_alpha()
         self.music_transformed = pygame.transform.scale(self.music, (60, 60))
         
         self.scroll_up = pygame.transform.rotate(self.play_button, 90)
@@ -56,15 +56,15 @@ class Menu():
         self.displayed_towers = [] # (img, name, price)
         self.displayed_towers_position = 0
         
-        archer = SourceManager.get_image("archer_tower").convert_alpha()
+        archer = ResourceManager.get_image("archer_tower").convert_alpha()
         archer_transformed = pygame.transform.scale(archer, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((archer_transformed, "archer_tower", 400))
 
-        magic = SourceManager.get_image("magic_tower").convert_alpha()
+        magic = ResourceManager.get_image("magic_tower").convert_alpha()
         magic_transformed = pygame.transform.scale(magic, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((magic_transformed, "magic_tower", 300))
         
-        cannon = SourceManager.get_image("cannon_tower").convert_alpha()
+        cannon = ResourceManager.get_image("cannon_tower").convert_alpha()
         cannon_transformed = pygame.transform.scale(cannon, (41 * self.scale_rate, 41 * self.scale_rate))
         self.displayed_towers.append((cannon_transformed, "cannon_tower", 500))
         
@@ -235,7 +235,7 @@ class Menu():
 
         scaled_towers = []
         for img, name, price in self.displayed_towers:
-            scaled_img = pygame.transform.scale(SourceManager.get_image(name), (41 * self.scale_rate * x_scale_rate, 41 * self.scale_rate * y_scale_rate))
+            scaled_img = pygame.transform.scale(ResourceManager.get_image(name), (41 * self.scale_rate * x_scale_rate, 41 * self.scale_rate * y_scale_rate))
             scaled_towers.append((scaled_img, name, price))
 
         self.displayed_towers = scaled_towers
