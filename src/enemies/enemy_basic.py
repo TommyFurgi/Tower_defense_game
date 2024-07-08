@@ -2,7 +2,7 @@ from enemies.enemy import Enemy
 import pygame
 from directions import Direction
 import random
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 from effects.effect_type import EffectType
 
 class EnemyBasic(Enemy):
@@ -20,10 +20,9 @@ class EnemyBasic(Enemy):
             x_scale_diff (float): Scaling difference for the x-axis.
             y_scale_diff (float): Scaling difference for the y-axis.
         '''
-        self.path = SourceManager.get_path("default")
-
-        Enemy.__init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
-        self.load_images("enemy")
+        super().__init__(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, "default")
+        self.original_sized_images = ResourceManager.get_image("basic")
+        self.imgs_up, self.imgs_left, self.imgs_down, self.imgs_right = tuple(self.original_sized_images)
         
         self.speed = 1.2
         self.max_speed = 1.2
@@ -32,50 +31,12 @@ class EnemyBasic(Enemy):
         self.reward = 30
         
         self.effects_resistance[EffectType.POISON] = True # Cannot be poisoned
-    
-    def load_images(self, images_filename):
-        '''
-        Loads and initializes the animation frames for the EnemyBasic based on an image strip.
-
-        Args:
-            images_filename (str): The filename of the image strip containing animation frames.
-        '''
         self.animation_count = random.randint(0, 7) * 10
-        self.path_pos = 0
-        self.imgs_up = []
-        self.imgs_down = []
-        self.imgs_right = []
-        self.imgs_left = []
-
-        animation_strip = SourceManager.get_image(images_filename)
-        frame_width = 64
-        frame_height = 64
         
-        for i in range(4):
-            for j in range(1,9):
-                frame = animation_strip.crop((frame_width * j, frame_height * i, frame_width * (j + 1), frame_height * (i+1)))
+        if x_scale_rate != 1 or y_scale_rate != 1:
+            self.scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, True)
 
-                data = frame.tobytes()
-                pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA").convert_alpha()
-
-                match i:
-                    case 0:
-                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-                    case 1:
-                        self.imgs_left.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-                    case 2:
-                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-                    case 3:
-                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-
-                self.original_sized_images[i].append(pygame_surface)
-
-        self.direction = Direction.RIGHT
-        self.img = self.imgs_right[0]
-
-        self.flipped = False
-
-    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, initialize_enemy = False):
         '''
         Scales the parameters of the EnemyBasic instance based on given scaling factors and differences.
 
@@ -84,8 +45,9 @@ class EnemyBasic(Enemy):
             y_scale_rate (float): The scaling factor for the y-axis.
             x_scale_diff (float): The scaling difference for the x-axis.
             y_scale_diff (float): The scaling difference for the y-axis.
+            initialize_enemy (bool): The flag indicating whether the function is called during initialization
         '''
-        super().scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
+        super().scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, initialize_enemy)
 
         for i in range(4):
             for j, img in enumerate(self.original_sized_images[i]):

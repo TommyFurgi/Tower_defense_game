@@ -1,5 +1,5 @@
 import pygame
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 
 class Main_menu():
     '''
@@ -16,19 +16,19 @@ class Main_menu():
         self.y_scale_rate = 1
         self.width, self.height = screen.get_size()
 
-        self.music = SourceManager.get_image("music2").convert()
+        self.music = ResourceManager.get_image("music2").convert()
         self.music_transformed = pygame.transform.scale(self.music, (100, 100))
 
-        self.knight = SourceManager.get_image("knight").convert()
+        self.knight = ResourceManager.get_image("knight").convert()
         self.knight_transformed = pygame.transform.scale(self.knight, (170, 500))
 
-        self.info = SourceManager.get_image("question").convert()
+        self.info = ResourceManager.get_image("question").convert()
         self.info_transformed = pygame.transform.scale(self.info, (100, 100))
 
-        self.back = SourceManager.get_image("back").convert()
+        self.back = ResourceManager.get_image("back").convert()
         self.back_transformed = pygame.transform.scale(self.back, (100, 100))
 
-        self.instruction = SourceManager.get_image("instruction").convert()
+        self.instruction = ResourceManager.get_image("instruction").convert()
         self.instruction_transformed = pygame.transform.scale(self.instruction, (1052, 657))
 
         self.font_buttons = pygame.font.Font(None, 24) 

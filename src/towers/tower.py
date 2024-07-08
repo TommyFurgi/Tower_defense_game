@@ -2,7 +2,7 @@ import pygame
 from abc import ABC
 from towers.target import Target
 from towers.tower_menu import TowerMenu
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 from text_alert import TextAlert
 
 
@@ -40,8 +40,8 @@ class Tower(pygame.sprite.Sprite, ABC):
         
         self.time_from_last_shot = pygame.time.get_ticks()
         
-        self.sell_sound = SourceManager.get_sound("selling")
-        self.upgrade_sound = SourceManager.get_sound("upgrade")
+        self.sell_sound = ResourceManager.get_sound("selling")
+        self.upgrade_sound = ResourceManager.get_sound("upgrade")
         
         self.tower_menu = TowerMenu(self)
         

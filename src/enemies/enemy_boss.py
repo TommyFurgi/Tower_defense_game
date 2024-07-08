@@ -3,7 +3,7 @@ import pygame
 from directions import Direction
 from effects.boost_effect import BoostEffect
 import random
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 
 class EnemyBoss(Enemy):
     '''
@@ -20,10 +20,9 @@ class EnemyBoss(Enemy):
             x_scale_diff (float): Scaling difference for the x-axis.
             y_scale_diff (float): Scaling difference for the y-axis.
         '''
-        self.path = SourceManager.get_path("default")
-
-        Enemy.__init__(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
-        self.load_images("boss")
+        super().__init__(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, "default")
+        self.original_sized_images = ResourceManager.get_image("boss")
+        self.imgs_left, self.imgs_right, self.imgs_up, self.imgs_down = tuple(self.original_sized_images)
 
         self.speed = 1
         self.max_speed = 1.1
@@ -31,49 +30,10 @@ class EnemyBoss(Enemy):
         self.max_health = 400
         self.reward = 50
 
-    def load_images(self, images_filename):
-        '''
-        Loads and initializes the animation frames for the EnemyBoss based on an image strip.
-
-        Args:
-            images_filename (str): The filename of the image strip containing animation frames.
-        '''
         self.animation_count = random.randint(0, 2) * 10
-        
-        self.path_pos = 0
-        self.imgs_up = []
-        self.imgs_down = []
-        self.imgs_right = []
-        self.imgs_left = []
-        
-        animation_strip = SourceManager.get_image(images_filename)
-        frame_width = 120
-        frame_height = 120
-        
-        for i in range(1,4):
-            for j in range(1,4):
-                frame = animation_strip.crop((frame_width * j, frame_height * i + 40, frame_width * (j + 1), frame_height * (i+1) + 40))
 
-                data = frame.tobytes()
-                pygame_surface = pygame.image.fromstring(data, frame.size, "RGBA").convert_alpha()
-
-                match i:
-                    case 1:
-                        self.imgs_right.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-                        pygame_surface_flipped = pygame.transform.flip(pygame_surface, True, False)
-                        self.imgs_left.append(pygame.transform.scale(pygame_surface_flipped, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-
-                    case 2:
-                        self.imgs_up.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-                    case 3:
-                        self.imgs_down.append(pygame.transform.scale(pygame_surface, (128 * self.x_scale_rate, 128 * self.y_scale_rate)).convert_alpha())
-
-                self.original_sized_images[i].append(pygame_surface)
-
-        self.direction = Direction.RIGHT
-        self.img = self.imgs_right[0]
-
-        self.flipped = False
+        if x_scale_rate != 1 or y_scale_rate != 1:
+            self.scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, True)
 
     def update(self, game_pause, enemies):
         '''
@@ -100,7 +60,7 @@ class EnemyBoss(Enemy):
             if not isinstance(enemy, EnemyBoss):
                 enemy.add_effect(BoostEffect(1.6, 3))
 
-    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff):
+    def scale_parameters(self, x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, initialize_enemy = False):
         '''
         Scales the parameters of the EnemyBoss instance based on given scaling factors and differences.
 
@@ -109,8 +69,9 @@ class EnemyBoss(Enemy):
             y_scale_rate (float): The scaling factor for the y-axis.
             x_scale_diff (float): The scaling difference for the x-axis.
             y_scale_diff (float): The scaling difference for the y-axis.
+            initialize_enemy (bool): The flag indicating whether the function is called during initialization
         '''
-        super().scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff)
+        super().scale_parameters(x_scale_rate, y_scale_rate, x_scale_diff, y_scale_diff, initialize_enemy)
 
         for i in range(1, 4):
             for j, img in enumerate(self.original_sized_images[i]):

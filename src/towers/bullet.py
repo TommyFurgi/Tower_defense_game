@@ -1,5 +1,5 @@
 import pygame, math
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -28,7 +28,7 @@ class Bullet(pygame.sprite.Sprite):
         self.dirn = (self.dirn[0]/self.length, self.dirn[1]/self.length)
         self.dirn = (self.dirn[0] * self.speed, self.dirn[1] * self.speed)
 
-        self.bullet = SourceManager.get_image("bullet-01").convert_alpha()
+        self.bullet = ResourceManager.get_image("bullet-01").convert_alpha()
         self.bullet_transformed = pygame.transform.scale(self.bullet, (bullet_size * x_scale_rate, bullet_size * y_scale_rate))
     
 

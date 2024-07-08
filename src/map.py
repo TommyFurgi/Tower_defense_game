@@ -1,5 +1,5 @@
 import pygame
-from source_manager import SourceManager
+from resource_manager import ResourceManager
  
 class Map():
     def __init__(self, screen):
@@ -14,7 +14,7 @@ class Map():
         window_width, self.height = screen.get_size()
         self.width = 0.85 * window_width 
 
-        self.background = SourceManager.get_image("map").convert()
+        self.background = ResourceManager.get_image("map").convert()
         self.background_transformated = pygame.transform.scale(self.background, (int(self.width), self.height))
 
     def draw_background(self):

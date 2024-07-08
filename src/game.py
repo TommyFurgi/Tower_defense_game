@@ -1,13 +1,13 @@
 import pygame
 from pygame.locals import *
 from map import Map 
-from menu import Menu
+from shop import Shop
 from main_menu import Main_menu
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 from towers.cannon_tower import CannonTower
 from waves.wave_manager import WaveManager
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 from text_alert import TextAlert
 from math import sqrt
 
@@ -34,7 +34,7 @@ class Game():
         self.width, self.height = screen.get_width(), screen.get_height()
         
         self.game_map = Map(self.screen)
-        self.menu = Menu(self.screen)
+        self.menu = Shop(self.screen)
         self.main_menu = Main_menu(self.screen)
 
         self.handle_restart_game()
@@ -50,10 +50,10 @@ class Game():
         self.load_rects("path", self.path_collisions)
         self.load_rects("others", self.other_obstacles_collisions)
 
-        self.success_sound = SourceManager.get_sound("success")
-        self.failture_sound = SourceManager.get_sound("failture")
-        self.success_sound_end_game = SourceManager.get_sound("success_end_game")
-        self.building_sound = SourceManager.get_sound("building")
+        self.success_sound = ResourceManager.get_sound("success")
+        self.failture_sound = ResourceManager.get_sound("failture")
+        self.success_sound_end_game = ResourceManager.get_sound("success_end_game")
+        self.building_sound = ResourceManager.get_sound("building")
 
         self.objects_to_scale = {self.game_map, self.menu, self.main_menu}
 
@@ -66,7 +66,7 @@ class Game():
             name (str): The name identifier for the rectangles to load from SourceManager.
             group (pygame.sprite.Group): The sprite group to which the loaded rectangles will be added.
         """
-        rectangles = SourceManager.get_rectangles(name)
+        rectangles = ResourceManager.get_rectangles(name)
         
         for rectangle in rectangles:
             rect_sprite = pygame.sprite.Sprite()
@@ -349,10 +349,10 @@ class Game():
                                 case "music":
                                     if self.sound_play:
                                         self.sound_play = False
-                                        SourceManager.set_sounds_volume(0)
+                                        ResourceManager.set_sounds_volume(0)
                                     else:
                                         self.sound_play = True
-                                        SourceManager.set_sounds_volume(0.015)
+                                        ResourceManager.set_sounds_volume(0.015)
                                 case "new_game":
                                     self.handle_restart_game()
                                     selected_tower = None
@@ -449,10 +449,10 @@ class Game():
                                         elif drag_object_name == "music":
                                             if self.sound_play:
                                                 self.sound_play = False
-                                                SourceManager.set_sounds_volume(0)
+                                                ResourceManager.set_sounds_volume(0)
                                             else:
                                                 self.sound_play = True
-                                                SourceManager.set_sounds_volume(0.015)
+                                                ResourceManager.set_sounds_volume(0.015)
 
                                         continue
 

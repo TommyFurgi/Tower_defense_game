@@ -322,34 +322,19 @@ class TowerMenu():
     
     def sell_pressed(self, clicked_position):
         """Checks if sell button was pressed."""
-        if self.sell_icon_rect.collidepoint(clicked_position):
-            return True
-        
-        return False
-    
+        return self.sell_icon_rect.collidepoint(clicked_position)
     
     def upgrade_pressed(self, clicked_position):
         """Checks if upgrade button was pressed."""
-        if self.upgrade_icon_rect.collidepoint(clicked_position):
-            return True
-        
-        return False
+        return self.upgrade_icon_rect.collidepoint(clicked_position)
     
     def taget_mode_left_arrow_pressed(self, clicked_position):
         """Checks if left arrow used for changing targeting modes was pressed."""
-        if self.arrow_left_rect.collidepoint(clicked_position):
-            return True
-        
-        return False
-    
+        return self.arrow_left_rect.collidepoint(clicked_position)
     
     def taget_mode_right_arrow_pressed(self, clicked_position):
         """Checks if right arrow used for changing targeting modes was pressed."""
-        if self.arrow_right_rect.collidepoint(clicked_position):
-            return True
-        
-        return False
-    
+        return self.arrow_right_rect.collidepoint(clicked_position)
     
     def manage_tower_menu_page(self, clicked_position):
         """

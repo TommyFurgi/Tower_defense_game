@@ -3,7 +3,7 @@ from towers.tower import Tower
 from towers.bullet import Bullet
 from effects.effect_type import EffectType
 from effects.poison_effect import PoisonEffect
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 from towers.target import Target
 from math import sqrt
 
@@ -16,7 +16,7 @@ class ArcherTower(Tower):
     def __init__(self, x, y, x_scale_rate, y_scale_rate):        
         Tower.__init__(self, x, y, x_scale_rate, y_scale_rate)
 
-        self.tower_img = SourceManager.get_image("archer_tower").convert_alpha()
+        self.tower_img = ResourceManager.get_image("archer_tower").convert_alpha()
         self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
         self.damage = 50
@@ -35,7 +35,7 @@ class ArcherTower(Tower):
         self.tower_target = Target.FIRST
 
         self.target_modes = [Target.FIRST, Target.LAST, Target.LEAST_HEALTH, Target.MOST_HEALTH]
-        self.shot_sound = SourceManager.get_sound("arrow_shot")
+        self.shot_sound = ResourceManager.get_sound("arrow_shot")
 
 
     def find_targets(self, enemies, delta_time):

@@ -2,16 +2,17 @@
 
 <h3>This project was made for the Python Programming course at the AGH UST in 2023/2024.</h3>
 
+## Authors
+
+- [Jakub Frączek](https://github.com/JakubFr4czek)  
+- [Tomasz Furgała](https://github.com/TommyFurgi)
+
+
 ## Description
 
 `Tower Defense Game` is a classic strategy game where player strategically place defensive towers along a path to defend against waves of incoming enemies. The objective is to prevent the enemies from reaching the end of the path by strategically placing various types of defensive towers that can attack, slow down or poison the enemies.
 
 ![Project overview](assets/images/overview.jpg)
-
-## Authors
-
-- [Jakub Frączek](https://github.com/JakubFr4czek)  
-- [Tomasz Furgała](https://github.com/TommyFurgi)
 
 ## Gameplay
 
@@ -39,22 +40,22 @@ To run the `Tower Defense Game`, follow these steps:
 
 1. **Install Python:** First, ensure Python is installed on your system. You can download and install Python from python.org.
 2. **Clone the Repository:** To clone the project repository, open your terminal or command prompt and enter the following command:
-```
-git clone https://github.com/TommyFurgi/Tower_defense_game.git
-```
+    ```
+    git clone https://github.com/TommyFurgi/Tower_defense_game.git
+    ```
 3. **Open Project:** Once the repository has been cloned, navigate into the cloned project directory using the cd command in your terminal or command prompt. For example:
-```
-cd Tower_defense_game
-```
+    ```
+    cd Tower_defense_game
+    ```
 4. **Install Requirements:** Navigate to the directory where the game files are located and install the required libraries from the requirements.txt file by running:
-```
-pip install -r requirements.txt
-```
+    ```
+    pip install -r requirements.txt
+    ```
 5. **Run game:** After navigating into the project directory, you can run the main game file `main.py` by executing the following command in your terminal or command prompt:
-```
-python main.py
-```
-This command will launch the game window, and you can start playing the `Tower Defense Game` right away. Enjoy!
+    ```
+    python src/main.py
+    ```
+    This command will launch the game window, and you can start playing the `Tower Defense Game` right away. Enjoy!
 
 
 ## Assets Sources

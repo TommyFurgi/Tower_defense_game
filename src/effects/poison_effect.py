@@ -35,6 +35,5 @@ class PoisonEffect(Effect):
 
     def is_active(self):
         """Determines if effect is still active."""
-        if self.demage_counter <= 0:
-            return False
-        return True
+        return self.demage_counter > 0
+            

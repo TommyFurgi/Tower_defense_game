@@ -2,7 +2,7 @@ import pygame
 from towers.tower import Tower
 from effects.effect_type import EffectType
 from effects.slow_down_effect import SlowDownEffect
-from source_manager import SourceManager
+from resource_manager import ResourceManager
 from towers.target import Target
 from math import sqrt
 
@@ -15,7 +15,7 @@ class MagicTower(Tower):
     def __init__(self, x, y, x_scale_rate, y_scale_rate):
         Tower.__init__(self, x, y, x_scale_rate, y_scale_rate)
 
-        self.tower_img = SourceManager.get_image("magic_tower").convert_alpha()
+        self.tower_img = ResourceManager.get_image("magic_tower").convert_alpha()
         self.tower_img_transformed = pygame.transform.scale(self.tower_img, (150 * x_scale_rate, 150 * y_scale_rate))
         
         self.damage = 15
@@ -37,7 +37,7 @@ class MagicTower(Tower):
         self.tower_target = Target.ALL
 
         self.target_modes = [Target.ALL]
-        self.shot_sound = SourceManager.get_sound("magic_shot")
+        self.shot_sound = ResourceManager.get_sound("magic_shot")
 
 
     def find_targets(self, enemies, delta_time):
